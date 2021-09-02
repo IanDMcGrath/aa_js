@@ -21,4 +21,5 @@ In addition, this project will include:
 { other aspect of project }
 { other aspect of project }
 
-yadda yadda
+current on-switch steps
+command to launch http-server(nav to index.html directory first): http-server . -p 8000
