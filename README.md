@@ -55,9 +55,9 @@ Technologies, Libraries, APIs
 	- https://www.substance3d.com/
 	- Sébastien Deguy
 	
-Photoshop
+* Photoshop
 
-Audition
+* Audition
 
 Implementation Timeline
 
