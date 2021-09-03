@@ -1,45 +1,56 @@
 Background
 With a bachelor's in Virtual Technologies & Design (read: 3D generalist) and no good barrier between work and life, I plan to make a battle racing game. Building models and materials will take no time. This will be completely about learning to use three.js api with JavaScript. I will attempt to iterate fast to deliver a game that at least doesn't hurt to look at or play.
 
-Functionality & MVPs
------       MVPs       -----
-Car responds to player inputs
-Game starts in a time-attack mode
-Displayed timer in HUD
-Displayed final time after crossing finishline
 
------ full feature list -----
-Race starts and you drive
-Steer expertly to stay on the road
-Shove other drivers or get shoved
-Increase or decrease points based on performance
-Rolling terminations will chop off stragglers
-Race finish podium
+
+beans line - You've got the furious must for fast. Choose the speed which dictates the win. Push buttons, Do moves. All oppositers tremble. 
+
+Functionality & MVPs
+
+MVPs
+- Car responds to player inputs
+- Game starts in a time-attack mode
+- Displayed timer in HUD
+- Displayed final time after crossing finishline
+
+full feature list
+- Race starts and you drive
+- Steer expertly to stay on the road
+- Shove other drivers or get shoved
+- Increase or decrease points based on performance
+- Rolling terminations will chop off stragglers
+- Race finish podium
 
 Wireframes
-There's a viewport and there are racers on a road or some'n
+
+![wireframe](wireframe.jpg)
+
 LinkedIn
+
 MyWebsite
+
 ArtStation
+
 Twitter
 
 Technologies, Libraries, APIs
-three.js
+
+* three.js
 	- JavaScript canvas rendering library
 	- https://threejs.org/
 	- Ricardo Cabello
 
-Three.js Webpack ES6 Boilerplate
+* Three.js Webpack ES6 Boilerplate
 	- The "Hello World!" for three.js & webpack
 	- https://github.com/paulmg/ThreeJS-Webpack-ES6-Boilerplate
 	- Paul M G
 
-Blender
+* Blender
 	- Mesh modelling / animation / materials / etc suite
 	- https://www.blender.org/
 	- Ton Roosendaal
 
-Substance Painter & Substance Designer
+* Substance Painter & Substance Designer
 	- Material authoring
 	- https://www.substance3d.com/
 	- Sébastien Deguy
@@ -49,20 +60,21 @@ Photoshop
 Audition
 
 Implementation Timeline
-Friday Afternoon & Weekend
+
+* Friday Afternoon & Weekend
 	- three.js working in browser
 	- models & materials can be imported
 	- scene global lighting and skybox/skysphere
 	- vehicle class associated with model and updates model's position in the scene
 	- world block-out // road mesh / vehicle mesh / starting-line w/ banner mesh
-Monday
+* Monday
 	- player input influences vehicle movement
 	- viewport camera follows vehicle
 	- vehicle acceleration
 	- vehicle gravity
 	- vehicle respects the floor plane
 	- vehicle respects the road mesh
-Tuesday
+* Tuesday
 	- race start
 	- timer on HUD
 	- race end
@@ -71,7 +83,7 @@ Tuesday
 	- dummy ai (it just drives forward)
 	- race starting positions
 	- racer shoving and collision responses
-Wednesday
+* Wednesday
 	- death and respawn (fall off track -> return to track)
 	- ai ensmarten (points towards race finish without disrespecting road mesh)
 	- points system
@@ -81,5 +93,5 @@ Wednesday
 	- add particle effects (dirt trails) (confetti cannons) (race flag waver)
 	- add sounds (?)
 	- add music (?)
-Thursday Morning
+* Thursday Morning
 	- safety day / last minute tweaking / upload beans
