@@ -35,4 +35,13 @@ export function wrapAngle(inAngle, wrapAngle=(6.2831)) { // default wrapAngle is
 }
 
 
+export function clampFMax(f, max) {
+    if (f > max) {
+        return max;
+    } else {
+        return f;
+    }
+}
+
+
 // module.exports = Util

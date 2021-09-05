@@ -7,9 +7,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Camera } from 'three';
 
 // import my files
-const Vehicle = require('./vehicle');
+import { Vehicle } from './vehicle';
+import { PlayCam } from './camera';
 const Util = require('./utils');
-const PlayCam = require('./camera');
 
 // Loading
 const textureLoader = new THREE.TextureLoader();
@@ -19,6 +19,7 @@ const gltfLoader = new GLTFLoader();
 // Collections
 const arrRacers = [];
 const arrSky = [];
+const arrColliders = [];
 
 
 // Debug
@@ -51,23 +52,26 @@ material.color = new THREE.Color(0xffffff)
 // scene.add(sphere)
 
 
-gltfLoader.load( './environment/sky/uvsphere_inverted.glb', function ( gltf ) {
-    let skysphere = gltf.scene;
-    skysphere.scale.set(1,1,1);
-	scene.add( gltf.scene );
-    // skysphere.material = material;
-    // skysphere.material.depthTest = true
-    skysphere.renderOrder = 1000;
-    // arrSky.push(skysphere)
-}, undefined, function ( error ) {
-    console.error( error );
-} );
+// gltfLoader.load( './environment/sky/uvsphere_inverted.glb', function ( gltf ) {
+//     let skysphere = gltf.scene;
+//     skysphere.scale.set(1,1,1);
+// 	scene.add( gltf.scene );
+//     // skysphere.material = material;
+//     // skysphere.material.depthTest = true
+//     skysphere.renderOrder = 1000;
+//     // arrSky.push(skysphere)
+// }, undefined, function ( error ) {
+//     console.error( error );
+// } );
 
 function addRoad() {
     gltfLoader.load( './environment/road/roadtest.glb', function ( gltf ) {
         let road = gltf.scene;
         road.scale.set(1,1,1);
-        scene.add( gltf.scene );
+        // road.layers.enable(1);
+        // road.layers.set(1);
+        arrColliders.push(road);
+        scene.add( road );
     }, undefined, function ( error ) {
         console.error( error );
     } );
@@ -80,8 +84,10 @@ function addRacer() {
         let mesh = gltf.scene;
         console.log(mesh.position.set(...[0,0,-1]))
         mesh.scale.set(1,1,1);
+        mesh.material = material
         scene.add( mesh );
-        let racer = new Vehicle(gltf);
+        let racer = new Vehicle(gltf, new THREE.Vector3());
+        racer.road = arrColliders[0];
         arrRacers.push(racer);
     }, undefined, function ( error ) {
         console.error( error );
@@ -135,7 +141,7 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 camera.position.x = 0
 camera.position.y = 10
 camera.position.z = 30
-const playCam = new PlayCam(camera, new THREE.Vector3());
+const playCam = new PlayCam(camera, new THREE.Vector3(), arrRacers[0]);
 scene.add(camera)
 
 // Controls
@@ -156,8 +162,9 @@ const myVector = new THREE.Vector3(50,0,0);
 function renderRacers() {
     for (let i=0; i<arrRacers.length; i++) {
         arrRacers[i].move();
+        // arrRacers[i].position.x = clock.getElapsedTime();
     }
-    if (arrRacers[0]) playCam.lookAt(arrRacers[0].position);
+    // if (arrRacers[0]) playCam.lookAt(arrRacers[0].position);
     // if (arrRacers[0]) playCam.obj.lookAt(myVector);
     // console.log(playCam.lookatTarget)
 }
@@ -183,6 +190,9 @@ const tick = () =>
     // console.log(skysphere.scene)
     // skysphere.scene.position.set(camera.position.x,camera.position.y,camera.position.z - 50)
     // renderSky();
+    // playCam.obj.lookAt(arrRacers[0].position)
+    renderRacers();
+    playCam.move();
     
     renderer.render(scene, camera)
     // Update Orbital Controls
@@ -193,9 +203,24 @@ const tick = () =>
     
     // Render
     
-    renderRacers();
+
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
 
-tick()
+var prepTick = setInterval(tryTick, 100);
+
+function tryTick() {
+    console.log("Trying to start tick") // A catch-all solution to waiting on the player's vehicle to be ready
+    if (arrRacers[0]) {
+        arrRacers[0].isPlayer = true;
+        arrRacers[0].bindControls();
+        playCam.player = arrRacers[0];
+        console.log("Tick started")
+        tick()
+        clearInterval(prepTick);
+    }
+}
+
+
+// it's math
