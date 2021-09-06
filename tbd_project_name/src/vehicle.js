@@ -4,9 +4,9 @@ const Quat = Quaternion; // because it's easier to type and read
 
 
 export class Vehicle {
-    constructor(obj, positionVector, isPlayer=false) {
+    constructor(obj, isPlayer=false) {
         this.scale = [1,1,1];
-        this.position = positionVector.clone();
+        this.position = new Vector3(0,0,0);
         this.position.x = -5
         this.rotation = new Quat();
         this.throttle = 0;
@@ -23,8 +23,9 @@ export class Vehicle {
         this.road = undefined;
         this.isFalling = false;
         this.gravityDir = new Vector3(0,-1,0);
-        this.trueVelocity = new Vector3();
+        this.trueVelocity = new Vector3(0,0,0);
         this.secondPos = new Vector3();
+        this.yaw = 0;
 
         if (isPlayer) {
             bindControls();
@@ -39,27 +40,32 @@ export class Vehicle {
     calcDirections(){
         this.forwardDir = new Vector3(0,0,1).applyQuaternion(this.rotation);
         this.upDir = new Vector3(0,1,0).applyQuaternion(this.rotation);
+        this.rightDir = new Vector3(1,0,0).applyQuaternion(this.rotation);
         this.forwardDir.normalize();
-        // console.log(this.forwardDir)
+        this.upDir.normalize();
+        this.rightDir.normalize();
     }
-
-
+    
+    
     move() {
-        this.calcDirections();
-        this.collision();
         this.rotation.multiply(this.rotationalVelocity);
         this.rotation.normalize();
-
+        this.collision();
+        this.calcDirections();
+        // this.yaw += this.rotationalVelocity.y;
+        // this.yaw = this.yaw % Math.PI;
+        // console.log(this.yaw)
+        
         this.accelerate();
         if (this.isFalling) {
-            this.gravity();
+            // this.gravity();
         } else {
             this.momentum();
         }
         
         this.position.add(this.linearVelocity);
-
-
+        
+        
         // update the mesh to match the class transform;
         this.obj.scene.position.set(...this.position.toArray());
         this.obj.scene.rotation.setFromQuaternion(this.rotation);
@@ -88,7 +94,7 @@ export class Vehicle {
         speed = (speed + this.throttle);
         speed = Util.clampFMax(speed, 2);
          if (this.throttle === 0) speed = speed * 0.98;
-        this.linearVelocity.set(...this.forwardDir.multiplyScalar(speed).toArray());
+        this.linearVelocity.set(...this.forwardDir.clone().multiplyScalar(speed).toArray());
         // console.log(this.linearVelocity)
     }
 
@@ -159,12 +165,19 @@ export class Vehicle {
     }
 
     buildCollisions() {
-        this.raycaster = new Raycaster();
-        // this.raycaster.layers.set(1);
-        this.obj.scene.layers.set(1);
-        this.raycaster.far = 5;
-        this.raycaster.direction = new Euler(0,0,0);
-        console.log(this.raycaster.direction);
+        this.obj.scene.layers.set(2);
+        this.raycaster1 = new Raycaster();
+        this.raycaster1.far = 50;
+        this.raycaster1.direction = new Euler(0,0,0);
+        this.raycaster2 = new Raycaster();
+        this.raycaster2.far = 50;
+        this.raycaster2.direction = new Euler(0,0,0);
+        this.raycaster3 = new Raycaster();
+        this.raycaster3.far = 50;
+        this.raycaster3.direction = new Euler(0,0,0);
+        this.raycaster4 = new Raycaster();
+        this.raycaster4.far = 50;
+        this.raycaster4.direction = new Euler(0,0,0);
     }
     
     collision() {
@@ -172,37 +185,131 @@ export class Vehicle {
     }
     
     collideRoad() {
-        this.raycaster.set(this.position, new Vector3(0,-1,0).applyQuaternion(this.rotation));
+        let hitDists = []
+        let hitDists1 = []
+        let hitDists2 = []
+        let hitDists3 = []
+        this.raycaster1.set(this.position.clone().add(this.forwardDir.multiplyScalar(1)), this.upDir.clone().negate());
+        this.raycaster2.set(this.position.clone().add(this.forwardDir.clone().negate), this.upDir.clone().negate());
+        this.raycaster3.set(this.position.clone().add(this.rightDir.multiplyScalar(1)), this.upDir.clone().negate());
+        this.raycaster4.set(this.position.clone().add(this.rightDir.clone().negate()), this.upDir.clone().negate());
         let intersects = []
-        this.raycaster.intersectObjects(this.road.children, true, intersects);
+        // console.log(this.road)
+        this.raycaster1.intersectObjects(this.road.children, true, intersects);
+        this.raycaster2.intersectObjects(this.road.children, true, hitDists1);
+        this.raycaster3.intersectObjects(this.road.children, true, hitDists2);
+        this.raycaster4.intersectObjects(this.road.children, true, hitDists3);
+        // hitDists.push(intersects[0])
+        hitDists.concat(hitDists1.concat(hitDists2.concat(hitDists3)))
+        
         this.falling(!intersects.length > 0);
         if (!this.isFalling) {
-            this.moveToRoad(intersects[0]);
+            this.moveToRoad(intersects[0], hitDists);
         }
     };
-
-    moveToRoad(intersect) {
+    
+    moveToRoad(intersect, hitDists) {
         // console.log(intersect)
         let hitDist = this.position.clone().sub(intersect.point).length();
         // let downDir = this.upDir.clone().multiplyScalar(-1);
         // console.log(downDir)
-        let offset = this.upDir.multiplyScalar((hitDist - 1) * -1)
+        let offset = this.upDir.multiplyScalar((hitDist - 3) * -1);
         this.position.add(offset);
         // console.log(intersect)
+        
+        for (let i=0; i<4; i++) {
+            if (hitDists[i]) {
+                hitDists[i] = this.position.clone().sub(hitDists[i].point).length();
+            } else {
+                hitDists.push(1);
+            }
+        }
+        console.log(hitDists)
 
-        let forwardNormal = intersect.face.normal.projectOnPlane(this.forwardDir); // some jank happening here. Need to stabilize the added rotation somehow
-        let dot = forwardNormal.dot(this.upDir);
-        // dot = Math.cos(dot);
-        let slopeQuat = new Quat(-dot*0.3,0,0);
-        slopeQuat = this.rotation.clone().multiply(slopeQuat)
-        this.rotation = slopeQuat.clone();
+        let frontRocker = hitDists[0] - hitDists[1];
+        let sideRocker = hitDists[2] - hitDists[3];
+        let rollForward = new Quat(frontRocker*0.1,0,0);
+        let rollRight = new Quat(0,0,sideRocker*0.1);
 
-        // let forwardNormal = intersect.face.normal.projectOnPlane(this.forwardDir);
-        // let offsetQuat = new Quat();
-        // offsetQuat.setFromAxisAngle(intersect.face.normal.negate(), -this.rotation.w);
-        // console.log(offsetQuat.w)
-        // offsetQuat.normalize();
-        // this.rotation = offsetQuat.clone();
+        this.rotation.multiply(rollForward).normalize();
+        this.rotation.multiply(rollRight).normalize();
+        
+        // if (hitDists[0] - hitDists[1] > 0) {
+        //     this.rotation.multiply(rollForward);
+        // } else {
+        //     this.rotation.multiply(rollBackward);
+        // }
+                
+        // if (hitDists[2] - hitDists[3] > 0) {
+        //     this.rotation.multiply(rollLeft);
+        // } else {
+        //     this.rotation.multiply(rollRight);
+        // }
+
+        // let forwardNormal = intersect.face.normal.projectOnPlane(this.forwardDir); // some jank happening here. Need to stabilize the added rotation somehow
+        // let dot = forwardNormal.dot(this.upDir);
+        // // dot = Math.cos(dot);
+        // let slopeQuat = new Quat(-dot*0.1,0,0);
+        // slopeQuat = this.rotation.clone().multiply(slopeQuat)
+        // this.rotation = slopeQuat.clone();
+        
+        // hitEuler from the hitface normal
+            // hitQuat = transform the hit face normal into car local space
+        // let hitQuat = interset.face.normal
+            // hitEuler = new euler with x & z rotations of hitQuat and y:0
+        // this.rotation.add(new Quat().setFromEuler(hitEuler))
+
+        // let hitQuat = new Quat();
+        // hitQuat.setFromUnitVectors(intersect.face.normal, new Vector3(0,-1,0));
+        // hitQuat.multiply(this.rotation)
+        // console.log(hitQuat)
+        // let hitEuler = new Euler().setFromQuaternion(hitQuat);
+        // this.rotation.multiply(hitQuat);
+        // this.rotation.normalize();
+        // console.log(this.rotation)
+
+        // let euler = new Euler();
+        // euler.setFromVector3(intersect.face.normal);
+        // euler.y = (new Euler().setFromQuaternion(this.rotation)).y;
+        // // console.log(euler)
+        // this.rotation.setFromEuler(euler.clone());
+
+        // let quat = new Quat();
+        // quat.setFromAxisAngle(intersect.face.normal, this.rotation.y)
+        // quat.normalize();
+        // this.rotation.multiply(quat);
+
+        // let localNormal = intersect.face.normal.applyQuaternion(this.rotation.clone().invert());
+        // this.rotation.multiply(new Quat().setFromAxisAngle(localNormal, 0));
+
+        // let localHitNormal = intersect.face.normal
+        // // this.obj.scene.updateMatrixWorld();
+        // let quat = this.rotation.clone()
+        // localHitNormal = localHitNormal.applyQuaternion(quat.conjugate());
+        // console.log(localHitNormal)
+        // let rollForward = new Quat(0.01,0,0).normalize();
+        // let rollBackward = new Quat(-0.01,0,0).normalize();
+        // let rollRight = new Quat(0,0,0.01).invert().normalize();
+        // let rollLeft = new Quat(0,0,-0.01).invert().normalize();
+        // if (localHitNormal.x > 0.05) {
+        //     console.log('roll right')
+        //     this.rotation.multiply(rollLeft);
+        // } else {
+        //     console.log('roll left')
+        //     this.rotation.multiply(rollRight);
+        // }
+
+        // if (localHitNormal.x > 0) {
+        //     this.rotation.multiply(rollForward);
+        // } else {
+        //     this.rotation.multiply(rollBackward);
+        // }
+
+        // this.rotation.multiply(quat);
+        // this.rotation.normalize();
+
+
+
 
 
 

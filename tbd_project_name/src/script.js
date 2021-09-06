@@ -65,13 +65,14 @@ material.color = new THREE.Color(0xffffff)
 // } );
 
 function addRoad() {
-    gltfLoader.load( './environment/road/roadtest.glb', function ( gltf ) {
+    gltfLoader.load( './environment/road/roadtest.gltf', function ( gltf ) {
         let road = gltf.scene;
         road.scale.set(1,1,1);
         // road.layers.enable(1);
         // road.layers.set(1);
         arrColliders.push(road);
         scene.add( road );
+        addRacer(); // called in here to ensure road is loaded into scene before vehicles
     }, undefined, function ( error ) {
         console.error( error );
     } );
@@ -82,18 +83,17 @@ addRoad();
 function addRacer() {
     gltfLoader.load( './vehicle/vehicle.glb', function ( gltf ) {
         let mesh = gltf.scene;
-        console.log(mesh.position.set(...[0,0,-1]))
+        // console.log(mesh.position.set(...[0,0,-1]))
         mesh.scale.set(1,1,1);
         mesh.material = material
         scene.add( mesh );
-        let racer = new Vehicle(gltf, new THREE.Vector3());
+        let racer = new Vehicle(gltf);
         racer.road = arrColliders[0];
         arrRacers.push(racer);
     }, undefined, function ( error ) {
         console.error( error );
     } );
 }
-addRacer();
 // Lights
 
 const hlight = new THREE.AmbientLight (0x404040,1);
@@ -137,7 +137,7 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
 camera.position.x = 0
 camera.position.y = 10
 camera.position.z = 30

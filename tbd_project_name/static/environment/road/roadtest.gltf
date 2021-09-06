@@ -1,0 +1,151 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.4.40",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                1
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "NODE_AddSplineMeshComponent-1_29.001",
+            "rotation" : [
+                0,
+                -0.7071067690849304,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                170,
+                0,
+                29.999996185302734
+            ]
+        },
+        {
+            "children" : [
+                0
+            ],
+            "name" : "bp_splineMeshConstructor_5",
+            "scale" : [
+                0.009999999776482582,
+                0.009999999776482582,
+                0.009999999776482582
+            ],
+            "translation" : [
+                -0.699999988079071,
+                0.19999998807907104,
+                -1
+            ]
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "NODE_AddSplineMeshComponent-1_29.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TANGENT" : 2,
+                        "TEXCOORD_0" : 3,
+                        "TEXCOORD_1" : 4
+                    },
+                    "indices" : 5
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 3522,
+            "max" : [
+                81844.984375,
+                46679.92578125,
+                56974.7109375
+            ],
+            "min" : [
+                -61313.92578125,
+                -11572.734375,
+                -86939.875
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 3522,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 3522,
+            "type" : "VEC4"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5126,
+            "count" : 3522,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 3522,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 5,
+            "componentType" : 5123,
+            "count" : 8718,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 42264,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 42264,
+            "byteOffset" : 42264
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 56352,
+            "byteOffset" : 84528
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 28176,
+            "byteOffset" : 140880
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 28176,
+            "byteOffset" : 169056
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 17436,
+            "byteOffset" : 197232
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 214668,
+            "uri" : "roadtest.bin"
+        }
+    ]
+}
