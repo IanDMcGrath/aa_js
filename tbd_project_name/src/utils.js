@@ -34,10 +34,27 @@ export function wrapAngle(inAngle, wrapAngle=(6.2831)) { // default wrapAngle is
     return abs * dir;
 }
 
+export function clampFMin(f, min) {
+    if (f < min) {
+        return min;
+    } else {
+        return f;
+    }
+}
 
 export function clampFMax(f, max) {
     if (f > max) {
         return max;
+    } else {
+        return f;
+    }
+}
+
+export function clampFRange(f, min, max) {
+    if (f > max) {
+        return max;
+    } else if (f < min) {
+        return min;
     } else {
         return f;
     }

@@ -18,7 +18,7 @@ const gltfLoader = new GLTFLoader();
 // Collections
 const arrRacers = [];
 const arrSky = [];
-const arrColliders = [];
+const arrColliders = {road: undefined, walls: undefined};
 
 
 // Debug
@@ -42,6 +42,26 @@ const material = new THREE.MeshBasicMaterial();
 // material.roughness = 0.2;
 // material.normalMap = normalTexture;
 material.color = new THREE.Color(0xffffff);
+
+const matRoad = new THREE.MeshMatcapMaterial();
+matRoad.map = textureLoader.load('environment/road/roadTexture.jpg');
+
+const matRails = new THREE.MeshPhongMaterial({
+    map : textureLoader.load('environment/road/roadGuardRail.png'),
+    emissive : new THREE.Color(0xFFFFFF),
+    emissiveMap : textureLoader.load('environment/road/roadGuardRailEmissive.jpg'),
+    emissiveIntensity : 1,
+    alphaMap : textureLoader.load('environment/road/roadGuardRailAlpha.jpg'),
+    transparent : true,
+    alphaTest : 0.5
+});
+console.log(matRails);
+
+function meshesMaterial(meshArr=[], material) {
+    for (let i=0; i<meshArr.length; i++) {
+        meshArr[i].material = material;
+    }
+}
 
 // Mesh
 // var skysphere = undefined
@@ -68,7 +88,10 @@ function addWalls() {
         let walls = gltf.scene;
         walls.scale.set(1,1,1);
 
-        arrColliders.push(walls);
+        // meshesMaterial(walls.children, matRails)
+        // walls.visible = false;
+
+        arrColliders.walls = walls;
         scene.add( walls );
         
     }, undefined, function ( error ) {
@@ -82,27 +105,39 @@ function addEnv() {
         let env = gltf.scene;
         env.scale.set(1,1,1);
 
+        console.log(gltf)
+
+        let roadOwner = undefined;
+        let i=0;
+        while (i<gltf.scene.children.length && !roadOwner) {
+            if (gltf.scene.children[i].name === "roadGroupOwner") {
+                roadOwner = gltf.scene.children[i];
+            }
+        }
+        if (roadOwner) meshesMaterial(roadOwner.children, matRails);
+
         scene.add(env);
 
     }, undefined, function ( error ) {
         console.error( error );
     });
 }
-addEnv();
+// addEnv();
 
 function addRoad() {
     gltfLoader.load( './environment/road/track01_road.gltf', function ( gltf ) {
         let road = gltf.scene;
-        console.log(gltf)
         // road.castShadow = true;
         // road.receiveShadow = true;
         road.scale.set(1,1,1);
+
+        meshesMaterial(road.children, matRoad);
         
         // road.layers.enable(1);
         // road.layers.set(1);
-        arrColliders.push(road);
+        arrColliders.road = road;
         scene.add( road );
-        addRacer(); // called in here to ensure road is loaded into scene before vehicles
+        
     }, undefined, function ( error ) {
         console.error( error );
     } );
@@ -119,19 +154,29 @@ function addRacer() {
         // mesh.material = material;
         scene.add( mesh );
         let racer = new Vehicle(gltf);
-        racer.road = arrColliders[0];
-        racer.walls = arrColliders[1];
+        
         arrRacers.push(racer);
     }, undefined, function ( error ) {
         console.error( error );
     } );
 }
+addRacer(); 
+
+function assignRacerColliders() {
+    if (arrColliders.road && arrColliders.walls) {      // check that both colliders were loaded and exist
+        for (let i=0; i<arrRacers.length; i++) {        // pass references of colliders to racers
+            arrRacers[i].road = arrColliders.road;
+            arrRacers[i].walls = arrColliders.walls;
+        }
+    }
+}
+
 // Lights
 
-const hlight = new THREE.AmbientLight(0xffffff,50);
+const hlight = new THREE.AmbientLight(0xffffff,0.5);
 hlight.position.set(.5,.5,0);
 
-console.log(hlight)
+// console.log(hlight)
 scene.add(hlight);
 
 // const pointLight = new THREE.PointLight(0xffffff, 1);
@@ -140,8 +185,8 @@ scene.add(hlight);
 // pointLight.position.z = 4;
 // scene.add(pointLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff,2);
-directionalLight.position.set(.5,.5,0);
+const directionalLight = new THREE.DirectionalLight(0xffffff,1);
+directionalLight.position.set(.5,.5,.5);
 // directionalLight.castShadow = true;
 scene.add(directionalLight);
 
@@ -238,15 +283,15 @@ function addArrows() {
     arrows.push(arrow);
     scene.add(arrow);
 
-    // vehicle floor trace (down) 2
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+    // // vehicle floor trace (down) 2
+    // arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    // arrows.push(arrow);
+    // scene.add(arrow);
 
-    // vehicle floor trace (down) 3
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+    // // vehicle floor trace (down) 3
+    // arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    // arrows.push(arrow);
+    // scene.add(arrow);
 
     // gravity direction
     arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(0,0,255)"), 0.5);
@@ -266,16 +311,16 @@ function moveArrows() {
     // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(0,0,1)).normalize());
     // arrows[3].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
     arrows[3].setDirection(arrRacers[0].floorTraceCenter.direction.clone());
-    arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
-    arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
+    arrows[4].setDirection(arrRacers[0].gravityDir.clone());
+    // arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
+    // arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
     // arrows[4].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
-    arrows[6].setDirection(arrRacers[0].gravityDir.clone());
 
 
     arrows[3].position.set(...arrRacers[0].floorTraceCenter.origin.toArray());
-    arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
-    arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
-    arrows[6].position.set(...arrRacers[0].position.clone().add(new THREE.Vector3(0,5,0)).toArray())
+    arrows[4].position.set(...arrRacers[0].position.clone().add(new THREE.Vector3(0,5,0)).toArray())
+    // arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
+    // arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
     // console.log(arrows[3].position);
 }
 
@@ -312,10 +357,15 @@ var prepTick = setInterval(tryTick, 100);
 
 function tryTick() {
     console.log("Trying to start tick") // A catch-all solution to waiting on the player's vehicle to be ready
-    if (arrRacers[0]) {
+
+    assignRacerColliders(); // pass references of the roads and walls to all racers
+
+    if (arrRacers[0] && arrRacers[0].walls) {
         arrRacers[0].isPlayer = true;
         arrRacers[0].bindControls();
         playCam.player = arrRacers[0];
+        
+
         addArrows();
         console.log("Tick started")
         tick()
