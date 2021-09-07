@@ -1,10 +1,9 @@
 // import threejs
-import './style.css'
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import * as dat from 'dat.gui'
+import './style.css';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { Camera } from 'three';
 
 // import my files
 import { Vehicle } from './vehicle';
@@ -23,26 +22,26 @@ const arrColliders = [];
 
 
 // Debug
-const gui = new dat.GUI()
+// const gui = new dat.GUI();
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector('canvas.webgl');
 
 // Scene
-const scene = new THREE.Scene()
+const scene = new THREE.Scene();
 scene.background = textureLoader.load('environment/sky/skygradient.jpg');
 
 // Objects
-const geometry = new THREE.SphereBufferGeometry( 10, 1, 16, 10 );
+// const geometry = new THREE.SphereBufferGeometry( 10, 1, 16, 10 );
 
 
 // Materials
 
-const material = new THREE.MeshBasicMaterial()
+const material = new THREE.MeshBasicMaterial();
 // material.metalness = 0.7;
 // material.roughness = 0.2;
 // material.normalMap = normalTexture;
-material.color = new THREE.Color(0xffffff)
+material.color = new THREE.Color(0xffffff);
 
 // Mesh
 // var skysphere = undefined
@@ -64,10 +63,41 @@ material.color = new THREE.Color(0xffffff)
 //     console.error( error );
 // } );
 
+function addWalls() {
+    gltfLoader.load('./environment/road/track01_walls.gltf', function ( gltf ) {
+        let walls = gltf.scene;
+        walls.scale.set(1,1,1);
+
+        arrColliders.push(walls);
+        scene.add( walls );
+        
+    }, undefined, function ( error ) {
+        console.error( error );
+    });
+}
+addWalls();
+
+function addEnv() {
+    gltfLoader.load('./environment/road/track01_env.gltf', function ( gltf ) {
+        let env = gltf.scene;
+        env.scale.set(1,1,1);
+
+        scene.add(env);
+
+    }, undefined, function ( error ) {
+        console.error( error );
+    });
+}
+addEnv();
+
 function addRoad() {
-    gltfLoader.load( './environment/road/roadtest.gltf', function ( gltf ) {
+    gltfLoader.load( './environment/road/track01_road.gltf', function ( gltf ) {
         let road = gltf.scene;
+        console.log(gltf)
+        // road.castShadow = true;
+        // road.receiveShadow = true;
         road.scale.set(1,1,1);
+        
         // road.layers.enable(1);
         // road.layers.set(1);
         arrColliders.push(road);
@@ -79,16 +109,18 @@ function addRoad() {
 }
 addRoad();
 
-
 function addRacer() {
     gltfLoader.load( './vehicle/vehicle.glb', function ( gltf ) {
         let mesh = gltf.scene;
-        // console.log(mesh.position.set(...[0,0,-1]))
+        // mesh.castShadow = true;
+        // mesh.receiveShadow = true;
+        // console.log(mesh);
         mesh.scale.set(1,1,1);
-        mesh.material = material
+        // mesh.material = material;
         scene.add( mesh );
         let racer = new Vehicle(gltf);
         racer.road = arrColliders[0];
+        racer.walls = arrColliders[1];
         arrRacers.push(racer);
     }, undefined, function ( error ) {
         console.error( error );
@@ -96,18 +128,21 @@ function addRacer() {
 }
 // Lights
 
-const hlight = new THREE.AmbientLight (0x404040,1);
+const hlight = new THREE.AmbientLight(0xffffff,50);
+hlight.position.set(.5,.5,0);
+
+console.log(hlight)
 scene.add(hlight);
 
-const pointLight = new THREE.PointLight(0xffffff, 1)
-pointLight.position.x = 2
-pointLight.position.y = 3
-pointLight.position.z = 4
-scene.add(pointLight)
+// const pointLight = new THREE.PointLight(0xffffff, 1);
+// pointLight.position.x = 2;
+// pointLight.position.y = 3;
+// pointLight.position.z = 4;
+// scene.add(pointLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff,1);
+const directionalLight = new THREE.DirectionalLight(0xffffff,2);
 directionalLight.position.set(.5,.5,0);
-directionalLight.castShadow = true;
+// directionalLight.castShadow = true;
 scene.add(directionalLight);
 
 /**
@@ -121,28 +156,28 @@ const sizes = {
 window.addEventListener('resize', () =>
 {
     // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
 
     // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
 
     // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 })
 
 /**
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
-camera.position.x = 0
-camera.position.y = 10
-camera.position.z = 30
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
+camera.position.x = 0;
+camera.position.y = 10;
+camera.position.z = 30;
 const playCam = new PlayCam(camera, new THREE.Vector3(), arrRacers[0]);
-scene.add(camera)
+scene.add(camera);
 
 // Controls
 // const controls = new OrbitControls(camera, canvas)
@@ -154,8 +189,8 @@ scene.add(camera)
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const myVector = new THREE.Vector3(50,0,0);
 // render iterators
@@ -179,7 +214,57 @@ function renderSky() {
  * Animate
  */
 
-const clock = new THREE.Clock()
+const clock = new THREE.Clock();
+
+const arrows = [];
+function addArrows() {
+    // vehicle Y (up)
+    let arrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), arrRacers[0].position, 5, new THREE.Color("rgb(0,255,0)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
+    // vehicle Z (forward)
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(0,0,1), arrRacers[0].position, 5, new THREE.Color("rgb(0,0,255)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
+    // vehicle X (right)
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), arrRacers[0].position, 5, new THREE.Color("rgb(255,0,0)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
+    // vehicle floor trace (down)
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,0,0)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
+    // gravity direction
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(0,0,255)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+}
+
+function moveArrows() {
+    for (let i=0; i<arrows.length; i++) {
+        // arrows[i].position.set(arrRacers[0].position);
+        arrows[i].position.x = arrRacers[0].position.x;
+        arrows[i].position.y = arrRacers[0].position.y;
+        arrows[i].position.z = arrRacers[0].position.z;
+    }
+    // arrows[0].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(0,-1,0)).normalize());
+    // arrows[1].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(1,0,0)).normalize());
+    // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(0,0,1)).normalize());
+    // arrows[3].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
+    arrows[3].setDirection(arrRacers[0].floorTrace.direction.clone());
+    // arrows[4].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
+    arrows[4].setDirection(arrRacers[0].gravityDir.clone());
+
+
+    arrows[3].position.set(...arrRacers[0].floorTrace.origin.toArray());
+    arrows[4].position.set(...arrRacers[0].position.clone().add(new THREE.Vector3(0,5,0)).toArray())
+    // console.log(arrows[3].position);
+}
+
 
 const tick = () =>
 {
@@ -193,8 +278,9 @@ const tick = () =>
     // playCam.obj.lookAt(arrRacers[0].position)
     renderRacers();
     playCam.move();
+    moveArrows();
     
-    renderer.render(scene, camera)
+    renderer.render(scene, camera);
     // Update Orbital Controls
     // controls.update()
     // camera.rotateOnAxis.y = .1 * elapsedTime
@@ -205,8 +291,8 @@ const tick = () =>
     
 
     // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
-}
+    window.requestAnimationFrame(tick);
+}    
 
 var prepTick = setInterval(tryTick, 100);
 
@@ -216,11 +302,11 @@ function tryTick() {
         arrRacers[0].isPlayer = true;
         arrRacers[0].bindControls();
         playCam.player = arrRacers[0];
+        addArrows();
         console.log("Tick started")
         tick()
         clearInterval(prepTick);
-    }
-}
-
+    }    
+}    
 
 // it's math

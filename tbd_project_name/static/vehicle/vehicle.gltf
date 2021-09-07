@@ -1,0 +1,100 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v1.4.40",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Cube"
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Cube.001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 393,
+      "max": [
+        1.9088053703308105,
+        1.0468376874923706,
+        3.245220184326172
+      ],
+      "min": [
+        -1.9088053703308105,
+        -0.2410193383693695,
+        -2.645862579345703
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 393,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 393,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 1152,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 4716,
+      "byteOffset": 0
+    },
+    {
+      "buffer": 0,
+      "byteLength": 4716,
+      "byteOffset": 4716
+    },
+    {
+      "buffer": 0,
+      "byteLength": 3144,
+      "byteOffset": 9432
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2304,
+      "byteOffset": 12576
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "vehicle_data.bin",
+      "byteLength": 14880
+    }
+  ]
+}
