@@ -233,8 +233,18 @@ function addArrows() {
     arrows.push(arrow);
     scene.add(arrow);
 
-    // vehicle floor trace (down)
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,0,0)"), 0.5);
+    // vehicle floor trace (down) 1
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
+    // vehicle floor trace (down) 2
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
+    // vehicle floor trace (down) 3
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
@@ -255,13 +265,17 @@ function moveArrows() {
     // arrows[1].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(1,0,0)).normalize());
     // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(0,0,1)).normalize());
     // arrows[3].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
-    arrows[3].setDirection(arrRacers[0].floorTrace.direction.clone());
+    arrows[3].setDirection(arrRacers[0].floorTraceCenter.direction.clone());
+    arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
+    arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
     // arrows[4].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
-    arrows[4].setDirection(arrRacers[0].gravityDir.clone());
+    arrows[6].setDirection(arrRacers[0].gravityDir.clone());
 
 
-    arrows[3].position.set(...arrRacers[0].floorTrace.origin.toArray());
-    arrows[4].position.set(...arrRacers[0].position.clone().add(new THREE.Vector3(0,5,0)).toArray())
+    arrows[3].position.set(...arrRacers[0].floorTraceCenter.origin.toArray());
+    arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
+    arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
+    arrows[6].position.set(...arrRacers[0].position.clone().add(new THREE.Vector3(0,5,0)).toArray())
     // console.log(arrows[3].position);
 }
 
