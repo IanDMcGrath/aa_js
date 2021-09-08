@@ -52,8 +52,8 @@ export class Vehicle {
     
     
     move() {
-        this.accelerate();
         this.collision();
+        this.accelerate();
         this.addTurn();
         if (this.isFalling) {
             this.gravity();
@@ -205,9 +205,10 @@ export class Vehicle {
         // this.raycaster2 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
         // this.raycaster3 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
         // this.raycaster4 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
-        this.raycasterWallF = new Raycaster(this.position.clone(), this.rightDir.clone().negate(), 0, 5);
-        this.raycasterWallL = new Raycaster(this.position.clone(), this.rightDir.clone().negate(), 0, 5);
-        this.raycasterWallR = new Raycaster(this.position.clone(), this.rightDir.clone(), 0, 5);
+        this.raycasterWallC = new Raycaster(this.position.clone(), this.forwardDir.clone(), 0, 1);
+        this.raycasterWallF = new Raycaster(this.position.clone(), this.forwardDir.clone(), 0, 4);
+        this.raycasterWallL = new Raycaster(this.position.clone(), this.rightDir.clone().negate(), 0, 2);
+        this.raycasterWallR = new Raycaster(this.position.clone(), this.rightDir.clone(), 0, 2);
     }
     
     collision() {
@@ -324,49 +325,54 @@ export class Vehicle {
 
 
 
-        intersect.face.normal.negate();
-        this.gravityDir = intersect.face.normal.clone();
+        this.gravityDir = intersect.face.normal.clone().negate();
     }
 
     collideWall() {
         let predictPos = this.linearVelocity.clone().normalize();
-        let wallTraceFront = {origin: this.position.clone(), dir: predictPos, hits: []};
+        let wallTraceCenter = {origin: this.position.clone(), dir: predictPos, hits: []};
+        let wallTraceFront = {origin: this.position.clone(), dir: this.forwardDir.clone(), hits: []};
         let wallTraceLeft = {origin: this.position.clone(), dir: this.rightDir.clone().negate(), hits: []};
         let wallTraceRight = {origin: this.position.clone(), dir: this.rightDir.clone(), hits: []};
 
-        this.raycasterWallF.set(wallTraceFront.origin, wallTraceFront.dir);
-        this.raycasterWallF.far = Util.clampFMin(this.linearVelocity.length(), 3);
+        this.raycasterWallC.set(wallTraceCenter.origin, wallTraceCenter.dir);
+        this.raycasterWallC.far = Util.clampFMin(this.linearVelocity.length(), 3);
 
+        this.raycasterWallF.set(wallTraceFront.origin, wallTraceFront.dir);
         this.raycasterWallL.set(wallTraceLeft.origin, wallTraceLeft.dir);
         this.raycasterWallR.set(wallTraceRight.origin, wallTraceRight.dir);
 
+        // this.raycasterWallC.intersectObjects(this.walls.children, true, wallTraceCenter.hits);
         this.raycasterWallF.intersectObjects(this.walls.children, true, wallTraceFront.hits);
         this.raycasterWallL.intersectObjects(this.walls.children, true, wallTraceLeft.hits);
         this.raycasterWallR.intersectObjects(this.walls.children, true, wallTraceRight.hits);
 
-        if (wallTraceFront.hits.length > 0 || wallTraceLeft.hits.length > 0 || wallTraceRight.hits.length > 0) {
-            this.bounceOffWall([wallTraceFront, wallTraceLeft, wallTraceRight]);
-        }
 
-        // if (wallTraceLeft.hits.length > 0) {
-        //     this.bounceOffWall([wallTraceLeft]);
-        // }
+        if (wallTraceCenter.hits.length > 0 || wallTraceFront.hits.length > 0 || wallTraceLeft.hits.length > 0 || wallTraceRight.hits.length > 0) {
+            this.bounceOffWall([wallTraceCenter, wallTraceFront, wallTraceLeft, wallTraceRight]);
+        }
     }
 
     bounceOffWall(tracers) {
         let hitNormalTotal = new Vector3();
-        let hitPoint = new Vector3();
+        let hitPoints = [new Vector3()];
         for (let i=0; i<tracers.length; i++) {
             for (let j=0; j<tracers[i].hits.length; j++) {
-                let normal = tracers[i].hits[j].face.normal;
-                if (normal.dot(this.linearVelocity.clone().normalize()) < 1) {
-                    hitNormalTotal.add(tracers[i].hits[j].face.normal);
-                    hitPoint = tracers[i].hits[j].point.clone();
-                }
-                // console.log(tracers[i].hits)
-                // hitNormalTotal.add(tracers[i].dir.clone().negate());
+                let normal = tracers[i].hits[j].face.normal.clone();
+                hitNormalTotal.add(normal);
+                hitPoints.push(tracers[i].hits[j].point.clone());
             }
         }
+
+        let furthestHitPoint = hitPoints[0]
+        for (let i=0; i<hitPoints.length; i++) {
+            if (furthestHitPoint.lengthSq() < hitPoints[i].lengthSq()) {
+                furthestHitPoint = hitPoints[i].clone();
+            }
+        }
+
+        // console.log(hitPoint)
+
 
 
         // let posOffsetDist = this.linearVelocity.length();
@@ -377,10 +383,19 @@ export class Vehicle {
         //     collideOffset = hitPoint.clone().multiplyScalar(this.linearVelocity.length());
         // }
         // this.position.add(collideOffset);
+        this.linearVelocity.projectOnPlane(hitNormalTotal.clone().normalize());
 
-        this.linearVelocity.projectOnPlane(hitNormalTotal.clone().normalize())
-        // this.position.add();
-        this.position.add(hitNormalTotal.multiplyScalar(Util.clampFMin(this.linearVelocity.length(), 1)));
+        let hitDist = this.position.clone().sub(furthestHitPoint).length();
+        let hitOffset = furthestHitPoint.clone().sub(this.position)
+        let hitDepth = hitOffset.length() > this.raycasterWallL.far ? this.raycasterWallF.far : this.raycasterWallL.far;
+        console.log(hitDepth);
+        hitOffset = furthestHitPoint.clone().sub(this.position).multiplyScalar(hitDist - hitDepth);
+
+        this.position.add(hitOffset);
+        // this.position.add(hitNormalTotal.multiplyScalar(Util.clampFMin(this.linearVelocity.length(), 0.5)));
+        // this.position.add(hitNormalTotal.multiplyScalar(this.linearVelocity.length()));
+        // this.linearVelocity = this.linearVelocity.multiplyScalar(.1);
+        this.speed = this.speed * 0.95;
     }
 }
 
