@@ -342,7 +342,7 @@ export class Vehicle {
         this.raycasterWallL.set(wallTraceLeft.origin, wallTraceLeft.dir);
         this.raycasterWallR.set(wallTraceRight.origin, wallTraceRight.dir);
 
-        // this.raycasterWallC.intersectObjects(this.walls.children, true, wallTraceCenter.hits);
+        this.raycasterWallC.intersectObjects(this.walls.children, true, wallTraceCenter.hits);
         this.raycasterWallF.intersectObjects(this.walls.children, true, wallTraceFront.hits);
         this.raycasterWallL.intersectObjects(this.walls.children, true, wallTraceLeft.hits);
         this.raycasterWallR.intersectObjects(this.walls.children, true, wallTraceRight.hits);
@@ -353,7 +353,10 @@ export class Vehicle {
         }
     }
 
-    bounceOffWall(tracers) {
+    bounceOffWall(tracers) { 
+        // needs refactor to take hits from 2 sources at the same time 
+        // (when colliding with the wall on the side, the forward trace will lose priority 
+        // and you can slip through the wall)
         let hitNormalTotal = new Vector3();
         let hitPoints = [new Vector3()];
         for (let i=0; i<tracers.length; i++) {
@@ -371,30 +374,14 @@ export class Vehicle {
             }
         }
 
-        // console.log(hitPoint)
-
-
-
-        // let posOffsetDist = this.linearVelocity.length();
-        // let hitOffsetDist = this.position.clone().sub(hitPoint).length();
-
-        // let collideOffset = new Vector3();
-        // if ( posOffsetDist > hitOffsetDist ) {
-        //     collideOffset = hitPoint.clone().multiplyScalar(this.linearVelocity.length());
-        // }
-        // this.position.add(collideOffset);
         this.linearVelocity.projectOnPlane(hitNormalTotal.clone().normalize());
 
         let hitDist = this.position.clone().sub(furthestHitPoint).length();
         let hitOffset = furthestHitPoint.clone().sub(this.position)
         let hitDepth = hitOffset.length() > this.raycasterWallL.far ? this.raycasterWallF.far : this.raycasterWallL.far;
-        console.log(hitDepth);
         hitOffset = furthestHitPoint.clone().sub(this.position).multiplyScalar(hitDist - hitDepth);
 
         this.position.add(hitOffset);
-        // this.position.add(hitNormalTotal.multiplyScalar(Util.clampFMin(this.linearVelocity.length(), 0.5)));
-        // this.position.add(hitNormalTotal.multiplyScalar(this.linearVelocity.length()));
-        // this.linearVelocity = this.linearVelocity.multiplyScalar(.1);
         this.speed = this.speed * 0.95;
     }
 }

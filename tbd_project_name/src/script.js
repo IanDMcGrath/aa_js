@@ -5,10 +5,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+
 // import my files
 import { Vehicle } from './vehicle';
 import { PlayCam } from './camera';
 const Util = require('./utils');
+import { RaceManager } from './race';
+
 
 // Loading
 const textureLoader = new THREE.TextureLoader();
@@ -19,7 +22,10 @@ const gltfLoader = new GLTFLoader();
 const arrRacers = [];
 const arrSky = [];
 const arrColliders = {road: undefined, walls: undefined};
+const arrRaceGates = [];
 
+// Game classes
+const raceManager = new RaceManager();
 
 // Debug
 // const gui = new dat.GUI();
@@ -28,7 +34,7 @@ const arrColliders = {road: undefined, walls: undefined};
 const canvas = document.querySelector('canvas.webgl');
 
 // Scene
-const scene = new THREE.Scene();
+export const scene = new THREE.Scene();
 scene.background = textureLoader.load('environment/sky/skygradient.jpg');
 
 // Objects
@@ -55,7 +61,7 @@ const matRails = new THREE.MeshPhongMaterial({
     transparent : true,
     alphaTest : 0.5
 });
-console.log(matRails);
+// console.log(matRails);
 
 function meshesMaterial(meshArr=[], material) {
     for (let i=0; i<meshArr.length; i++) {
@@ -89,7 +95,7 @@ function addWalls() {
         walls.scale.set(1,1,1);
 
         // meshesMaterial(walls.children, matRails)
-        // walls.visible = false;
+        walls.visible = false;
 
         arrColliders.walls = walls;
         scene.add( walls );
@@ -107,14 +113,19 @@ function addEnv() {
 
         console.log(gltf)
 
-        let roadOwner = undefined;
-        let i=0;
-        while (i<gltf.scene.children.length && !roadOwner) {
-            if (gltf.scene.children[i].name === "roadGroupOwner") {
-                roadOwner = gltf.scene.children[i];
+        let roadParent = undefined;
+        let gateParent = undefined;
+        // let i=0;
+        // while (i<gltf.scene.children.length && !(roadParent && gateParent)) {
+        for (let i=0; i<gltf.scene.children.length; i++) {
+            if (gltf.scene.children[i].name === "roadGroupParent") {
+                roadParent = gltf.scene.children[i];
+            } else if (gltf.scene.children[i].name === "gateGroupParent") {
+                gateParent = gltf.scene.children[i];
             }
         }
-        if (roadOwner) meshesMaterial(roadOwner.children, matRails);
+        if (gateParent) arrRaceGates.push(...gateParent.children);
+        if (roadParent) meshesMaterial(roadParent.children, matRails);
 
         scene.add(env);
 
@@ -122,7 +133,7 @@ function addEnv() {
         console.error( error );
     });
 }
-// addEnv();
+addEnv();
 
 function addRoad() {
     gltfLoader.load( './environment/road/track01_road.gltf', function ( gltf ) {
@@ -371,6 +382,13 @@ function tryTick() {
         arrRacers[0].isPlayer = true;
         arrRacers[0].bindControls();
         playCam.player = arrRacers[0];
+
+        raceManager.racers = arrRacers;
+        raceManager.sortRaceGates();
+        raceManager.rotation = new THREE.Quaternion(0,1,0)
+        raceManager.raceLineup();
+        raceManager.raceCountdown();
+        raceManager.raceGates = arrRaceGates;
         
 
         addArrows();
