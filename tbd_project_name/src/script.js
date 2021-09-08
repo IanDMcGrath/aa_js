@@ -283,6 +283,11 @@ function addArrows() {
     arrows.push(arrow);
     scene.add(arrow);
 
+    // gravity direction
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(0,0,255)"), 0.5);
+    arrows.push(arrow);
+    scene.add(arrow);
+
     // // vehicle floor trace (down) 2
     // arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
     // arrows.push(arrow);
@@ -293,10 +298,11 @@ function addArrows() {
     // arrows.push(arrow);
     // scene.add(arrow);
 
-    // gravity direction
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(0,0,255)"), 0.5);
+    // vehicle front trace 
+    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
+
 }
 
 function moveArrows() {
@@ -312,6 +318,7 @@ function moveArrows() {
     // arrows[3].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
     arrows[3].setDirection(arrRacers[0].floorTraceCenter.direction.clone());
     arrows[4].setDirection(arrRacers[0].gravityDir.clone());
+    arrows[5].setDirection(arrRacers[0].forwardDir.clone());
     // arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
     // arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
     // arrows[4].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].gravityDir.clone()));

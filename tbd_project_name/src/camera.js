@@ -18,7 +18,7 @@ export class PlayCam{
 
     clampDist() {
         // get distance by cam position minus player position
-        let offset = this.player.obj.scene.position.clone().sub(this.obj.position);
+        let offset = this.player.camOffset.clone().applyQuaternion(this.player.rotation).add(this.player.obj.scene.position).clone().sub(this.obj.position);
         let dist = offset.length();
         this.obj.position.add(new Vector3(0,0.1,0))     ////////// replace this
         // if distance greater than 10, get direction multiply by remaining distance, add to cam position

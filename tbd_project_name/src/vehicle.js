@@ -18,7 +18,7 @@ export class Vehicle {
         this.forwardDir = new Vector3(0,0,1);
         this.upDir = new Vector3(0,1,0);
         this.rightDir = new Vector3(1,0,0);
-        this.camOffset = new Vector3(0,6,-10);
+        this.camOffset = new Vector3(0,10,-10);
         this.buildCollisions();
         this.road = undefined;
         this.walls = undefined;
