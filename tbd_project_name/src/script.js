@@ -1,8 +1,9 @@
 // import threejs
 import './style.css';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as dat from 'dat.gui';
+// import * as THREE from 'three';
+import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper} from 'three';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
@@ -14,7 +15,7 @@ import { RaceManager } from './race';
 
 
 // Loading
-const textureLoader = new THREE.TextureLoader();
+const textureLoader = new TextureLoader();
 // const normalTexture = textureLoader.load('/testDoor/dirt_mid_normal.jpg');
 const gltfLoader = new GLTFLoader();
 
@@ -34,27 +35,27 @@ const raceManager = new RaceManager();
 const canvas = document.querySelector('canvas.webgl');
 
 // Scene
-export const scene = new THREE.Scene();
+export const scene = new Scene();
 scene.background = textureLoader.load('environment/sky/skygradient.jpg');
 
 // Objects
-// const geometry = new THREE.SphereBufferGeometry( 10, 1, 16, 10 );
+// const geometry = new SphereBufferGeometry( 10, 1, 16, 10 );
 
 
 // Materials
 
-const material = new THREE.MeshBasicMaterial();
+const material = new MeshBasicMaterial();
 // material.metalness = 0.7;
 // material.roughness = 0.2;
 // material.normalMap = normalTexture;
-material.color = new THREE.Color(0xffffff);
+material.color = new Color(0xffffff);
 
-const matRoad = new THREE.MeshMatcapMaterial();
+const matRoad = new MeshMatcapMaterial();
 matRoad.map = textureLoader.load('environment/road/roadTexture.jpg');
 
-const matRails = new THREE.MeshPhongMaterial({
+const matRails = new MeshPhongMaterial({
     map : textureLoader.load('environment/road/roadGuardRail.png'),
-    emissive : new THREE.Color(0xFFFFFF),
+    emissive : new Color(0xFFFFFF),
     emissiveMap : textureLoader.load('environment/road/roadGuardRailEmissive.jpg'),
     emissiveIntensity : 1,
     alphaMap : textureLoader.load('environment/road/roadGuardRailAlpha.jpg'),
@@ -71,7 +72,7 @@ function meshesMaterial(meshArr=[], material) {
 
 // Mesh
 // var skysphere = undefined
-// var sphere = new THREE.Mesh(geometry,material)
+// var sphere = new Mesh(geometry,material)
 // sphere.renderOrder = 0
 // sphere.material.depthTest = false
 // scene.add(sphere)
@@ -181,19 +182,19 @@ function assignRacerColliders() {
 
 // Lights
 
-const hlight = new THREE.AmbientLight(0xffffff,0.5);
+const hlight = new AmbientLight(0xffffff,0.5);
 hlight.position.set(.5,.5,0);
 
 // console.log(hlight)
 scene.add(hlight);
 
-// const pointLight = new THREE.PointLight(0xffffff, 1);
+// const pointLight = new PointLight(0xffffff, 1);
 // pointLight.position.x = 2;
 // pointLight.position.y = 3;
 // pointLight.position.z = 4;
 // scene.add(pointLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff,1);
+const directionalLight = new DirectionalLight(0xffffff,1);
 directionalLight.position.set(.5,.5,.5);
 // directionalLight.castShadow = true;
 scene.add(directionalLight);
@@ -225,11 +226,11 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
+const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
 camera.position.x = 0;
 camera.position.y = 10;
 camera.position.z = 30;
-const playCam = new PlayCam(camera, new THREE.Vector3(), arrRacers[0]);
+const playCam = new PlayCam(camera, new Vector3(), arrRacers[0]);
 scene.add(camera);
 
 // Controls
@@ -239,13 +240,13 @@ scene.add(camera);
 /**
  * Renderer
  */
-const renderer = new THREE.WebGLRenderer({
+const renderer = new WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-const myVector = new THREE.Vector3(50,0,0);
+const myVector = new Vector3(50,0,0);
 // render iterators
 function renderRacers() {
     for (let i=0; i<arrRacers.length; i++) {
@@ -267,47 +268,47 @@ function renderSky() {
  * Animate
  */
 
-const clock = new THREE.Clock();
+const clock = new Clock();
 
 const arrows = [];
 function addArrows() {
     // vehicle Y (up)
-    let arrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), arrRacers[0].position, 5, new THREE.Color("rgb(0,255,0)"), 0.5);
+    let arrow = new ArrowHelper(new Vector3(0,1,0), arrRacers[0].position, 5, new Color("rgb(0,255,0)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
     // vehicle Z (forward)
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(0,0,1), arrRacers[0].position, 5, new THREE.Color("rgb(0,0,255)"), 0.5);
+    arrow = new ArrowHelper(new Vector3(0,0,1), arrRacers[0].position, 5, new Color("rgb(0,0,255)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
     // vehicle X (right)
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), arrRacers[0].position, 5, new THREE.Color("rgb(255,0,0)"), 0.5);
+    arrow = new ArrowHelper(new Vector3(1,0,0), arrRacers[0].position, 5, new Color("rgb(255,0,0)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
     // vehicle floor trace (down) 1
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
     // gravity direction
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(0,0,255)"), 0.5);
+    arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(0,0,255)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
     // // vehicle floor trace (down) 2
-    // arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    // arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
     // arrows.push(arrow);
     // scene.add(arrow);
 
     // // vehicle floor trace (down) 3
-    // arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    // arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
     // arrows.push(arrow);
     // scene.add(arrow);
 
     // vehicle front trace 
-    arrow = new THREE.ArrowHelper(new THREE.Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new THREE.Color("rgb(255,255,0)"), 0.5);
+    arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
     arrows.push(arrow);
     scene.add(arrow);
 
@@ -320,20 +321,20 @@ function moveArrows() {
         arrows[i].position.y = arrRacers[0].position.y;
         arrows[i].position.z = arrRacers[0].position.z;
     }
-    // arrows[0].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(0,-1,0)).normalize());
-    // arrows[1].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(1,0,0)).normalize());
-    // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new THREE.Quaternion(0,0,1)).normalize());
-    // arrows[3].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
+    // arrows[0].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(0,-1,0)).normalize());
+    // arrows[1].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(1,0,0)).normalize());
+    // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(0,0,1)).normalize());
+    // arrows[3].rotation.setFromQuaternion(new Quaternion().setFromUnitVectors(new Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
     arrows[3].setDirection(arrRacers[0].floorTraceCenter.direction.clone());
     arrows[4].setDirection(arrRacers[0].gravityDir.clone());
     arrows[5].setDirection(arrRacers[0].forwardDir.clone());
     // arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
     // arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
-    // arrows[4].rotation.setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
+    // arrows[4].rotation.setFromQuaternion(new Quaternion().setFromUnitVectors(new Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
 
 
     arrows[3].position.set(...arrRacers[0].floorTraceCenter.origin.toArray());
-    arrows[4].position.set(...arrRacers[0].position.clone().add(new THREE.Vector3(0,5,0)).toArray())
+    arrows[4].position.set(...arrRacers[0].position.clone().add(new Vector3(0,5,0)).toArray())
     // arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
     // arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
     // console.log(arrows[3].position);
@@ -385,7 +386,7 @@ function tryTick() {
         arrRacers[0].cam = playCam;
 
         raceManager.racers = arrRacers;
-        raceManager.rotation = new THREE.Quaternion(0,1,0)
+        raceManager.rotation = new Quaternion(0,1,0)
         raceManager.raceGates = arrRaceGates.gates;
         raceManager.sortRaceGates();
         raceManager.raceLineup();

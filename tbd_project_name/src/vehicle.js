@@ -131,8 +131,8 @@ export class Vehicle {
         this.keydown = (event) => {that.handleInput(event, true)}; // remove event listener proof for darrick #1
         this.keyup = (event) => {that.handleInput(event, false)};
 
-        window.addEventListener("keydown", this.keydown)
-        window.addEventListener("keyup",this.keyup)
+        window.addEventListener("keydown", this.keydown);
+        window.addEventListener("keyup",this.keyup);
     }
 
     handleInput(event, down) {
@@ -160,10 +160,10 @@ export class Vehicle {
     }
 
     resetPosition() { // in case the player gets stuck, call this by pressing 'R'
-        console.log(this.rotation)
+        console.log(this.rotation);
         this.position = this.resetPos.pos.clone();
         this.rotation = this.resetPos.rot.clone();
-        console.log(this.resetPos.rot.clone())
+        console.log(this.resetPos.rot.clone());
         this.obj.scene.rotation.setFromQuaternion(this.rotation);
         this.obj.scene.position.set(...this.position.toArray());
         this.linearVelocity = new Vector3();
@@ -177,7 +177,7 @@ export class Vehicle {
         // window.removeEventListener("keydown", this.keydown); // remove event listener proof for darrick #2
         this.forwardPressed = pressed;
         if (pressed) {
-            this.throttle = 0.02
+            this.throttle = 0.02;
         } else {
             this.backwardPressed ? this.playerBackward(true) : this.throttle = 0;
         }
@@ -186,7 +186,7 @@ export class Vehicle {
     playerBackward(pressed) {
         this.backwardPressed = pressed;
         if (pressed) {
-            this.throttle = -0.01
+            this.throttle = -0.01;
         } else {
             this.forwardPressed ? this.playerForward(true) : this.throttle = 0;
         }
@@ -238,7 +238,7 @@ export class Vehicle {
     }
     
     collideRoad() {
-        let hitDists = []
+        let hitDists = [];
         // let hitDists1 = []
         // let hitDists2 = []
         // let hitDists3 = []
