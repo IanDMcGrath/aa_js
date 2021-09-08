@@ -49,5 +49,11 @@ export class PlayCam{
         this.obj.rotation.setFromQuaternion(firstRot);
 
     }
+
+    resetPosition() {
+        this.obj.lookAt(this.player.position.clone().add(this.player.forwardDir.clone().multiplyScalar(10)));
+        let offset = this.player.camOffset.clone().applyEuler(this.player.obj.scene.rotation);
+        this.position = this.player.position.clone().add(offset);
+    }
 }
 

@@ -22,7 +22,7 @@ const gltfLoader = new GLTFLoader();
 const arrRacers = [];
 const arrSky = [];
 const arrColliders = {road: undefined, walls: undefined};
-const arrRaceGates = [];
+const arrRaceGates = {gates: undefined, finishLine: undefined};
 
 // Game classes
 const raceManager = new RaceManager();
@@ -111,8 +111,6 @@ function addEnv() {
         let env = gltf.scene;
         env.scale.set(1,1,1);
 
-        console.log(gltf)
-
         let roadParent = undefined;
         let gateParent = undefined;
         // let i=0;
@@ -124,9 +122,8 @@ function addEnv() {
                 gateParent = gltf.scene.children[i];
             }
         }
-        if (gateParent) arrRaceGates.push(...gateParent.children);
+        if (gateParent) arrRaceGates.gates = gateParent.children;
         if (roadParent) meshesMaterial(roadParent.children, matRails);
-
         scene.add(env);
 
     }, undefined, function ( error ) {
@@ -354,6 +351,7 @@ const tick = () =>
     // renderSky();
     // playCam.obj.lookAt(arrRacers[0].position)
     renderRacers();
+    raceManager.updatePositions();
     playCam.move();
     moveArrows();
     
@@ -376,25 +374,27 @@ var prepTick = setInterval(tryTick, 100);
 function tryTick() {
     console.log("Trying to start tick") // A catch-all solution to waiting on the player's vehicle to be ready
 
-    assignRacerColliders(); // pass references of the roads and walls to all racers
+    assignRacerColliders(); // pass references of the roads/walls to all racers
 
-    if (arrRacers[0] && arrRacers[0].walls) {
+    if (arrRacers[0] && arrRacers[0].walls && arrRaceGates.gates) {
+        clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
+
         arrRacers[0].isPlayer = true;
         arrRacers[0].bindControls();
         playCam.player = arrRacers[0];
+        arrRacers[0].cam = playCam;
 
         raceManager.racers = arrRacers;
-        raceManager.sortRaceGates();
         raceManager.rotation = new THREE.Quaternion(0,1,0)
+        raceManager.raceGates = arrRaceGates.gates;
+        raceManager.sortRaceGates();
         raceManager.raceLineup();
         raceManager.raceCountdown();
-        raceManager.raceGates = arrRaceGates;
         
 
         addArrows();
         console.log("Tick started")
         tick()
-        clearInterval(prepTick);
     }    
 }    
 

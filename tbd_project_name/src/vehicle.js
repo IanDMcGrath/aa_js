@@ -19,6 +19,7 @@ export class Vehicle {
         this.upDir = new Vector3(0,1,0);
         this.rightDir = new Vector3(1,0,0);
         this.camOffset = new Vector3(0,10,-10);
+        this.cam = undefined;
         this.buildCollisions();
         this.road = undefined;
         this.walls = undefined;
@@ -29,6 +30,7 @@ export class Vehicle {
         this.secondPos = new Vector3();
         this.yaw = 0;
         this.surface = "road";
+        this.resetPos = {pos: new Vector3(), rot: new Quaternion(0,1,0)};
 
         if (isPlayer) {
             bindControls();
@@ -123,12 +125,14 @@ export class Vehicle {
 
     // // --->> HANDLE INPUTS <<---
     bindControls() {
-        const that = this;
         console.log('binding keys')
-        this.keydown = (event) => {that.handleInput(event, true)};
+        const that = this;
+
+        this.keydown = (event) => {that.handleInput(event, true)}; // remove event listener proof for darrick #1
         this.keyup = (event) => {that.handleInput(event, false)};
+
         window.addEventListener("keydown", this.keydown)
-        window.addEventListener("keyup",(event) => {that.handleInput(event, false)})
+        window.addEventListener("keyup",this.keyup)
     }
 
     handleInput(event, down) {
@@ -147,13 +151,30 @@ export class Vehicle {
             case "d":
                 this.playerRight(down);
                 break;
+            case "r":
+                if (down) this.resetPosition();
+                break;
             default:
                 return;
         }
     }
 
+    resetPosition() { // in case the player gets stuck, call this by pressing 'R'
+        console.log(this.rotation)
+        this.position = this.resetPos.pos.clone();
+        this.rotation = this.resetPos.rot.clone();
+        console.log(this.resetPos.rot.clone())
+        this.obj.scene.rotation.setFromQuaternion(this.rotation);
+        this.obj.scene.position.set(...this.position.toArray());
+        this.linearVelocity = new Vector3();
+        this.trueVelocity = new Vector3();
+        this.rotationalVelocity = new Quat();
+        this.speed = 0;
+        this.cam.resetPosition();
+    }
+
     playerForward(pressed) {
-        // window.removeEventListener("keydown", this.keydown); // remove event listener proof for darrick
+        // window.removeEventListener("keydown", this.keydown); // remove event listener proof for darrick #2
         this.forwardPressed = pressed;
         if (pressed) {
             this.throttle = 0.02

@@ -12,6 +12,13 @@ export class RaceManager {
             this.columns = 1;
             this.racers = [];
             this.raceGates = [];
+            this.racerPositions = [];
+            this.lapCount = 1;
+            // this.racerPosition = {
+            //     racerId: 0,
+            //     gateId: 0,
+            //     distance: 0
+            // };
     }
 
     raceLineup() {
@@ -22,27 +29,82 @@ export class RaceManager {
     }
 
     raceCountdown() {
+        const that = this;
         // delay race start //
-        setTimeout(this.raceStart, 4000);
+        this.delayRaceStart = () => {that.raceStart()};
+        setTimeout(this.delayRaceStart, 4000);
         
         // countdown //
-        setTimeout(this.displayCtdNumber, 1000, 3);
-        setTimeout(this.displayCtdNumber, 2000, 2);
-        setTimeout(this.displayCtdNumber, 3000, 1);
-        setTimeout(this.displayCtdNumber, 4000, 0); // display GO!
+        this.delayCtd0 = () => {that.displayCtdNumber(0)}; // display GO! event object // forgot how I bound these events in the vehicle class so i'm just copying what it is now...
+        this.delayCtd1 = () => {that.displayCtdNumber(1)}; // display 1! event object
+        this.delayCtd2 = () => {that.displayCtdNumber(2)}; // display 2! event object
+        this.delayCtd3 = () => {that.displayCtdNumber(3)}; // display 3! event object
+        setTimeout(this.delayCtd3, 1000); // delay display numbers
+        setTimeout(this.delayCtd2, 2000);
+        setTimeout(this.delayCtd1, 3000);
+        setTimeout(this.delayCtd0, 4000); // delay display GO!
     }
 
     displayCtdNumber(num) {
         if (num > 0) {
-            console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`)
+            console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
         } else {
-            console.log('### GO! GO! GO! GO! GO! ###')
+            console.log('### GO! GO! GO! GO! GO! ###');
         }
-        console.log(this.raceGates);
     }
 
-    raceStart() {}
+    raceStart() {
+    }
 
     sortRaceGates() {
+        let sortedGates = Array(this.raceGates.length);
+
+        for (let i=0; i<this.raceGates.length; i++) {
+            let idx = parseInt(this.raceGates[i].name.slice(this.raceGates[i].name.length - 3) - 1)
+            sortedGates[idx] = this.raceGates[i];
+        }
+
+        this.raceGates = sortedGates;
+        this.initPositions();
+    }
+
+    initPositions() {
+        for (let i=0; i<this.racers.length; i++) {
+            this.racerPositions.push({
+                racerId: i,
+                gateId: 0, // start on the next gate because first gate is the starting line
+                distance: 0,
+                lap: 0
+            });
+        }
+        this.updatePositions();
+    }
+
+    updatePositions() {
+        for (let i=0; i<this.racerPositions.length; i++) {
+            let position = this.racerPositions[i];
+            let racer = this.racers[position.racerId];
+            let gate = this.raceGates[position.gateId];
+
+            position.distance = racer.position.clone().sub(gate.position).lengthSq();
+            if (position.distance < 1500) {
+                if (position.gateId === 0) {
+                    position.lap += 1;
+                    console.log(`newLap ${position.lap}`);
+                    if (position.lap > this.lapCount) this.raceFinish();
+                }
+
+                console.log(`currentGate: ${position.gateId}`);
+                position.gateId = (position.gateId + 1 ) % (this.raceGates.length);
+                console.log(`nextGate: ${position.gateId}`);
+            }
+            // console.log(position.gateId)
+
+        }
+    }
+
+    raceFinish(){
+        console.log('!race finished!')
     }
 }
+
