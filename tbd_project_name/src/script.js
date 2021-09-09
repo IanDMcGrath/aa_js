@@ -146,7 +146,7 @@ function addEnv() {
         }
         if (startingLine) {
             let mat = startingLine.material;
-            mat.map = textureLoader.load('fanfare/race_start/checker.jpg');
+            mat.map = textureLoader.load('environment/road/checker.jpg');
             mat.map.wrapS = RepeatWrapping;
             mat.map.wrapT = RepeatWrapping;
             mat.map.magFilter = NearestFilter;
@@ -441,7 +441,7 @@ const tick = () =>
     renderRacers();
     raceManager.updatePositions();
     playCam.move();
-    moveArrows();
+    // moveArrows();
 
     animate();
     
@@ -481,7 +481,7 @@ function tryTick() {
         raceManager.raceLineup();
         // raceManager.raceCountdown();
         
-        addArrows();
+        // addArrows(); // debugger
         console.log("Tick started")
         tick()
     }    
