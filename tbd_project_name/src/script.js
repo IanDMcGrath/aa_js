@@ -1,7 +1,7 @@
 // import threejs
 import './style.css';
 // import * as THREE from 'three';
-import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper} from 'three';
+import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -24,6 +24,7 @@ const arrRacers = [];
 const arrSky = [];
 const arrColliders = {road: undefined, walls: undefined};
 const arrRaceGates = {gates: undefined, finishLine: undefined};
+const animMixers = [];
 
 // Game classes
 const raceManager = new RaceManager();
@@ -70,12 +71,15 @@ function meshesMaterial(meshArr=[], material) {
     }
 }
 
+
+
 // Mesh
 // var skysphere = undefined
 // var sphere = new Mesh(geometry,material)
 // sphere.renderOrder = 0
 // sphere.material.depthTest = false
 // scene.add(sphere)
+
 
 
 // gltfLoader.load( './environment/sky/uvsphere_inverted.glb', function ( gltf ) {
@@ -180,10 +184,53 @@ function assignRacerColliders() {
     }
 }
 
+// sound and visual effects for other classes to use
+const fanfare = {};
+function addRaceFont() {
+    gltfLoader.load('./fanfare/race_start/raceFont.gltf', function (gltf) {
+        fanfare.raceFont = gltf;
+        gltf.scene.scale.set(10,10,10)
+        // console.log(fanfare.raceFont);
+        raceManager.fanfare.raceFont = gltf;
+
+        gltf.scene.rotation.set(0,Math.PI * 0.5,0)
+        
+
+        const animMixer = new AnimationMixer(gltf.scene)
+        const animAction = animMixer.clipAction(gltf.animations[0])
+        animAction.timeScale = 62;
+        animAction.play();
+        animMixers.push(animMixer);
+
+        console.log(gltf.scene.children[0].children[5].material);
+        // gltf.scene.children[0].children[5].material = matRails
+        let mat = gltf.scene.children[0].children[5].material;
+        let texMap = textureLoader.load('fanfare/race_start/racingFont.jpg');
+        texMap.flipY = false;
+        mat.map = texMap;
+        mat.alphaMap = textureLoader.load('fanfare/race_start/racingFontAlpha.jpg');
+        mat.alphaMap.flipY = false;
+        mat.transparent = true;
+        mat.alphaTest = 0.5;
+        console.log(mat.map)
+        mat.needsUpdate = true;
+        // mat.color = new Color(0xFFFFFF)
+        // mat.emissive = new Color(0xFFFFFF)
+        // mat.emissiveIntensity = 0.5;
+        mat.reflectivity = 0
+        // mat.map.offset = [1,1];
+
+        scene.add(gltf.scene);
+    }, undefined, function ( error ) {
+        console.error( error );
+    });
+}
+addRaceFont();
+
 // Lights
 
 const hlight = new AmbientLight(0xffffff,0.5);
-hlight.position.set(.5,.5,0);
+hlight.position.set(.5,.5,.5);
 
 // console.log(hlight)
 scene.add(hlight);
@@ -195,7 +242,7 @@ scene.add(hlight);
 // scene.add(pointLight);
 
 const directionalLight = new DirectionalLight(0xffffff,1);
-directionalLight.position.set(.5,.5,.5);
+directionalLight.position.set(-1,.5,.5);
 // directionalLight.castShadow = true;
 scene.add(directionalLight);
 
@@ -267,8 +314,15 @@ function renderSky() {
 /**
  * Animate
  */
-
 const clock = new Clock();
+
+ function animate() {
+    let deltaTime = clock.getDelta();
+    for (let i=0; i<animMixers.length; i++) {
+        animMixers[i].update(deltaTime) // FIX THE TIME DILATION FOR ANIM IMPORT
+    }
+}
+
 
 const arrows = [];
 function addArrows() {
@@ -343,7 +397,6 @@ function moveArrows() {
 
 const tick = () =>
 {
-
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
@@ -355,6 +408,8 @@ const tick = () =>
     raceManager.updatePositions();
     playCam.move();
     moveArrows();
+
+    animate();
     
     renderer.render(scene, camera);
     // Update Orbital Controls
@@ -392,7 +447,6 @@ function tryTick() {
         raceManager.raceLineup();
         raceManager.raceCountdown();
         
-
         addArrows();
         console.log("Tick started")
         tick()

@@ -31,6 +31,7 @@ export class Vehicle {
         this.yaw = 0;
         this.surface = "road";
         this.resetPos = {pos: new Vector3(), rot: new Quaternion(0,1,0)};
+        this.startIntervals();
 
         if (isPlayer) {
             bindControls();
@@ -137,18 +138,18 @@ export class Vehicle {
 
     handleInput(event, down) {
         switch(event.key) {
-            case "w":
+            case "w": case "ArrowUp":
                 this.playerForward(down);
                 // console.log("W")
                 // alert('you pressed w')
                 break;
-            case "s":
+            case "s": case "ArrowDown":
                 this.playerBackward(down);
                 break;
-            case "a":
+            case "a": case "ArrowLeft":
                 this.playerLeft(down);
                 break;
-            case "d":
+            case "d": case "ArrowRight":
                 this.playerRight(down);
                 break;
             case "r":
@@ -157,6 +158,14 @@ export class Vehicle {
             default:
                 return;
         }
+    }
+
+    startIntervals() {
+        const that = this;
+
+        this.intNewResetPos = () => {that.newResetPos()};
+
+        setInterval(this.intNewResetPos, 2000);
     }
 
     resetPosition() { // in case the player gets stuck, call this by pressing 'R'
@@ -171,6 +180,14 @@ export class Vehicle {
         this.rotationalVelocity = new Quat();
         this.speed = 0;
         this.cam.resetPosition();
+    }
+
+    // --->> lazy checkpoint system <<---
+    newResetPos() {
+        if (this.surface = "road") {
+            this.resetPos.pos = this.position.clone();
+            this.resetPos.rot = this.rotation.clone();
+        }
     }
 
     playerForward(pressed) {

@@ -1,5 +1,6 @@
 import scene from './script.js';
 import { Quaternion, Vector3 } from 'three';
+import { RaceFont } from './fanfare.js';
 
 
 export class RaceManager {
@@ -14,6 +15,9 @@ export class RaceManager {
             this.raceGates = [];
             this.racerPositions = [];
             this.lapCount = 1;
+            this.fanfare = {
+                raceFont: undefined
+            };
             // this.racerPosition = {
             //     racerId: 0,
             //     gateId: 0,
@@ -46,6 +50,8 @@ export class RaceManager {
     }
 
     displayCtdNumber(num) {
+        let raceFont = new RaceFont(this.fanfare.raceFont, num);
+        // scene.add()
         if (num > 0) {
             console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
         } else {
