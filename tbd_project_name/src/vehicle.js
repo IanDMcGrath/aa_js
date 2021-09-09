@@ -169,24 +169,26 @@ export class Vehicle {
     }
 
     resetPosition() { // in case the player gets stuck, call this by pressing 'R'
-        console.log(this.rotation);
-        this.position = this.resetPos.pos.clone();
-        this.rotation = this.resetPos.rot.clone();
-        console.log(this.resetPos.rot.clone());
-        this.obj.scene.rotation.setFromQuaternion(this.rotation);
-        this.obj.scene.position.set(...this.position.toArray());
         this.linearVelocity = new Vector3();
         this.trueVelocity = new Vector3();
+        this.gravityTotal = new Vector3();
+        this.position = this.resetPos.pos.clone();
+        this.rotation = this.resetPos.rot.clone();
+        this.obj.scene.rotation.setFromQuaternion(this.rotation);
+        this.obj.scene.position.set(...this.position.toArray());
         this.rotationalVelocity = new Quat();
         this.speed = 0;
         this.cam.resetPosition();
+        this.isFalling = false;
+        console.log(this.position);
     }
 
     // --->> lazy checkpoint system <<---
     newResetPos() {
-        if (this.surface = "road") {
+        if (this.surface === "road") {
             this.resetPos.pos = this.position.clone();
             this.resetPos.rot = this.rotation.clone();
+            console.log("position saved!")
         }
     }
 
@@ -282,8 +284,25 @@ export class Vehicle {
         this.falling(!intersects.length > 0);
         if (!this.isFalling) {
             this.moveToRoad(intersects[0], hitDists);
+        } else {
+            this.setSurface();
         }
     };
+
+    setSurface(floor){
+        // this.surface =
+        if (!floor) {
+            this.surface = "none"
+            return;
+        };
+        if (floor.name.slice(0,4) === "dirt") {
+            this.surface = "dirt";
+        } else if (floor.name.slice(0,4) === "road") {
+            this.surface = "road";
+        } else {
+            this.surface = "none";
+        }
+    }
     
     moveToRoad(intersect, hitDists) {
         // console.log(intersect)
@@ -293,11 +312,8 @@ export class Vehicle {
         let offset = this.upDir.clone().multiplyScalar((hitDist - 2.5) * -1); // subtract to offset from trace origin (0 is on the origin) (higher numbers push the vehicle off the floor)
         this.position.add(offset);
         // console.log(offset);
-        if (intersect.object.name === "dirt") {
-            this.surface = "dirt";
-        } else {
-            this.surface = "road";
-        }
+        this.setSurface(intersect.object)
+        
         // console.log(this.surface)
         // console.log(intersect)
         

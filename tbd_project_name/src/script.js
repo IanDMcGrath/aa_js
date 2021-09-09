@@ -263,7 +263,7 @@ addRaceFont();
 
 // Lights
 
-const hlight = new AmbientLight(0xffffff,0.5);
+const hlight = new AmbientLight(0xffffff,1);
 hlight.position.set(.5,.5,.5);
 
 // console.log(hlight)
