@@ -1,7 +1,7 @@
 // import threejs
 import './style.css';
 // import * as THREE from 'three';
-import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler} from 'three';
+import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -117,16 +117,43 @@ function addEnv() {
         let env = gltf.scene;
         env.scale.set(1,1,1);
 
+        console.log(gltf.scene)
+
         let roadParent = undefined;
         let gateParent = undefined;
+        let startingLine = undefined;
         // let i=0;
         // while (i<gltf.scene.children.length && !(roadParent && gateParent)) {
         for (let i=0; i<gltf.scene.children.length; i++) {
-            if (gltf.scene.children[i].name === "roadGroupParent") {
-                roadParent = gltf.scene.children[i];
-            } else if (gltf.scene.children[i].name === "gateGroupParent") {
-                gateParent = gltf.scene.children[i];
+            let obj = gltf.scene.children[i];
+            // if (gltf.scene.children[i].name === "roadGroupParent") {
+            //     roadParent = gltf.scene.children[i];
+            // } else if (gltf.scene.children[i].name === "gateGroupParent") {
+            //     gateParent = gltf.scene.children[i];
+            // } 
+            // console.log(obj)
+            switch(obj.name) {
+                case "roadGroupParent":
+                    roadParent = obj;
+                    break;
+                case "gateGroupParent":
+                    gateParent = obj;
+                    break;
+                case "raceStartingLine":
+                    startingLine = obj;
+                default:
             }
+        }
+        if (startingLine) {
+            let mat = startingLine.material;
+            mat.map = textureLoader.load('fanfare/race_start/checker.jpg');
+            mat.map.wrapS = RepeatWrapping;
+            mat.map.wrapT = RepeatWrapping;
+            mat.map.magFilter = NearestFilter;
+            startingLine.scale.set(-1,1,-1);
+            mat.emissive = new Color(0xFFFFFF)
+            mat.emissiveMap = mat.map;
+            mat.emissiveIntensity = .7;
         }
         if (gateParent) arrRaceGates.gates = gateParent.children;
         if (roadParent) meshesMaterial(roadParent.children, matRails);
@@ -193,32 +220,37 @@ function addRaceFont() {
         gltf.scene.scale.set(10,10,10)
         gltf.scene.position.set(70,0,0)
         // console.log(fanfare.raceFont);
-        raceManager.fanfare.raceFont = gltf;
+        raceManager.fanfare.raceFont = {}
+        raceManager.fanfare.raceFont.obj = gltf;
 
         gltf.scene.rotation.set(0,Math.PI * 0.5,0)
         
 
         const animMixer = new AnimationMixer(gltf.scene)
         const animAction = animMixer.clipAction(gltf.animations[0])
+        raceManager.fanfare.raceFont.animAction = animAction;
+        console.log(raceManager.fanfare)
         animAction.timeScale = 62;
-        animAction.play();
+        // animAction.play();
         animMixers.push(animMixer);
 
-        console.log(gltf.scene.children[0].children[5].material);
+        // console.log(gltf.scene.children[0].children[5].material);
         // gltf.scene.children[0].children[5].material = matRails
         let mat = gltf.scene.children[0].children[5].material;
         let texMap = textureLoader.load('fanfare/race_start/racingFont.jpg');
+        texMap.magFilter = NearestFilter;
         texMap.flipY = false;
         mat.map = texMap;
         mat.alphaMap = textureLoader.load('fanfare/race_start/racingFontAlpha.jpg');
         mat.alphaMap.flipY = false;
         mat.transparent = true;
         mat.alphaTest = 0.5;
-        console.log(mat.map)
+        // console.log(mat.map)
         mat.needsUpdate = true;
         // mat.color = new Color(0xFFFFFF)
-        // mat.emissive = new Color(0xFFFFFF)
-        // mat.emissiveIntensity = 0.5;
+        mat.emissive = new Color(0xFFFFFF)
+        mat.emissiveMap = texMap;
+        mat.emissiveIntensity = 1;
         mat.reflectivity = 0
         // mat.map.offset = [1,1];
 
@@ -438,7 +470,7 @@ function tryTick() {
         clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
 
         arrRacers[0].isPlayer = true;
-        arrRacers[0].bindControls();
+        // arrRacers[0].bindControls();
         playCam.player = arrRacers[0];
         arrRacers[0].cam = playCam;
 
@@ -447,7 +479,7 @@ function tryTick() {
         raceManager.raceGates = arrRaceGates.gates;
         raceManager.sortRaceGates();
         raceManager.raceLineup();
-        raceManager.raceCountdown();
+        // raceManager.raceCountdown();
         
         addArrows();
         console.log("Tick started")

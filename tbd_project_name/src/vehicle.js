@@ -34,7 +34,7 @@ export class Vehicle {
         this.startIntervals();
 
         if (isPlayer) {
-            bindControls();
+            // bindControls();
             this.forwardPressed = false;
             this.backwardPressed = false;
             this.leftPressed = false;

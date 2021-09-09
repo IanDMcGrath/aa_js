@@ -30,6 +30,9 @@ export class RaceManager {
             this.racers[i].position = this.position.clone();
             this.racers[i].rotation = this.rotation.clone();
         }
+
+        const that = this;
+        setTimeout(()=>{that.raceCountdown()}, 3000);
     }
 
     raceCountdown() {
@@ -43,10 +46,13 @@ export class RaceManager {
         this.delayCtd1 = () => {that.displayCtdNumber(1)}; // display 1! event object
         this.delayCtd2 = () => {that.displayCtdNumber(2)}; // display 2! event object
         this.delayCtd3 = () => {that.displayCtdNumber(3)}; // display 3! event object
-        setTimeout(this.delayCtd3, 1000); // delay display numbers
-        setTimeout(this.delayCtd2, 2000);
-        setTimeout(this.delayCtd1, 3000);
-        setTimeout(this.delayCtd0, 4000); // delay display GO!
+        setTimeout(this.delayCtd3, 0); // delay display numbers
+        setTimeout(this.delayCtd2, 1000);
+        setTimeout(this.delayCtd1, 2000);
+        setTimeout(this.delayCtd0, 3000); // delay display GO!
+        // this.fanfare.raceFont.animAction.setDuration(1);
+        this.fanfare.raceFont.animAction.setLoop(0,1);
+        this.fanfare.raceFont.animAction.play();
     }
 
     displayCtdNumber(num) {
@@ -56,6 +62,7 @@ export class RaceManager {
             console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
         } else {
             console.log('### GO! GO! GO! GO! GO! ###');
+            this.racers[0].bindControls();
         }
     }
 

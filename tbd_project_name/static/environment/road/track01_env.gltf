@@ -34,7 +34,7 @@
                     "export_def_bones" : 1,
                     "export_extras" : 1,
                     "export_format" : "GLTF_SEPARATE",
-                    "export_image_format" : "JPEG",
+                    "export_image_format" : "AUTO",
                     "export_materials" : "EXPORT",
                     "export_morph" : 0,
                     "export_morph_tangent" : 1,
@@ -935,7 +935,7 @@
         {
             "extras" : {},
             "mesh" : 64,
-            "name" : "Plane",
+            "name" : "raceStartingLine",
             "translation" : [
                 62.21422576904297,
                 0,
@@ -2048,7 +2048,7 @@
         },
         {
             "extras" : {},
-            "name" : "Plane.005",
+            "name" : "plane.001",
             "primitives" : [
                 {
                     "attributes" : {
