@@ -188,7 +188,6 @@ export class Vehicle {
         if (this.surface === "road") {
             this.resetPos.pos = this.position.clone();
             this.resetPos.rot = this.rotation.clone();
-            console.log("position saved!")
         }
     }
 

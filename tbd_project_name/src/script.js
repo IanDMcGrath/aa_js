@@ -284,15 +284,15 @@ scene.add(directionalLight);
  * Sizes
  */
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
+    width: Util.clampFMax(window.innerWidth, 1200),
+    height: Util.clampFMax(window.innerHeight, 700)
 }
 
 window.addEventListener('resize', () =>
 {
     // Update sizes
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
+    sizes.width = Util.clampFMax(window.innerWidth, 1200);
+    sizes.height = Util.clampFMax(window.innerHeight, 700);
 
     // Update camera
     camera.aspect = sizes.width / sizes.height;
