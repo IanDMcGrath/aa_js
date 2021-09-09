@@ -28,6 +28,7 @@ const animMixers = [];
 
 // Game classes
 const raceManager = new RaceManager();
+raceManager.position = new Vector3(50,0,0);
 
 // Debug
 // const gui = new dat.GUI();
@@ -190,6 +191,7 @@ function addRaceFont() {
     gltfLoader.load('./fanfare/race_start/raceFont.gltf', function (gltf) {
         fanfare.raceFont = gltf;
         gltf.scene.scale.set(10,10,10)
+        gltf.scene.position.set(70,0,0)
         // console.log(fanfare.raceFont);
         raceManager.fanfare.raceFont = gltf;
 
