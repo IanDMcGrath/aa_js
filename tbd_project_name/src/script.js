@@ -1,7 +1,7 @@
 // import threejs
 import './style.css';
 // import * as THREE from 'three';
-import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping} from 'three';
+import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -46,10 +46,9 @@ scene.background = textureLoader.load('environment/sky/skygradient.jpg');
 
 // Materials
 
-const material = new MeshBasicMaterial();
-// material.metalness = 0.7;
-// material.roughness = 0.2;
-// material.normalMap = normalTexture;
+const material = new MeshPhysicalMaterial();
+material.metalness = 0;
+material.roughness = 1;
 material.color = new Color(0xffffff);
 
 const matRoad = new MeshMatcapMaterial();
@@ -173,6 +172,29 @@ function addRoad() {
         road.scale.set(1,1,1);
 
         meshesMaterial(road.children, matRoad);
+
+        console.log('road vvv')
+        console.log(gltf.scene.children[31].name)
+
+        let dirt = undefined;
+        for (let i=0; i<gltf.scene.children.length; i++) {
+            let obj = gltf.scene.children[i];
+            switch(obj.name) {
+                case "dirt":
+                    dirt = obj;
+                default:
+            }
+        }
+        if (dirt) {
+            dirt.material = new MeshPhysicalMaterial();
+            let mat = dirt.material;
+            mat.map = textureLoader.load("./environment/ground/dirt_grass_basecolor.jpg");
+            mat.map.wrapS = RepeatWrapping;
+            mat.map.wrapT = RepeatWrapping;
+            mat.normalMap = textureLoader.load("./environment/ground/dirt_grass_normal.jpg");
+            mat.normalMap.wrapS = RepeatWrapping;
+            mat.normalMap.wrapT = RepeatWrapping;
+        }
         
         // road.layers.enable(1);
         // road.layers.set(1);
@@ -263,7 +285,7 @@ addRaceFont();
 
 // Lights
 
-const hlight = new AmbientLight(0xffffff,1);
+const hlight = new AmbientLight(0xffffff,.5);
 hlight.position.set(.5,.5,.5);
 
 // console.log(hlight)

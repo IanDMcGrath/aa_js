@@ -27,13 +27,18 @@
                     }
                 },
                 "glTF2ExportSettings" : {
+                    "export_all_influences" : 1,
                     "export_animations" : 0,
-                    "export_apply" : 0,
+                    "export_apply" : 1,
+                    "export_colors" : 0,
+                    "export_def_bones" : 1,
                     "export_extras" : 1,
                     "export_format" : "GLTF_SEPARATE",
-                    "export_image_format" : "JPEG",
+                    "export_image_format" : "AUTO",
                     "export_materials" : "EXPORT",
                     "export_morph" : 0,
+                    "export_morph_tangent" : 1,
+                    "export_normals" : 1,
                     "export_skins" : 0,
                     "export_tangents" : 1,
                     "export_yup" : 1,
@@ -73,7 +78,8 @@
                 28,
                 29,
                 30,
-                31
+                31,
+                37
             ]
         }
     ],
@@ -242,12 +248,113 @@
                 0,
                 89.66055297851562
             ]
+        },
+        {
+            "name" : "root",
+            "rotation" : [
+                -2.9802322387695312e-08,
+                1.1920927533992653e-07,
+                4.235164736271502e-22,
+                1
+            ],
+            "scale" : [
+                1,
+                0.9999998807907104,
+                0.9999998807907104
+            ]
+        },
+        {
+            "name" : "cntDown.1",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1.110607624053955
+            ],
+            "translation" : [
+                0.23604299128055573,
+                0,
+                -5.62770345879926e-08
+            ]
+        },
+        {
+            "name" : "cntDown.2",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1
+            ],
+            "translation" : [
+                0.23604299128055573,
+                0,
+                -5.62770345879926e-08
+            ]
+        },
+        {
+            "name" : "cntDown.3",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1
+            ],
+            "translation" : [
+                0.23604299128055573,
+                0,
+                -5.62770345879926e-08
+            ]
+        },
+        {
+            "name" : "cntDown.go",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1
+            ]
+        },
+        {
+            "children" : [
+                32,
+                33,
+                34,
+                35,
+                36
+            ],
+            "extras" : {},
+            "name" : "cntDown_armature"
         }
     ],
     "materials" : [
         {
             "doubleSided" : true,
             "name" : "m_road",
+            "pbrMetallicRoughness" : {}
+        },
+        {
+            "doubleSided" : true,
+            "name" : "Material.001",
             "pbrMetallicRoughness" : {}
         }
     ],
@@ -734,7 +841,7 @@
         },
         {
             "extras" : {},
-            "name" : "Plane",
+            "name" : "dirt",
             "primitives" : [
                 {
                     "attributes" : {
@@ -743,7 +850,8 @@
                         "TANGENT" : 134,
                         "TEXCOORD_0" : 135
                     },
-                    "indices" : 136
+                    "indices" : 136,
+                    "material" : 1
                 }
             ]
         },
@@ -1860,41 +1968,41 @@
         {
             "bufferView" : 132,
             "componentType" : 5126,
-            "count" : 284,
+            "count" : 676,
             "max" : [
-                661.4797973632812,
-                46.748748779296875,
+                865.691650390625,
+                135.9783477783203,
                 861.5620727539062
             ],
             "min" : [
                 -1061.4779052734375,
-                -0.5000038146972656,
-                -861.3956909179688
+                -26.57292938232422,
+                -1101.59326171875
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 133,
             "componentType" : 5126,
-            "count" : 284,
+            "count" : 676,
             "type" : "VEC3"
         },
         {
             "bufferView" : 134,
             "componentType" : 5126,
-            "count" : 284,
+            "count" : 676,
             "type" : "VEC4"
         },
         {
             "bufferView" : 135,
             "componentType" : 5126,
-            "count" : 284,
+            "count" : 676,
             "type" : "VEC2"
         },
         {
             "bufferView" : 136,
             "componentType" : 5123,
-            "count" : 1194,
+            "count" : 2814,
             "type" : "SCALAR"
         },
         {
@@ -2601,58 +2709,58 @@
         },
         {
             "buffer" : 0,
-            "byteLength" : 3408,
+            "byteLength" : 8112,
             "byteOffset" : 64416
         },
         {
             "buffer" : 0,
-            "byteLength" : 3408,
-            "byteOffset" : 67824
+            "byteLength" : 8112,
+            "byteOffset" : 72528
         },
         {
             "buffer" : 0,
-            "byteLength" : 4544,
-            "byteOffset" : 71232
+            "byteLength" : 10816,
+            "byteOffset" : 80640
         },
         {
             "buffer" : 0,
-            "byteLength" : 2272,
-            "byteOffset" : 75776
+            "byteLength" : 5408,
+            "byteOffset" : 91456
         },
         {
             "buffer" : 0,
-            "byteLength" : 2388,
-            "byteOffset" : 78048
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 4584,
-            "byteOffset" : 80436
+            "byteLength" : 5628,
+            "byteOffset" : 96864
         },
         {
             "buffer" : 0,
             "byteLength" : 4584,
-            "byteOffset" : 85020
+            "byteOffset" : 102492
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 4584,
+            "byteOffset" : 107076
         },
         {
             "buffer" : 0,
             "byteLength" : 6112,
-            "byteOffset" : 89604
+            "byteOffset" : 111660
         },
         {
             "buffer" : 0,
             "byteLength" : 3056,
-            "byteOffset" : 95716
+            "byteOffset" : 117772
         },
         {
             "buffer" : 0,
             "byteLength" : 2244,
-            "byteOffset" : 98772
+            "byteOffset" : 120828
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 101016,
+            "byteLength" : 123072,
             "uri" : "track01_road.bin"
         }
     ]

@@ -13,6 +13,11 @@ body {
     background-color: rgb(0, 80, 133);
 }
 
+a {
+    color: white;
+    text-decoration: none;
+}
+
 canvas {
     display: block;
     /* position: absolute; */
@@ -22,6 +27,18 @@ canvas {
     /* justify-self: center; */
     height: 70px;
     width: 70px;
+}
+
+li {
+    list-style: none;
+}
+
+body {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 div.main {
@@ -36,8 +53,35 @@ div.main h1 {
     color: white;
 }
 
+div.main h1:before{
+    content: url('../static/stripestyling.png');
+    display: inline-block;
+    /* width: 50px; */
+}
+
+div.main h1:after{
+    content: url('../static/stripestyling.png');
+}
+
+body div.main div.top {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 25px;
+}
+
+aside {
+    position: absolute;
+    right: 10%;
+}
+
 aside ul li{
     padding: 5px;
+}
+
+aside ul {
+    padding-top: 400px;
+    padding-left: 20px;
 }
 
 aside a.twitter {
@@ -49,4 +93,32 @@ aside img.twitter {
 
 aside a.git {
     color: white;
+}
+
+
+h2.controls {
+    padding: 10px;
+    padding-left: 20px;
+    text-justify: center;
+}
+
+div.controls {
+    display:flex;
+    flex-direction: row;
+    padding: 20px;
+}
+
+div.controls-keys {
+    padding-right: 30px;
+}
+
+.controls {
+    border: solid 1px black;
+}
+
+div.bottom {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
