@@ -186,8 +186,20 @@ export class Vehicle {
         const that = this;
 
         this.intNewResetPos = () => {that.newResetPos()};
+        this.intRespawn = () => {that.respawn()}
 
         setInterval(this.intNewResetPos, 2000);
+        setInterval(this.intRespawn, 1000);
+    }
+
+    respawn() {
+        if (this.position.y < 0) {
+            if (this.resetPosition.y < 0){
+                this.position = new Vector3()
+            } else {
+                this.resetPosition();
+            }
+        }
     }
 
     resetPosition() { // in case the player gets stuck, call this by pressing 'R'
@@ -410,7 +422,7 @@ export class Vehicle {
         let wallTraceRight = {origin: this.position.clone(), dir: this.rightDir.clone(), hits: []};
 
         this.raycasterWallC.set(wallTraceCenter.origin, wallTraceCenter.dir);
-        this.raycasterWallC.far = Util.clampFMin(this.linearVelocity.length(), 3);
+        this.raycasterWallC.far = Util.clampFMin(this.linearVelocity.length(), 10);
 
         this.raycasterWallF.set(wallTraceFront.origin, wallTraceFront.dir);
         this.raycasterWallL.set(wallTraceLeft.origin, wallTraceLeft.dir);
@@ -423,7 +435,7 @@ export class Vehicle {
 
 
         if (wallTraceCenter.hits.length > 0 || wallTraceFront.hits.length > 0 || wallTraceLeft.hits.length > 0 || wallTraceRight.hits.length > 0) {
-            this.bounceOffWall( [wallTraceLeft, wallTraceRight], [wallTraceFront, wallTraceCenter] );
+            this.bounceOffWall( [wallTraceLeft, wallTraceRight], wallTraceFront, wallTraceCenter );
         }
     }
 
