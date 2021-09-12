@@ -39,7 +39,7 @@ export class RaceManager {
         const that = this;
         // delay race start //
         this.delayRaceStart = () => {that.raceStart()};
-        setTimeout(this.delayRaceStart, 4000);
+        setTimeout(this.delayRaceStart, 400);
         
         // countdown //
         this.delayCtd0 = () => {that.displayCtdNumber(0)}; // display GO! event object // forgot how I bound these events in the vehicle class so i'm just copying what it is now...
@@ -47,9 +47,9 @@ export class RaceManager {
         this.delayCtd2 = () => {that.displayCtdNumber(2)}; // display 2! event object
         this.delayCtd3 = () => {that.displayCtdNumber(3)}; // display 3! event object
         setTimeout(this.delayCtd3, 0); // delay display numbers
-        setTimeout(this.delayCtd2, 1000);
-        setTimeout(this.delayCtd1, 2000);
-        setTimeout(this.delayCtd0, 3000); // delay display GO!
+        setTimeout(this.delayCtd2, 100);
+        setTimeout(this.delayCtd1, 200);
+        setTimeout(this.delayCtd0, 300); // delay display GO!
         // this.fanfare.raceFont.animAction.setDuration(1);
         this.fanfare.raceFont.animAction.setLoop(0,1);
         this.fanfare.raceFont.animAction.play();

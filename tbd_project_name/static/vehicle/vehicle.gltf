@@ -1,100 +1,238 @@
 {
-  "asset": {
-    "generator": "Khronos glTF Blender I/O v1.4.40",
-    "version": "2.0"
-  },
-  "scene": 0,
-  "scenes": [
-    {
-      "name": "Scene",
-      "nodes": [
-        0
-      ]
-    }
-  ],
-  "nodes": [
-    {
-      "mesh": 0,
-      "name": "Cube"
-    }
-  ],
-  "meshes": [
-    {
-      "name": "Cube.001",
-      "primitives": [
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.4.40",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
         {
-          "attributes": {
-            "POSITION": 0,
-            "NORMAL": 1,
-            "TEXCOORD_0": 2
-          },
-          "indices": 3
+            "extras" : {
+                "JK_MMT" : {
+                    "Export_props" : [
+                        {
+                            "name" : "Default"
+                        }
+                    ],
+                    "Export_active" : "Default",
+                    "Import_props" : [
+                        {
+                            "name" : "Default"
+                        }
+                    ],
+                    "Import_active" : "Default"
+                },
+                "bc" : {
+                    "snap" : {
+                        "hit" : 0
+                    }
+                },
+                "glTF2ExportSettings" : {
+                    "export_all_influences" : 1,
+                    "export_animations" : 0,
+                    "export_apply" : 1,
+                    "export_colors" : 0,
+                    "export_def_bones" : 1,
+                    "export_extras" : 1,
+                    "export_format" : "GLTF_SEPARATE",
+                    "export_image_format" : "AUTO",
+                    "export_materials" : "EXPORT",
+                    "export_morph" : 0,
+                    "export_morph_tangent" : 1,
+                    "export_normals" : 1,
+                    "export_skins" : 0,
+                    "export_tangents" : 1,
+                    "export_yup" : 1,
+                    "use_selection" : 1
+                }
+            },
+            "name" : "Scene",
+            "nodes" : [
+                0,
+                6
+            ]
         }
-      ]
-    }
-  ],
-  "accessors": [
-    {
-      "bufferView": 0,
-      "componentType": 5126,
-      "count": 393,
-      "max": [
-        1.9088053703308105,
-        1.0468376874923706,
-        3.245220184326172
-      ],
-      "min": [
-        -1.9088053703308105,
-        -0.2410193383693695,
-        -2.645862579345703
-      ],
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 1,
-      "componentType": 5126,
-      "count": 393,
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 2,
-      "componentType": 5126,
-      "count": 393,
-      "type": "VEC2"
-    },
-    {
-      "bufferView": 3,
-      "componentType": 5123,
-      "count": 1152,
-      "type": "SCALAR"
-    }
-  ],
-  "bufferViews": [
-    {
-      "buffer": 0,
-      "byteLength": 4716,
-      "byteOffset": 0
-    },
-    {
-      "buffer": 0,
-      "byteLength": 4716,
-      "byteOffset": 4716
-    },
-    {
-      "buffer": 0,
-      "byteLength": 3144,
-      "byteOffset": 9432
-    },
-    {
-      "buffer": 0,
-      "byteLength": 2304,
-      "byteOffset": 12576
-    }
-  ],
-  "buffers": [
-    {
-      "uri": "vehicle_data.bin",
-      "byteLength": 14880
-    }
-  ]
+    ],
+    "nodes" : [
+        {
+            "extras" : {},
+            "mesh" : 0,
+            "name" : "vehicle"
+        },
+        {
+            "name" : "root",
+            "rotation" : [
+                -2.9802322387695312e-08,
+                1.1920927533992653e-07,
+                4.235164736271502e-22,
+                1
+            ],
+            "scale" : [
+                1,
+                0.9999998807907104,
+                0.9999998807907104
+            ]
+        },
+        {
+            "name" : "cntDown.1",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1.110607624053955
+            ],
+            "translation" : [
+                -0.22719958424568176,
+                0,
+                5.416860204832119e-08
+            ]
+        },
+        {
+            "name" : "cntDown.2",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1
+            ],
+            "translation" : [
+                -0.22719958424568176,
+                0,
+                5.416860204832119e-08
+            ]
+        },
+        {
+            "name" : "cntDown.3",
+            "rotation" : [
+                0,
+                1.5894570992713852e-07,
+                0,
+                0.9999999403953552
+            ],
+            "scale" : [
+                1,
+                0,
+                1
+            ],
+            "translation" : [
+                -0.22719958424568176,
+                0,
+                5.416860204832119e-08
+            ]
+        },
+        {
+            "name" : "cntDown.go",
+            "rotation" : [
+                0,
+                1.1920928955078125e-07,
+                0,
+                1
+            ],
+            "scale" : [
+                1,
+                1.0035446882247925,
+                1
+            ]
+        },
+        {
+            "children" : [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "extras" : {},
+            "name" : "cntDown_armature"
+        }
+    ],
+    "meshes" : [
+        {
+            "extras" : {},
+            "name" : "Cube.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 641,
+            "max" : [
+                1.6842782497406006,
+                1.0648458003997803,
+                2.900080442428589
+            ],
+            "min" : [
+                -1.6842782497406006,
+                -0.24274542927742004,
+                -2.8845276832580566
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 641,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 641,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 1584,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 7692,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 7692,
+            "byteOffset" : 7692
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 5128,
+            "byteOffset" : 15384
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 3168,
+            "byteOffset" : 20512
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 23680,
+            "uri" : "vehicle.bin"
+        }
+    ]
 }

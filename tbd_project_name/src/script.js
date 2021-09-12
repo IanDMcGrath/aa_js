@@ -1,10 +1,11 @@
 // import threejs
 import './style.css';
 // import * as THREE from 'three';
-import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial} from 'three';
+import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial, Mesh} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
 
 // import my files
@@ -210,6 +211,15 @@ addRoad();
 function addRacer() {
     gltfLoader.load( './vehicle/vehicle.glb', function ( gltf ) {
         let mesh = gltf.scene;
+        console.log('addRacer');
+        console.log(gltf.scene);
+        let mat = mesh.children[1].material;
+        let texColor = textureLoader.load("./vehicle/vehicle_BaseColor.jpg");
+        texColor.flipY = false;
+        mat.map = texColor;
+        mat.emissiveMap = texColor;
+        mat.emissive = new Color(0xFFFFFF);
+        mat.emissiveIntensity = 0.75;
         // mesh.castShadow = true;
         // mesh.receiveShadow = true;
         // console.log(mesh);
@@ -273,7 +283,7 @@ function addRaceFont() {
         mat.emissive = new Color(0xFFFFFF)
         mat.emissiveMap = texMap;
         mat.emissiveIntensity = 1;
-        mat.reflectivity = 0
+        mat.reflectivity = 0;
         // mat.map.offset = [1,1];
 
         scene.add(gltf.scene);
@@ -283,9 +293,28 @@ function addRaceFont() {
 }
 addRaceFont();
 
+// function addDecalShadows() {
+//     gltfLoader.load('./util/cube.glb', function (gltf) {
+//         console.log('add decal shadows: ');
+//         console.log(arrRacers[0].obj.scene);
+//         var decalShadow = new DecalGeometry(arrRacers[0].obj.scene.children[0], arrRacers[0].obj.scene.position, arrRacers[0].obj.scene.rotation.clone().multiply(new Quaternion(1,0,0)), new Vector3(1,1,1));
+//         const matShadow = new MeshBasicMaterial({color: 0x00ff00});
+//         const decal = new Mesh(decalShadow, matShadow);
+//         console.log(decal);
+//         decal.scale.set(5,5,5);
+//         decal.position.set(...arrRacers[0].position.toArray());
+//         scene.add(decal);
+//         arrRacers[0].decalShadow = decal;
+
+//     }, undefined, function ( error ) {
+//         console.error( error );
+//     });
+// }
+// addDecalShadows();
+
 // Lights
 
-const hlight = new AmbientLight(0xffffff,.5);
+const hlight = new AmbientLight(0xD4FBF9,.5);
 hlight.position.set(.5,.5,.5);
 
 // console.log(hlight)
@@ -297,7 +326,7 @@ scene.add(hlight);
 // pointLight.position.z = 4;
 // scene.add(pointLight);
 
-const directionalLight = new DirectionalLight(0xffffff,1);
+const directionalLight = new DirectionalLight(0xFAF3C0,1);
 directionalLight.position.set(-1,.5,.5);
 // directionalLight.castShadow = true;
 scene.add(directionalLight);
@@ -308,7 +337,7 @@ scene.add(directionalLight);
 const sizes = {
     width: Util.clampFMax(window.innerWidth, 1200),
     height: Util.clampFMax(window.innerHeight, 700)
-}
+};
 
 window.addEventListener('resize', () =>
 {

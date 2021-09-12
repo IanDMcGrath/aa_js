@@ -32,6 +32,7 @@ export class Vehicle {
         this.surface = "road";
         this.resetPos = {pos: new Vector3(), rot: new Quaternion(0,1,0)};
         this.jumping = false;
+        this.wallBounced = 1;
         this.startIntervals();
 
         if (isPlayer) {
@@ -52,11 +53,12 @@ export class Vehicle {
         this.forwardDir.normalize();
         this.upDir.normalize();
         this.rightDir.normalize();
+        this.moveDir = this.linearVelocity.clone().normalize();
     }
     
     
     move() {
-        this.collision();
+        this.calcDirections();
         this.accelerate();
         this.addTurn();
         if (this.isFalling) {
@@ -64,10 +66,10 @@ export class Vehicle {
         } else {
             this.momentum();
         }
+        this.collision();
         this.position.add(this.linearVelocity);
         this.rotation.multiply(this.rotationalVelocity);
         this.rotation.normalize();
-        this.calcDirections();
         
         
         
@@ -105,19 +107,45 @@ export class Vehicle {
         // speed = (this.speed + this.throttle);
         this.speed = Util.clampFMax((this.surface === "dirt" ? this.speed * 0.97 : this.speed) * (this.leftPressed || this.rightPressed ? 0.99 : 1), 4);
          if (this.throttle === 0) {
-             this.speed = this.speed * 0.99;
+             this.speed = this.speed * 0.995;
             } else if (this.throttle < 0) {
                this.speed = this.speed * 0.97;
             }
-        this.linearVelocity.set(...(this.gravityTotal.clone().add(this.forwardDir.clone().multiplyScalar(this.speed)).toArray()));
+        // this.linearVelocity.set(...(this.gravityTotal.clone().add(this.forwardDir.clone().multiplyScalar(this.speed)).toArray()));
+        this.linearVelocity.lerp((this.gravityTotal.clone().add(this.forwardDir.clone().multiplyScalar(this.speed))), this.traction());
+        // this.linearVelocity.lerp(new Vector3, 1)
         // console.log(this.linearVelocity)
+        // console.log(this.linearVelocity)
+    }
+
+    traction() {
+        let traction = 1;
+        traction = traction * this.wallBounced;
+        return traction;
+    }
+
+    wallDidBounce() {
+        clearTimeout(this.tohWallUnbounce);
+        // console.log("bounced!");
+        this.wallBounced = 0.01;
+        this.tohWallUnbounce = setTimeout(this.wallUnbounce.bind(this), 100);
+    }
+
+    wallUnbounce() {
+        // console.log("stopped bounce");
+        // console.log(this);
+        // console.log(this.wallBounced);
+        this.wallBounced = Math.min(this.wallBounced * 1.5, 1);
+        if (this.wallBounced < 1) {
+            setTimeout(this.wallUnbounce.bind(this), 100);
+        }
     }
 
     addTurn() {
         let maxTurn = 0.03;
         let currentTurn = this.rotationalVelocity.y;
         currentTurn = currentTurn + (this.leftPressed ? 0.003 : this.rightPressed ? -0.003 : currentTurn * -0.2);
-        currentTurn = Util.clampFRange(currentTurn, -maxTurn, maxTurn)
+        currentTurn = Util.clampFRange(currentTurn, -maxTurn, maxTurn);
         this.rotationalVelocity.y = currentTurn;
     }
 
@@ -127,7 +155,7 @@ export class Vehicle {
 
     // // --->> HANDLE INPUTS <<---
     bindControls() {
-        console.log('binding keys')
+        console.log('binding keys');
         const that = this;
 
         this.keydown = (event) => {that.handleInput(event, true)}; // remove event listener proof for darrick #1
@@ -186,16 +214,16 @@ export class Vehicle {
         const that = this;
 
         this.intNewResetPos = () => {that.newResetPos()};
-        this.intRespawn = () => {that.respawn()}
+        this.intRespawn = () => {that.respawn()};
 
         setInterval(this.intNewResetPos, 2000);
         setInterval(this.intRespawn, 1000);
     }
 
     respawn() {
-        if (this.position.y < 0) {
+        if (this.position.y < -10) {
             if (this.resetPosition.y < 0){
-                this.position = new Vector3()
+                this.position = new Vector3(0,5,0)
             } else {
                 this.resetPosition();
             }
@@ -214,7 +242,8 @@ export class Vehicle {
         this.speed = 0;
         this.cam.resetPosition();
         this.isFalling = false;
-        console.log(this.position);
+        // console.log(reset position to:);
+        // console.log(this.position);
     }
 
     newResetPos() {
@@ -245,13 +274,6 @@ export class Vehicle {
 
     playerLeft(pressed) {
         this.leftPressed = pressed;
-        // if (pressed) {
-        //     // this.rotationalVelocity = new Quat(0,0.03,0);
-        //     // this.rotationalVelocity = new Quat(0.03,0,0);
-        // } else {
-        //     this.rightPressed ? this.playerRight(true) : this.rotationalVelocity = new Quat();
-        // }
-
         if (!pressed) {
             if (this.rightPressed) {this.playerRight(true)}
         }
@@ -259,13 +281,6 @@ export class Vehicle {
 
     playerRight(pressed) {
         this.rightPressed = pressed;
-        // if (pressed) {
-        //     // this.rotationalVelocity = new Quat(0,-0.03,0);
-        //     // this.rotationalVelocity = new Quat(-0.03,0,0);
-        // } else {
-        //     this.leftPressed ? this.playerLeft(true) : this.rotationalVelocity = new Quat();
-        // }
-
         if (!pressed) {
             if (this.leftPressed) {this.playerLeft(true)}
         }
@@ -273,12 +288,9 @@ export class Vehicle {
 
     buildCollisions() {
         this.obj.scene.layers.set(2);
-        this.raycaster1 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
-        // this.raycaster2 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
-        // this.raycaster3 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
-        // this.raycaster4 = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
-        this.raycasterWallC = new Raycaster(this.position.clone(), this.forwardDir.clone(), 0, 1);
-        this.raycasterWallF = new Raycaster(this.position.clone(), this.forwardDir.clone(), 0, 4);
+        this.raycasterFloorC = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
+        this.raycasterFloorVel = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
+        this.raycasterWallVel = new Raycaster(this.position.clone(), this.forwardDir.clone(), 0, 1);
         this.raycasterWallL = new Raycaster(this.position.clone(), this.rightDir.clone().negate(), 0, 2);
         this.raycasterWallR = new Raycaster(this.position.clone(), this.rightDir.clone(), 0, 2);
     }
@@ -289,35 +301,32 @@ export class Vehicle {
     }
     
     collideRoad() {
-        let hitDists = [];
-        // let hitDists1 = []
-        // let hitDists2 = []
-        // let hitDists3 = []
-    
         let upOffset = this.position.clone().add(this.upDir.clone().multiplyScalar(2));
         let downDir = this.upDir.clone().negate();
-        this.floorTraceCenter = {origin: upOffset.clone(), direction: downDir.clone()}
-        // this.floorTraceFront = {origin: upOffset.clone().add(this.forwardDir.clone().multiplyScalar(3)), direction: downDir.clone()}
-        // this.floorTraceBack = {origin: upOffset.clone().add(this.forwardDir.clone().multiplyScalar(-3)), direction: downDir.clone()}
-        // console.log(upOffset.clone().add(this.forwardDir.clone().multiplyScalar(1)))
-        this.raycaster1.set(this.floorTraceCenter.origin, this.floorTraceCenter.direction);
-        // this.raycaster2.set(this.floorTraceFront.origin, this.floorTraceFront.direction);
-        // this.raycaster3.set(this.floorTraceBack.origin, this.floorTraceBack.direction);
-        // this.raycaster4.set(this.position.clone().add(this.rightDir.clone().negate()), this.upDir.clone().negate());
-        let intersects = [];
-        // console.log(this.road)
-        this.raycaster1.intersectObjects(this.road.children, true, intersects);
-        // this.raycaster2.intersectObjects(this.road.children, true, hitDists1);
-        // this.raycaster3.intersectObjects(this.road.children, true, hitDists2);
-        // this.raycaster4.intersectObjects(this.road.children, true, hitDists3);
-        // hitDists.push(intersects[0])
-        // hitDists = [hitDists[hitDists.length - 1], hitDists1[hitDists1.length - 1], hitDists2[hitDists2.length - 1]];
+
+        this.floorTraceVel = {origin: this.position.clone().add(this.upDir.clone().multiplyScalar(-1 * this.raycasterFloorC.far)), dir: this.moveDir};
+        this.raycasterFloorVel.set(this.floorTraceVel.origin, this.moveDir);
+
+        this.floorTraceCenter = {origin: upOffset.clone(), dir: downDir.clone()};
+        this.raycasterFloorC.set(this.floorTraceCenter.origin, this.floorTraceCenter.dir);
+
+        let intersectsC = [];
+        this.raycasterFloorC.intersectObjects(this.road.children, true, intersectsC);
+
+        let intersectsVel = [];
+        this.raycasterFloorVel.intersectObjects(this.road.children, true, intersectsVel);
         
-        this.falling(!intersects.length > 0);
-        if (!this.isFalling) {
-            this.moveToRoad(intersects[0], hitDists);
+       
+        if (intersectsC.length > 0) {
+            this.moveToRoad(intersectsC[0]);
+            this.falling(false);
+        } else if (intersectsVel.length > 0) {
+            console.log(intersectsVel[0])
+            this.moveToRoadVel(intersectsVel[0]);
+            this.falling(false);
         } else {
-            this.setSurface();
+            this.falling(true);
+            this.setSurface(); // set surface to undefined (this.surface will be "none")
         }
     };
 
@@ -336,110 +345,58 @@ export class Vehicle {
         }
     }
     
-    moveToRoad(intersect, hitDists) {
-        // console.log(intersect)
-        let hitDist = this.floorTraceCenter.origin.clone().sub(intersect.point).length();
-        // let downDir = this.upDir.clone().multiplyScalar(-1);
-        // console.log(downDir)
-        let offset = this.upDir.clone().multiplyScalar((hitDist - 2.5) * -1); // subtract to offset from trace origin (0 is on the origin) (higher numbers push the vehicle off the floor)
-        this.position.add(offset);
-        // console.log(offset);
+    moveToRoad(intersect) {
+        this.position = intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(1));
         this.setSurface(intersect.object);
+
+        this.orientToRoad(intersect);
+    }
+
+    moveToRoadVel(intersect) {
+        console.log('moveToRoadVel');
+        let hitPoint = intersect.point;
         
-        // console.log(this.surface)
-        // console.log(intersect)
-        
-        // for (let i=0; i<4; i++) {
-        //     if (hitDists[i]) {
-        //         hitDists[i] = this.position.clone().sub(hitDists[i].point).length();
-        //     } else {
-        //         hitDists.push(1);
-        //     }
-        // }
-        // console.log(hitDists)
+        this.position = hitPoint.clone().add(intersect.face.normal.clone().multiplyScalar( 3 ));
+        this.linearVelocity.projectOnPlane(intersect.face.normal);
 
-        // let frontRocker = hitDists[0] - hitDists[1];
-        // let sideRocker = hitDists[2] - hitDists[3];
-        // let rollForward = new Quat(frontRocker*0.1,0,0);
-        // let rollRight = new Quat(0,0,sideRocker*0.1);
+        this.orientToRoad(intersect);
+    }
+    
+    orientToRoad(intersect) {
+    // --->> the simple, snappy solution <<---
+    let localHitNormal = intersect.face.normal.clone(); 
+    let quat = new Quat().setFromUnitVectors(this.upDir.clone(), localHitNormal);
+    this.rotation.premultiply(quat);
 
-        // this.rotation.multiply(rollForward).normalize();
-        // this.rotation.multiply(rollRight).normalize();
-        
-        // if (hitDists[0] - hitDists[1] > 0) {
-        //     this.rotation.multiply(rollForward);
-        // } else {
-        //     this.rotation.multiply(rollBackward);
-        // }
-                
-        // if (hitDists[2] - hitDists[3] > 0) {
-        //     this.rotation.multiply(rollLeft);
-        // } else {
-        //     this.rotation.multiply(rollRight);
-        // }
-
-
-        // // --->> the janky, was supposed to smooth, way <<---
-        // let offsetOrder = [this.floorTraceCenter, this.floorTraceFront, this.floorTraceBack];
-        // let hitNormalTotal = new Vector3(0,1,0);
-        // for (let i=0; i<hitDists.length; i++) {
-        //     if (hitDists[i]) {
-        //         hitNormalTotal.add(hitDists[i].face.normal.clone().multiplyScalar(offsetOrder[i].origin.clone().sub(hitDists[i].point).length() * 0.1));
-        //         // console.log(hitDists[i].face.normal)
-        //     } else {
-        //         hitNormalTotal.add(this.upDir);
-        //     }
-        // }
-        // console.log(hitDists)
-        // let hitNormalAvg = this.prevNormalTotal.clone().add(hitNormalTotal)
-        // this.prevNormalTotal = hitNormalTotal.clone();
-        // hitNormalAvg.normalize()
-
-        // // let localHitNormal = intersect.face.normal.clone(); 
-        // let localHitNormal = hitNormalAvg.clone();
-        // let quat = new Quat().setFromUnitVectors(this.upDir.clone(), localHitNormal);
-        // // let angle = this.upDir.angleTo(localHitNormal);
-        // this.rotation.premultiply(quat);
-
-
-
-        // --->> the simple, snappy solution <<---
-        let localHitNormal = intersect.face.normal.clone(); 
-        let quat = new Quat().setFromUnitVectors(this.upDir.clone(), localHitNormal);
-        // let angle = this.upDir.angleTo(localHitNormal);
-        this.rotation.premultiply(quat);
-
-
-
-        this.gravityDir = intersect.face.normal.clone().negate();
+    this.gravityDir = intersect.face.normal.clone().negate();
     }
 
     collideWall() {
         let predictPos = this.linearVelocity.clone().normalize();
-        let wallTraceCenter = {origin: this.position.clone(), dir: predictPos, hits: []};
-        let wallTraceFront = {origin: this.position.clone(), dir: this.forwardDir.clone(), hits: []};
-        let wallTraceLeft = {origin: this.position.clone(), dir: this.rightDir.clone().negate(), hits: []};
-        let wallTraceRight = {origin: this.position.clone(), dir: this.rightDir.clone(), hits: []};
+        let wallTraceCenter = { origin: this.position.clone(), dir: predictPos, hits: [] };
+        let wallTraceLeft = { origin: this.position.clone(), dir: this.rightDir.clone().negate(), hits: [] };
+        let wallTraceRight = { origin: this.position.clone(), dir: this.rightDir.clone(), hits: [] };
 
-        this.raycasterWallC.set(wallTraceCenter.origin, wallTraceCenter.dir);
-        this.raycasterWallC.far = Util.clampFMin(this.linearVelocity.length(), 10);
+        this.raycasterWallVel.set(wallTraceCenter.origin, wallTraceCenter.dir);
+        this.raycasterWallVel.far = Math.max(this.linearVelocity.length(), 3);
 
-        this.raycasterWallF.set(wallTraceFront.origin, wallTraceFront.dir);
         this.raycasterWallL.set(wallTraceLeft.origin, wallTraceLeft.dir);
         this.raycasterWallR.set(wallTraceRight.origin, wallTraceRight.dir);
 
-        this.raycasterWallC.intersectObjects(this.walls.children, true, wallTraceCenter.hits);
-        this.raycasterWallF.intersectObjects(this.walls.children, true, wallTraceFront.hits);
+        this.raycasterWallVel.intersectObjects(this.walls.children, true, wallTraceCenter.hits);
         this.raycasterWallL.intersectObjects(this.walls.children, true, wallTraceLeft.hits);
         this.raycasterWallR.intersectObjects(this.walls.children, true, wallTraceRight.hits);
 
-
-        if (wallTraceCenter.hits.length > 0 || wallTraceFront.hits.length > 0 || wallTraceLeft.hits.length > 0 || wallTraceRight.hits.length > 0) {
-            this.bounceOffWall( [wallTraceLeft, wallTraceRight], wallTraceFront, wallTraceCenter );
+        
+        if (wallTraceCenter.hits.length > 0) {
+            this.wallVelCollide(wallTraceCenter);
+        } else if (wallTraceLeft.hits.length > 0 || wallTraceRight.hits.length > 0 ) {
+            this.wallSideCollide( [wallTraceLeft, wallTraceRight]);
         }
     }
 
     getHits(tracers) {
+        if (tracers.length < 1) return [this.position.clone()];
         let hitPoints = [];
         let hitNormalTotal = new Vector3();
         for (let i=0; i<tracers.length; i++) {
@@ -454,7 +411,7 @@ export class Vehicle {
     }
 
     getFurthestHitPoint(hitPoints) {
-        if (hitPoints.length < 1) return;
+        if (hitPoints.length < 1) return this.position.clone();
         let furthestHitPoint = hitPoints[0];
         for (let i=0; i<hitPoints.length; i++) {
             if (furthestHitPoint.lengthSq() < hitPoints[i].lengthSq()) {
@@ -464,43 +421,31 @@ export class Vehicle {
         return furthestHitPoint;
     }
 
-    bounceOffWall(wallTracers=[], frontTracers=[]) { // NEED TO STOP TRACING NON-SCANNED RAYS
-        // needs refactor to take hits from 2 sources at the same time 
-        // (when colliding with the wall on the side, the forward trace will lose priority 
-        // and you can slip through the wall)
-        let sideHits = this.getHits(wallTracers);
+    wallVelCollide(trace) {
+        let hits = this.getHits([trace]);
+        let hitNormal = hits.normal;
+        let hitpoints = hits.points;
+
+        let point = this.getFurthestHitPoint(hitpoints);
+        let offset = this.position.clone().sub(point);
+
+        let dist = this.raycasterWallVel.far - offset.length();
+
+        this.position.add(offset.clampLength(0, dist));
+        this.speed = this.speed * (this.moveDir.dot(hitNormal) + 1);
+        this.position.add(this.linearVelocity.reflect(hitNormal.normalize()));
+
+        this.wallDidBounce();
+    }
+
+    wallSideCollide(sideTracers=[]) {
+        let sideHits = this.getHits(sideTracers);
         let sideHitNormalTotal = sideHits.normal;
         let sideHitPoints = sideHits.points;
-
-        let frontHits = this.getHits(frontTracers);
-        let frontHitNormalTotal = frontHits.normal;
-        let frontHitPoints = frontHits.points;
-
-        console.log(frontTracers)
-
-    
-
-
-
-
-        ///////// old wall collision ///////////
+        
         let furthestSideHitPoint = this.getFurthestHitPoint(sideHitPoints);
-        let furthestFrontHitPoint = this.getFurthestHitPoint(frontHitPoints);
-
-        let furthestHitPoint = new Vector3();
-        if (furthestFrontHitPoint && furthestSideHitPoint) {
-            furthestHitPoint = furthestSideHitPoint.add(furthestFrontHitPoint);
-            furthestHitPoint.multiplyScalar(0.5);
-        } else if (furthestFrontHitPoint || furthestSideHitPoint) {
-            furthestHitPoint = furthestSideHitPoint ? furthestSideHitPoint : furthestFrontHitPoint;
-        }
-
-        let hitNormalTotal = new Vector3();
-        if (sideHitNormalTotal && frontHitNormalTotal) {
-            hitNormalTotal = sideHitNormalTotal.add(frontHitNormalTotal);
-        } else {
-            hitNormalTotal = sideHitNormalTotal ? sideHitNormalTotal : frontHitNormalTotal;
-        }
+        let furthestHitPoint = furthestSideHitPoint;
+        let hitNormalTotal = sideHitNormalTotal;
 
         this.linearVelocity.projectOnPlane(hitNormalTotal.clone().normalize());
 
@@ -514,4 +459,3 @@ export class Vehicle {
     }
 }
 
-// module.exports = Vehicle;

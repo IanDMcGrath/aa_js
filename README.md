@@ -1,3 +1,5 @@
+live link: https://www.ians.tech/machblitz-racing
+
 Background
 
 With a bachelor's in Virtual Technologies & Design (read: 3D generalist) and no good barrier between work and life, I plan to make a battle racing game. Building models and materials will take no time. This will be completely about learning to use three.js api with JavaScript. I will attempt to iterate fast to deliver a game that at least doesn't hurt to look at or play.
@@ -24,8 +26,8 @@ full feature list
 
 Wireframes
 
-![wireframe](wireframe.jpg)
-![car_concept](sillhouette.jpg)
+![wireframe](README_files/wireframe.jpg)
+![car_concept](README_files/sillhouette.jpg)
 
 LinkedIn
 
