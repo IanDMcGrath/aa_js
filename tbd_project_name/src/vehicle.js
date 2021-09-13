@@ -356,7 +356,7 @@ export class Vehicle {
         console.log('moveToRoadVel');
         let hitPoint = intersect.point;
         
-        this.position = hitPoint.clone().add(intersect.face.normal.clone().multiplyScalar( 3 ));
+        this.position = hitPoint.clone().add(intersect.face.normal.clone().multiplyScalar( 1 ));
         this.linearVelocity.projectOnPlane(intersect.face.normal);
 
         this.orientToRoad(intersect);

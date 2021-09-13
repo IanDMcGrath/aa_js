@@ -117,7 +117,7 @@ function addEnv() {
         let env = gltf.scene;
         env.scale.set(1,1,1);
 
-        console.log(gltf.scene)
+        // console.log(gltf.scene)
 
         let roadParent = undefined;
         let gateParent = undefined;
@@ -174,8 +174,8 @@ function addRoad() {
 
         meshesMaterial(road.children, matRoad);
 
-        console.log('road vvv')
-        console.log(gltf.scene.children[31].name)
+        // console.log('road vvv')
+        // console.log(gltf.scene.children[31].name)
 
         let dirt = undefined;
         for (let i=0; i<gltf.scene.children.length; i++) {
@@ -211,8 +211,8 @@ addRoad();
 function addRacer() {
     gltfLoader.load( './vehicle/vehicle.glb', function ( gltf ) {
         let mesh = gltf.scene;
-        console.log('addRacer');
-        console.log(gltf.scene);
+        // console.log('addRacer');
+        // console.log(gltf.scene);
         let mat = mesh.children[1].material;
         let texColor = textureLoader.load("./vehicle/vehicle_BaseColor.jpg");
         texColor.flipY = false;
@@ -249,26 +249,32 @@ const fanfare = {};
 function addRaceFont() {
     gltfLoader.load('./fanfare/race_start/raceFont.gltf', function (gltf) {
         fanfare.raceFont = gltf;
-        gltf.scene.scale.set(10,10,10)
-        gltf.scene.position.set(70,0,0)
+        gltf.scene.scale.set(10,10,10);
+        gltf.scene.position.set(70,0,0);
         // console.log(fanfare.raceFont);
-        raceManager.fanfare.raceFont = {}
+        raceManager.fanfare.raceFont = {};
         raceManager.fanfare.raceFont.obj = gltf;
 
-        gltf.scene.rotation.set(0,Math.PI * 0.5,0)
+        gltf.scene.rotation.set(0,Math.PI * 0.5,0);
         
 
-        const animMixer = new AnimationMixer(gltf.scene)
-        const animAction = animMixer.clipAction(gltf.animations[0])
-        raceManager.fanfare.raceFont.animAction = animAction;
-        console.log(raceManager.fanfare)
+        const animMixer = new AnimationMixer(gltf.scene);
+        const animAction = animMixer.clipAction(gltf.animations[0]);
+        raceManager.fanfare.raceFont.animMixer = animMixer;
+        raceManager.fanfare.raceFont.animCountdown = animMixer.clipAction(gltf.animations[0]);
+        raceManager.fanfare.raceFont.animFinish = animMixer.clipAction(gltf.animations[1]);
+        raceManager.fanfare.raceFont.animLapFinal = animMixer.clipAction(gltf.animations[2]);
+        raceManager.fanfare.raceFont.animLap3 = animMixer.clipAction(gltf.animations[3]);
+        raceManager.fanfare.raceFont.animLap2 = animMixer.clipAction(gltf.animations[4]);
+        console.log(raceManager.fanfare);
         animAction.timeScale = 62;
         // animAction.play();
         animMixers.push(animMixer);
 
-        // console.log(gltf.scene.children[0].children[5].material);
+        console.log('add race font: ');
+        console.log(gltf);
         // gltf.scene.children[0].children[5].material = matRails
-        let mat = gltf.scene.children[0].children[5].material;
+        let mat = gltf.scene.children[0].children[8].material;
         let texMap = textureLoader.load('fanfare/race_start/racingFont.jpg');
         texMap.magFilter = NearestFilter;
         texMap.flipY = false;
@@ -280,7 +286,7 @@ function addRaceFont() {
         // console.log(mat.map)
         mat.needsUpdate = true;
         // mat.color = new Color(0xFFFFFF)
-        mat.emissive = new Color(0xFFFFFF)
+        mat.emissive = new Color(0xFFFFFF);
         mat.emissiveMap = texMap;
         mat.emissiveIntensity = 1;
         mat.reflectivity = 0;
