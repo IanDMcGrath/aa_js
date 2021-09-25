@@ -267,7 +267,7 @@ function addRaceFont() {
         raceManager.fanfare.raceFont.animLap3 = animMixer.clipAction(gltf.animations[3]);
         raceManager.fanfare.raceFont.animLap2 = animMixer.clipAction(gltf.animations[4]);
         console.log(raceManager.fanfare);
-        animAction.timeScale = 62;
+        // animAction.timeScale = 42;
         // animAction.play();
         animMixers.push(animMixer);
 
@@ -386,9 +386,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const myVector = new Vector3(50,0,0);
 // render iterators
-function renderRacers() {
+function renderRacers(deltaTime) {
     for (let i=0; i<arrRacers.length; i++) {
-        arrRacers[i].move();
+        arrRacers[i].move(deltaTime);
         // arrRacers[i].position.x = clock.getElapsedTime();
     }
     // if (arrRacers[0]) playCam.lookAt(arrRacers[0].position);
@@ -407,8 +407,7 @@ function renderSky() {
  */
 const clock = new Clock();
 
- function animate() {
-    let deltaTime = clock.getDelta();
+ function animate(deltaTime) {
     for (let i=0; i<animMixers.length; i++) {
         animMixers[i].update(deltaTime) // FIX THE TIME DILATION FOR ANIM IMPORT
     }
@@ -479,7 +478,7 @@ function moveArrows() {
 
 
     arrows[3].position.set(...arrRacers[0].floorTraceCenter.origin.toArray());
-    arrows[4].position.set(...arrRacers[0].position.clone().add(new Vector3(0,5,0)).toArray())
+    arrows[4].position.set(...arrRacers[0].position.clone().add(new Vector3(0,5,0)).toArray());
     // arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
     // arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
     // console.log(arrows[3].position);
@@ -488,19 +487,19 @@ function moveArrows() {
 
 const tick = () =>
 {
-    const elapsedTime = clock.getElapsedTime()
-
+    const deltaTime = clock.getDelta();
+    // const elapsedTime = clock.getElapsedTime();
     // Update objects
     // console.log(skysphere.scene)
     // skysphere.scene.position.set(camera.position.x,camera.position.y,camera.position.z - 50)
     // renderSky();
     // playCam.obj.lookAt(arrRacers[0].position)
-    renderRacers();
+    renderRacers(deltaTime);
     raceManager.updatePositions();
-    playCam.move();
+    playCam.move(deltaTime);
     // moveArrows();
 
-    animate();
+    animate(deltaTime);
     
     renderer.render(scene, camera);
     // Update Orbital Controls

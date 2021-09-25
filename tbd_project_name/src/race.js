@@ -14,7 +14,7 @@ export class RaceManager {
             this.racers = [];
             this.raceGates = [];
             this.racerPositions = [];
-            this.lapCount = 4;
+            this.lapCount = 3;
             this.fanfare = {
                 raceFont: undefined
             };
@@ -39,7 +39,7 @@ export class RaceManager {
         const that = this;
         // delay race start //
         this.delayRaceStart = () => {that.raceStart()};
-        setTimeout(this.delayRaceStart, 400);
+        setTimeout(this.delayRaceStart, 3000);
         
         // countdown //
         this.delayCtd0 = () => {that.displayCtdNumber(0)}; // display GO! event object // forgot how I bound these events in the vehicle class so i'm just copying what it is now...
@@ -47,9 +47,9 @@ export class RaceManager {
         this.delayCtd2 = () => {that.displayCtdNumber(2)}; // display 2! event object
         this.delayCtd3 = () => {that.displayCtdNumber(3)}; // display 3! event object
         setTimeout(this.delayCtd3, 0); // delay display numbers
-        setTimeout(this.delayCtd2, 100);
-        setTimeout(this.delayCtd1, 200);
-        setTimeout(this.delayCtd0, 300); // delay display GO!
+        setTimeout(this.delayCtd2, 1000);
+        setTimeout(this.delayCtd1, 2000);
+        setTimeout(this.delayCtd0, 3000); // delay display GO!
         // this.fanfare.raceFont.animAction.setDuration(1);
         this.fanfare.raceFont.animCountdown.setLoop(0,1);
         this.fanfare.raceFont.animCountdown.play();
@@ -59,9 +59,9 @@ export class RaceManager {
         let raceFont = new RaceFont(this.fanfare.raceFont, num);
         // scene.add()
         if (num > 0) {
-            console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
+            // console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
         } else {
-            console.log('### GO! GO! GO! GO! GO! ###');
+            // console.log('### GO! GO! GO! GO! GO! ###');
             this.raceStart();
         }
     }
@@ -107,29 +107,29 @@ export class RaceManager {
                     if (position.lap === 2) {
                         // this.fanfare.raceFont.animMixer.clipAction(this.fanfare.raceFont.animLap2);
                         this.fanfare.raceFont.animLap2.setLoop(0,1);
-                        this.fanfare.raceFont.animLap2.timeScale = 62;
+                        // this.fanfare.raceFont.animLap2.timeScale = 42;
                         this.fanfare.raceFont.animLap2.play();
-                        console.log('lap 22222222222');
+                        // console.log('lap 22222222222');
                     } else if (position.lap === 3) {
                         // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animLap3);
-                        this.fanfare.raceFont.animLap3.setLoop(0,1);
-                        this.fanfare.raceFont.animLap3.timeScale = 62;
-                        this.fanfare.raceFont.animLap3.play();
-                        console.log('lap 33333333333');
-                    } else if (position.lap === 4) {
+                    //     this.fanfare.raceFont.animLap3.setLoop(0,1);
+                    //     this.fanfare.raceFont.animLap3.timeScale = 42;
+                    //     this.fanfare.raceFont.animLap3.play();
+                    //     console.log('lap 33333333333');
+                    // } else if (position.lap === 4) {
                         // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animLapFinal);
                         this.fanfare.raceFont.animLapFinal.setLoop(0,1);
-                        this.fanfare.raceFont.animLapFinal.timeScale= 62;
+                        // this.fanfare.raceFont.animLapFinal.timeScale= 42;
                         this.fanfare.raceFont.animLapFinal.play();
-                        console.log('lap FFIINNAALL');
+                        // console.log('lap FFIINNAALL');
                     }
-                    console.log(`newLap ${position.lap}`);
+                    // console.log(`newLap ${position.lap}`);
                     if (position.lap > this.lapCount) this.raceFinish();
                 }
 
-                console.log(`currentGate: ${position.gateId}`);
+                // console.log(`currentGate: ${position.gateId}`);
                 position.gateId = (position.gateId + 1 ) % (this.raceGates.length);
-                console.log(`nextGate: ${position.gateId}`);
+                // console.log(`nextGate: ${position.gateId}`);
             }
             // console.log(position.gateId)
 
@@ -137,10 +137,10 @@ export class RaceManager {
     }
 
     raceFinish(){
-        console.log('!race finished!');
+        // console.log('!race finished!');
         // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animFinish);
         this.fanfare.raceFont.animFinish.setLoop(0,1);
-        this.fanfare.raceFont.animFinish.timeScale = 62;
+        // this.fanfare.raceFont.animFinish.timeScale = 42;
         this.fanfare.raceFont.animFinish.play();
     }
 }
