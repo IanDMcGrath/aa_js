@@ -2,11 +2,11 @@ live link: https://www.ians.tech/machblitz-racing
 
 Background
 
-With a bachelor's in Virtual Technologies & Design (read: 3D generalist) and no good barrier between work and life, I plan to make a battle racing game. Building models and materials will take no time. This will be completely about learning to use three.js api with JavaScript. I will attempt to iterate fast to deliver a game that at least doesn't hurt to look at or play.
+With a bachelor's in Virtual Technologies & Design (read: 3D generalist) and no good barrier between work and life, I plan to make a battle racing game. Building models and materials will take no time. This will be completely about learning to use Three.js api with JavaScript. I will attempt to iterate fast to deliver a game that at least doesn't hurt to look at or play.
 
 
 
-beans line - You've got the furious must for fast. Choose the speed which dictates the win. Push buttons, Do moves. All oppositers tremble. 
+You've got the furious must for fast. Choose the speed which dictates the win. Push buttons, Do moves. All oppositers tremble.
 
 Functionality & MVPs
 
@@ -16,7 +16,7 @@ MVPs
 - Displayed timer in HUD
 - Displayed final time after crossing finishline
 
-full feature list
+future feature list
 - Race starts and you drive
 - Steer expertly to stay on the road
 - Shove other drivers or get shoved
@@ -58,7 +58,7 @@ Technologies, Libraries, APIs
 	- Material authoring
 	- https://www.substance3d.com/
 	- Sébastien Deguy
-	
+
 * Photoshop
 
 * Audition
