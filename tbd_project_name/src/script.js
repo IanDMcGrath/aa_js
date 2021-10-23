@@ -56,20 +56,20 @@ const matRoad = new MeshMatcapMaterial();
 matRoad.map = textureLoader.load('environment/road/roadTexture.jpg');
 
 const matRails = new MeshPhongMaterial({
-    map : textureLoader.load('environment/road/roadGuardRail.png'),
-    emissive : new Color(0xFFFFFF),
-    emissiveMap : textureLoader.load('environment/road/roadGuardRailEmissive.jpg'),
-    emissiveIntensity : 1,
-    alphaMap : textureLoader.load('environment/road/roadGuardRailAlpha.jpg'),
-    transparent : true,
-    alphaTest : 0.5
+  map : textureLoader.load('environment/road/roadGuardRail.png'),
+  emissive : new Color(0xFFFFFF),
+  emissiveMap : textureLoader.load('environment/road/roadGuardRailEmissive.jpg'),
+  emissiveIntensity : 1,
+  alphaMap : textureLoader.load('environment/road/roadGuardRailAlpha.jpg'),
+  transparent : true,
+  alphaTest : 0.5
 });
 // console.log(matRails);
 
-function meshesMaterial(meshArr=[], material) {
-    for (let i=0; i<meshArr.length; i++) {
-        meshArr[i].material = material;
-    }
+function meshesMaterial(meshArr=[], material=null) {
+  for (let i=0; i<meshArr.length; i++) {
+    meshArr[i].material = material;
+  }
 }
 
 
@@ -96,206 +96,208 @@ function meshesMaterial(meshArr=[], material) {
 // } );
 
 function addWalls() {
-    gltfLoader.load('./environment/road/track01_walls.gltf', function ( gltf ) {
-        let walls = gltf.scene;
-        walls.scale.set(1,1,1);
+  gltfLoader.load('./environment/road/track01_walls.gltf', function ( gltf ) {
+    let walls = gltf.scene;
+    walls.scale.set(1,1,1);
 
-        // meshesMaterial(walls.children, matRails)
-        walls.visible = false;
+    // meshesMaterial(walls.children, matRails)
+    walls.visible = false;
 
-        arrColliders.walls = walls;
-        scene.add( walls );
-        
-    }, undefined, function ( error ) {
-        console.error( error );
-    });
+    arrColliders.walls = walls;
+    scene.add( walls );
+
+  }, undefined, function ( error ) {
+    console.error( error );
+  });
 }
 addWalls();
 
 function addEnv() {
-    gltfLoader.load('./environment/road/track01_env.gltf', function ( gltf ) {
-        let env = gltf.scene;
-        env.scale.set(1,1,1);
+  gltfLoader.load('./environment/road/track01_env.gltf', function ( gltf ) {
+    let env = gltf.scene;
+    env.scale.set(1,1,1);
 
-        // console.log(gltf.scene)
+    // console.log(gltf.scene)
 
-        let roadParent = undefined;
-        let gateParent = undefined;
-        let startingLine = undefined;
-        // let i=0;
-        // while (i<gltf.scene.children.length && !(roadParent && gateParent)) {
-        for (let i=0; i<gltf.scene.children.length; i++) {
-            let obj = gltf.scene.children[i];
-            // if (gltf.scene.children[i].name === "roadGroupParent") {
-            //     roadParent = gltf.scene.children[i];
-            // } else if (gltf.scene.children[i].name === "gateGroupParent") {
-            //     gateParent = gltf.scene.children[i];
-            // } 
-            // console.log(obj)
-            switch(obj.name) {
-                case "roadGroupParent":
-                    roadParent = obj;
-                    break;
-                case "gateGroupParent":
-                    gateParent = obj;
-                    break;
-                case "raceStartingLine":
-                    startingLine = obj;
-                default:
-            }
-        }
-        if (startingLine) {
-            let mat = startingLine.material;
-            mat.map = textureLoader.load('environment/road/checker.jpg');
-            mat.map.wrapS = RepeatWrapping;
-            mat.map.wrapT = RepeatWrapping;
-            mat.map.magFilter = NearestFilter;
-            startingLine.scale.set(-1,1,-1);
-            mat.emissive = new Color(0xFFFFFF)
-            mat.emissiveMap = mat.map;
-            mat.emissiveIntensity = .7;
-        }
-        if (gateParent) arrRaceGates.gates = gateParent.children;
-        if (roadParent) meshesMaterial(roadParent.children, matRails);
-        scene.add(env);
+    let roadParent = null;
+    let gateParent = null;
+    let startingLine = null;
+    // let i=0;
+    // while (i<gltf.scene.children.length && !(roadParent && gateParent)) {
+    for (let i=0; i<gltf.scene.children.length; i++) {
+      let obj = gltf.scene.children[i];
+      // if (gltf.scene.children[i].name === "roadGroupParent") {
+      //     roadParent = gltf.scene.children[i];
+      // } else if (gltf.scene.children[i].name === "gateGroupParent") {
+      //     gateParent = gltf.scene.children[i];
+      // }
+      // console.log(obj)
+      switch(obj.name) {
+        case "roadGroupParent":
+          roadParent = obj;
+          break;
+        case "gateGroupParent":
+          gateParent = obj;
+          break;
+        case "raceStartingLine":
+          startingLine = obj;
+          break;
+        default: break;
+      }
+    }
+    if (startingLine) {
+      let mat = startingLine.material;
+      mat.map = textureLoader.load('environment/road/checker.jpg');
+      mat.map.wrapS = RepeatWrapping;
+      mat.map.wrapT = RepeatWrapping;
+      mat.map.magFilter = NearestFilter;
+      startingLine.scale.set(-1,1,-1);
+      mat.emissive = new Color(0xFFFFFF);
+      mat.emissiveMap = mat.map;
+      mat.emissiveIntensity = 0.7;
+    }
+    if (gateParent) arrRaceGates.gates = gateParent.children;
+    if (roadParent) meshesMaterial(roadParent.children, matRails);
+    scene.add(env);
 
-    }, undefined, function ( error ) {
-        console.error( error );
-    });
+  }, undefined, function ( error ) {
+    console.error( error );
+  });
 }
 addEnv();
 
 function addRoad() {
-    gltfLoader.load( './environment/road/track01_road.gltf', function ( gltf ) {
-        let road = gltf.scene;
-        // road.castShadow = true;
-        // road.receiveShadow = true;
-        road.scale.set(1,1,1);
+  gltfLoader.load( './environment/road/track01_road.gltf', function ( gltf ) {
+    let road = gltf.scene;
+    // road.castShadow = true;
+    // road.receiveShadow = true;
+    road.scale.set(1,1,1);
 
-        meshesMaterial(road.children, matRoad);
+    meshesMaterial(road.children, matRoad);
 
-        // console.log('road vvv')
-        // console.log(gltf.scene.children[31].name)
+    // console.log('road vvv')
+    // console.log(gltf.scene.children[31].name)
 
-        let dirt = undefined;
-        for (let i=0; i<gltf.scene.children.length; i++) {
-            let obj = gltf.scene.children[i];
-            switch(obj.name) {
-                case "dirt":
-                    dirt = obj;
-                default:
-            }
-        }
-        if (dirt) {
-            dirt.material = new MeshPhysicalMaterial();
-            let mat = dirt.material;
-            mat.map = textureLoader.load("./environment/ground/dirt_grass_basecolor.jpg");
-            mat.map.wrapS = RepeatWrapping;
-            mat.map.wrapT = RepeatWrapping;
-            mat.normalMap = textureLoader.load("./environment/ground/dirt_grass_normal.jpg");
-            mat.normalMap.wrapS = RepeatWrapping;
-            mat.normalMap.wrapT = RepeatWrapping;
-        }
-        
-        // road.layers.enable(1);
-        // road.layers.set(1);
-        arrColliders.road = road;
-        scene.add( road );
-        
-    }, undefined, function ( error ) {
-        console.error( error );
-    } );
+    let dirt = null;
+    for (let i=0; i<gltf.scene.children.length; i++) {
+      let obj = gltf.scene.children[i];
+      switch(obj.name) {
+        case "dirt":
+          dirt = obj;
+          break;
+        default:
+      }
+    }
+    if (dirt) {
+      dirt.material = new MeshPhysicalMaterial();
+      let mat = dirt.material;
+      mat.map = textureLoader.load("./environment/ground/dirt_grass_basecolor.jpg");
+      mat.map.wrapS = RepeatWrapping;
+      mat.map.wrapT = RepeatWrapping;
+      mat.normalMap = textureLoader.load("./environment/ground/dirt_grass_normal.jpg");
+      mat.normalMap.wrapS = RepeatWrapping;
+      mat.normalMap.wrapT = RepeatWrapping;
+    }
+
+    // road.layers.enable(1);
+    // road.layers.set(1);
+    arrColliders.road = road;
+    scene.add( road );
+
+  }, undefined, function ( error ) {
+    console.error( error );
+  } );
 }
 addRoad();
 
 function addRacer() {
-    gltfLoader.load( './vehicle/vehicle.glb', function ( gltf ) {
-        let mesh = gltf.scene;
-        // console.log('addRacer');
-        // console.log(gltf.scene);
-        let mat = mesh.children[1].material;
-        let texColor = textureLoader.load("./vehicle/vehicle_BaseColor.jpg");
-        texColor.flipY = false;
-        mat.map = texColor;
-        mat.emissiveMap = texColor;
-        mat.emissive = new Color(0xFFFFFF);
-        mat.emissiveIntensity = 0.75;
-        // mesh.castShadow = true;
-        // mesh.receiveShadow = true;
-        // console.log(mesh);
-        mesh.scale.set(1,1,1);
-        // mesh.material = material;
-        scene.add( mesh );
-        let racer = new Vehicle(gltf);
-        
-        arrRacers.push(racer);
-    }, undefined, function ( error ) {
-        console.error( error );
-    } );
+  gltfLoader.load( './vehicle/vehicle.glb', function ( gltf ) {
+    let mesh = gltf.scene;
+    // console.log('addRacer');
+    // console.log(gltf.scene);
+    let mat = mesh.children[1].material;
+    let texColor = textureLoader.load("./vehicle/vehicle_BaseColor.jpg");
+    texColor.flipY = false;
+    mat.map = texColor;
+    mat.emissiveMap = texColor;
+    mat.emissive = new Color(0xFFFFFF);
+    mat.emissiveIntensity = 0.75;
+    // mesh.castShadow = true;
+    // mesh.receiveShadow = true;
+    // console.log(mesh);
+    mesh.scale.set(1,1,1);
+    // mesh.material = material;
+    scene.add( mesh );
+    let racer = new Vehicle(gltf);
+
+    arrRacers.push(racer);
+  }, undefined, function ( error ) {
+    console.error( error );
+  } );
 }
-addRacer(); 
+addRacer();
 
 function assignRacerColliders() {
-    if (arrColliders.road && arrColliders.walls) {      // check that both colliders were loaded and exist
-        for (let i=0; i<arrRacers.length; i++) {        // pass references of colliders to racers
-            arrRacers[i].road = arrColliders.road;
-            arrRacers[i].walls = arrColliders.walls;
-        }
+  if (arrColliders.road && arrColliders.walls) {      // check that both colliders were loaded and exist
+    for (let i=0; i<arrRacers.length; i++) {        // pass references of colliders to racers
+      arrRacers[i].road = arrColliders.road;
+      arrRacers[i].walls = arrColliders.walls;
     }
+  }
 }
 
 // sound and visual effects for other classes to use
 const fanfare = {};
 function addRaceFont() {
-    gltfLoader.load('./fanfare/race_start/raceFont.gltf', function (gltf) {
-        fanfare.raceFont = gltf;
-        gltf.scene.scale.set(10,10,10);
-        gltf.scene.position.set(70,0,0);
-        // console.log(fanfare.raceFont);
-        raceManager.fanfare.raceFont = {};
-        raceManager.fanfare.raceFont.obj = gltf;
+  gltfLoader.load('./fanfare/race_start/raceFont.gltf', function (gltf) {
+    fanfare.raceFont = gltf;
+    gltf.scene.scale.set(10,10,10);
+    gltf.scene.position.set(70,0,0);
+    // console.log(fanfare.raceFont);
+    raceManager.fanfare.raceFont = {};
+    raceManager.fanfare.raceFont.obj = gltf;
 
-        gltf.scene.rotation.set(0,Math.PI * 0.5,0);
-        
+    gltf.scene.rotation.set(0,Math.PI * 0.5,0);
 
-        const animMixer = new AnimationMixer(gltf.scene);
-        const animAction = animMixer.clipAction(gltf.animations[0]);
-        raceManager.fanfare.raceFont.animMixer = animMixer;
-        raceManager.fanfare.raceFont.animCountdown = animMixer.clipAction(gltf.animations[0]);
-        raceManager.fanfare.raceFont.animFinish = animMixer.clipAction(gltf.animations[1]);
-        raceManager.fanfare.raceFont.animLapFinal = animMixer.clipAction(gltf.animations[2]);
-        raceManager.fanfare.raceFont.animLap3 = animMixer.clipAction(gltf.animations[3]);
-        raceManager.fanfare.raceFont.animLap2 = animMixer.clipAction(gltf.animations[4]);
-        console.log(raceManager.fanfare);
-        // animAction.timeScale = 42;
-        // animAction.play();
-        animMixers.push(animMixer);
 
-        console.log('add race font: ');
-        console.log(gltf);
-        // gltf.scene.children[0].children[5].material = matRails
-        let mat = gltf.scene.children[0].children[8].material;
-        let texMap = textureLoader.load('fanfare/race_start/racingFont.jpg');
-        texMap.magFilter = NearestFilter;
-        texMap.flipY = false;
-        mat.map = texMap;
-        mat.alphaMap = textureLoader.load('fanfare/race_start/racingFontAlpha.jpg');
-        mat.alphaMap.flipY = false;
-        mat.transparent = true;
-        mat.alphaTest = 0.5;
-        // console.log(mat.map)
-        mat.needsUpdate = true;
-        // mat.color = new Color(0xFFFFFF)
-        mat.emissive = new Color(0xFFFFFF);
-        mat.emissiveMap = texMap;
-        mat.emissiveIntensity = 1;
-        mat.reflectivity = 0;
-        // mat.map.offset = [1,1];
+    const animMixer = new AnimationMixer(gltf.scene);
+    const animAction = animMixer.clipAction(gltf.animations[0]);
+    raceManager.fanfare.raceFont.animMixer = animMixer;
+    raceManager.fanfare.raceFont.animCountdown = animMixer.clipAction(gltf.animations[0]);
+    raceManager.fanfare.raceFont.animFinish = animMixer.clipAction(gltf.animations[1]);
+    raceManager.fanfare.raceFont.animLapFinal = animMixer.clipAction(gltf.animations[2]);
+    raceManager.fanfare.raceFont.animLap3 = animMixer.clipAction(gltf.animations[3]);
+    raceManager.fanfare.raceFont.animLap2 = animMixer.clipAction(gltf.animations[4]);
+    console.log(raceManager.fanfare);
+    // animAction.timeScale = 42;
+    // animAction.play();
+    animMixers.push(animMixer);
 
-        scene.add(gltf.scene);
-    }, undefined, function ( error ) {
-        console.error( error );
-    });
+    console.log('add race font: ');
+    console.log(gltf);
+    // gltf.scene.children[0].children[5].material = matRails
+    let mat = gltf.scene.children[0].children[8].material;
+    let texMap = textureLoader.load('fanfare/race_start/racingFont.jpg');
+    texMap.magFilter = NearestFilter;
+    texMap.flipY = false;
+    mat.map = texMap;
+    mat.alphaMap = textureLoader.load('fanfare/race_start/racingFontAlpha.jpg');
+    mat.alphaMap.flipY = false;
+    mat.transparent = true;
+    mat.alphaTest = 0.5;
+    // console.log(mat.map)
+    mat.needsUpdate = true;
+    // mat.color = new Color(0xFFFFFF)
+    mat.emissive = new Color(0xFFFFFF);
+    mat.emissiveMap = texMap;
+    mat.emissiveIntensity = 1;
+    mat.reflectivity = 0;
+    // mat.map.offset = [1,1];
+
+    scene.add(gltf.scene);
+  }, undefined, function ( error ) {
+    console.error( error );
+  });
 }
 addRaceFont();
 
@@ -320,8 +322,8 @@ addRaceFont();
 
 // Lights
 
-const hlight = new AmbientLight(0xD4FBF9,.5);
-hlight.position.set(.5,.5,.5);
+const hlight = new AmbientLight(0xD4FBF9,0.5);
+hlight.position.set(0.5,0.5,0.5);
 
 // console.log(hlight)
 scene.add(hlight);
@@ -333,7 +335,7 @@ scene.add(hlight);
 // scene.add(pointLight);
 
 const directionalLight = new DirectionalLight(0xFAF3C0,1);
-directionalLight.position.set(-1,.5,.5);
+directionalLight.position.set(-1,0.5,0.5);
 // directionalLight.castShadow = true;
 scene.add(directionalLight);
 
@@ -341,24 +343,24 @@ scene.add(directionalLight);
  * Sizes
  */
 const sizes = {
-    width: Util.clampFMax(window.innerWidth, 1200),
-    height: Util.clampFMax(window.innerHeight, 700)
+  width: Util.clampFMax(window.innerWidth, 1200),
+  height: Util.clampFMax(window.innerHeight, 700)
 };
 
 window.addEventListener('resize', () =>
 {
-    // Update sizes
-    sizes.width = Util.clampFMax(window.innerWidth, 1200);
-    sizes.height = Util.clampFMax(window.innerHeight, 700);
+  // Update sizes
+  sizes.width = Util.clampFMax(window.innerWidth, 1200);
+  sizes.height = Util.clampFMax(window.innerHeight, 700);
 
-    // Update camera
-    camera.aspect = sizes.width / sizes.height;
-    camera.updateProjectionMatrix();
+  // Update camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
 
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-})
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
 
 /**
  * Camera
@@ -380,26 +382,26 @@ scene.add(camera);
  */
 const renderer = new WebGLRenderer({
     canvas: canvas
-})
+});
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const myVector = new Vector3(50,0,0);
 // render iterators
 function renderRacers(deltaTime) {
-    for (let i=0; i<arrRacers.length; i++) {
-        arrRacers[i].move(deltaTime);
-        // arrRacers[i].position.x = clock.getElapsedTime();
-    }
-    // if (arrRacers[0]) playCam.lookAt(arrRacers[0].position);
-    // if (arrRacers[0]) playCam.obj.lookAt(myVector);
-    // console.log(playCam.lookatTarget)
+  for (let i=0; i<arrRacers.length; i++) {
+    arrRacers[i].move(deltaTime);
+    // arrRacers[i].position.x = clock.getElapsedTime();
+  }
+  // if (arrRacers[0]) playCam.lookAt(arrRacers[0].position);
+  // if (arrRacers[0]) playCam.obj.lookAt(myVector);
+  // console.log(playCam.lookatTarget)
 }
 
 function renderSky() {
-    for (let i=0; i<arrRacers.length; i++) {
-        arrSky[i].position.set(camera.position.x,camera.position.y,camera.position.z);
-    }
+  for (let i=0; i<arrRacers.length; i++) {
+    arrSky[i].position.set(camera.position.x,camera.position.y,camera.position.z);
+  }
 }
 
 /**
@@ -408,139 +410,139 @@ function renderSky() {
 const clock = new Clock();
 
  function animate(deltaTime) {
-    for (let i=0; i<animMixers.length; i++) {
-        animMixers[i].update(deltaTime) // FIX THE TIME DILATION FOR ANIM IMPORT
-    }
+  for (let i=0; i<animMixers.length; i++) {
+    animMixers[i].update(deltaTime); // FIX THE TIME DILATION FOR ANIM IMPORT
+  }
 }
 
 
 const arrows = [];
 function addArrows() {
-    // vehicle Y (up)
-    let arrow = new ArrowHelper(new Vector3(0,1,0), arrRacers[0].position, 5, new Color("rgb(0,255,0)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+  // vehicle Y (up)
+  let arrow = new ArrowHelper(new Vector3(0,1,0), arrRacers[0].position, 5, new Color("rgb(0,255,0)"), 0.5);
+  arrows.push(arrow);
+  scene.add(arrow);
 
-    // vehicle Z (forward)
-    arrow = new ArrowHelper(new Vector3(0,0,1), arrRacers[0].position, 5, new Color("rgb(0,0,255)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+  // vehicle Z (forward)
+  arrow = new ArrowHelper(new Vector3(0,0,1), arrRacers[0].position, 5, new Color("rgb(0,0,255)"), 0.5);
+  arrows.push(arrow);
+  scene.add(arrow);
 
-    // vehicle X (right)
-    arrow = new ArrowHelper(new Vector3(1,0,0), arrRacers[0].position, 5, new Color("rgb(255,0,0)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+  // vehicle X (right)
+  arrow = new ArrowHelper(new Vector3(1,0,0), arrRacers[0].position, 5, new Color("rgb(255,0,0)"), 0.5);
+  arrows.push(arrow);
+  scene.add(arrow);
 
-    // vehicle floor trace (down) 1
-    arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+  // vehicle floor trace (down) 1
+  arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
+  arrows.push(arrow);
+  scene.add(arrow);
 
-    // gravity direction
-    arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(0,0,255)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+  // gravity direction
+  arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(0,0,255)"), 0.5);
+  arrows.push(arrow);
+  scene.add(arrow);
 
-    // // vehicle floor trace (down) 2
-    // arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
-    // arrows.push(arrow);
-    // scene.add(arrow);
+  // // vehicle floor trace (down) 2
+  // arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
+  // arrows.push(arrow);
+  // scene.add(arrow);
 
-    // // vehicle floor trace (down) 3
-    // arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
-    // arrows.push(arrow);
-    // scene.add(arrow);
+  // // vehicle floor trace (down) 3
+  // arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
+  // arrows.push(arrow);
+  // scene.add(arrow);
 
-    // vehicle front trace 
-    arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
-    arrows.push(arrow);
-    scene.add(arrow);
+  // vehicle front trace
+  arrow = new ArrowHelper(new Vector3(), arrRacers[0].position, arrRacers[0].raycaster1.far, new Color("rgb(255,255,0)"), 0.5);
+  arrows.push(arrow);
+  scene.add(arrow);
 
 }
 
 function moveArrows() {
-    for (let i=0; i<arrows.length; i++) {
-        // arrows[i].position.set(arrRacers[0].position);
-        arrows[i].position.x = arrRacers[0].position.x;
-        arrows[i].position.y = arrRacers[0].position.y;
-        arrows[i].position.z = arrRacers[0].position.z;
-    }
-    // arrows[0].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(0,-1,0)).normalize());
-    // arrows[1].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(1,0,0)).normalize());
-    // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(0,0,1)).normalize());
-    // arrows[3].rotation.setFromQuaternion(new Quaternion().setFromUnitVectors(new Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
-    arrows[3].setDirection(arrRacers[0].floorTraceCenter.direction.clone());
-    arrows[4].setDirection(arrRacers[0].gravityDir.clone());
-    arrows[5].setDirection(arrRacers[0].forwardDir.clone());
-    // arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
-    // arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
-    // arrows[4].rotation.setFromQuaternion(new Quaternion().setFromUnitVectors(new Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
+  for (let i=0; i<arrows.length; i++) {
+    // arrows[i].position.set(arrRacers[0].position);
+    arrows[i].position.x = arrRacers[0].position.x;
+    arrows[i].position.y = arrRacers[0].position.y;
+    arrows[i].position.z = arrRacers[0].position.z;
+  }
+  // arrows[0].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(0,-1,0)).normalize());
+  // arrows[1].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(1,0,0)).normalize());
+  // arrows[2].rotation.setFromQuaternion(arrRacers[0].rotation.clone().multiply(new Quaternion(0,0,1)).normalize());
+  // arrows[3].rotation.setFromQuaternion(new Quaternion().setFromUnitVectors(new Vector3(0,1,0), arrRacers[0].floorTrace.direction.clone()));
+  arrows[3].setDirection(arrRacers[0].floorTraceCenter.direction.clone());
+  arrows[4].setDirection(arrRacers[0].gravityDir.clone());
+  arrows[5].setDirection(arrRacers[0].forwardDir.clone());
+  // arrows[4].setDirection(arrRacers[0].floorTraceFront.direction.clone());
+  // arrows[5].setDirection(arrRacers[0].floorTraceBack.direction.clone());
+  // arrows[4].rotation.setFromQuaternion(new Quaternion().setFromUnitVectors(new Vector3(0,1,0), arrRacers[0].gravityDir.clone()));
 
 
-    arrows[3].position.set(...arrRacers[0].floorTraceCenter.origin.toArray());
-    arrows[4].position.set(...arrRacers[0].position.clone().add(new Vector3(0,5,0)).toArray());
-    // arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
-    // arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
-    // console.log(arrows[3].position);
+  arrows[3].position.set(...arrRacers[0].floorTraceCenter.origin.toArray());
+  arrows[4].position.set(...arrRacers[0].position.clone().add(new Vector3(0,5,0)).toArray());
+  // arrows[4].position.set(...arrRacers[0].floorTraceFront.origin.toArray());
+  // arrows[5].position.set(...arrRacers[0].floorTraceBack.origin.toArray());
+  // console.log(arrows[3].position);
 }
 
 
 const tick = () =>
 {
-    const deltaTime = clock.getDelta();
-    // const elapsedTime = clock.getElapsedTime();
-    // Update objects
-    // console.log(skysphere.scene)
-    // skysphere.scene.position.set(camera.position.x,camera.position.y,camera.position.z - 50)
-    // renderSky();
-    // playCam.obj.lookAt(arrRacers[0].position)
-    renderRacers(deltaTime);
-    raceManager.updatePositions();
-    playCam.move(deltaTime);
-    // moveArrows();
+  const deltaTime = clock.getDelta();
+  // const elapsedTime = clock.getElapsedTime();
+  // Update objects
+  // console.log(skysphere.scene)
+  // skysphere.scene.position.set(camera.position.x,camera.position.y,camera.position.z - 50)
+  // renderSky();
+  // playCam.obj.lookAt(arrRacers[0].position)
+  renderRacers(deltaTime);
+  raceManager.updatePositions();
+  playCam.move(deltaTime);
+  // moveArrows();
 
-    animate(deltaTime);
-    
-    renderer.render(scene, camera);
-    // Update Orbital Controls
-    // controls.update()
-    // camera.rotateOnAxis.y = .1 * elapsedTime
-    // camera.rotation.set(0,0,0) // 1 * elapsedTime
-    
-    
-    // Render
-    
+  animate(deltaTime);
 
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick);
-}    
+  renderer.render(scene, camera);
+  // Update Orbital Controls
+  // controls.update()
+  // camera.rotateOnAxis.y = .1 * elapsedTime
+  // camera.rotation.set(0,0,0) // 1 * elapsedTime
+
+
+  // Render
+
+
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick);
+};
 
 var prepTick = setInterval(tryTick, 100);
 
 function tryTick() {
-    console.log("Trying to start tick") // A catch-all solution to waiting on the player's vehicle to be ready
+  console.log("Trying to start tick"); // A catch-all solution to waiting on the player's vehicle to be ready
 
-    assignRacerColliders(); // pass references of the roads/walls to all racers
+  assignRacerColliders(); // pass references of the roads/walls to all racers
 
-    if (arrRacers[0] && arrRacers[0].walls && arrRaceGates.gates) {
-        clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
+  if (arrRacers[0] && arrRacers[0].walls && arrRaceGates.gates) {
+    clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
 
-        arrRacers[0].isPlayer = true;
-        // arrRacers[0].bindControls();
-        playCam.player = arrRacers[0];
-        arrRacers[0].cam = playCam;
+    arrRacers[0].isPlayer = true;
+    // arrRacers[0].bindControls();
+    playCam.player = arrRacers[0];
+    arrRacers[0].cam = playCam;
 
-        raceManager.racers = arrRacers;
-        raceManager.rotation = new Quaternion(0,1,0)
-        raceManager.raceGates = arrRaceGates.gates;
-        raceManager.sortRaceGates();
-        raceManager.raceLineup();
-        // raceManager.raceCountdown();
-        
-        // addArrows(); // debugger
-        console.log("Tick started")
-        tick()
-    }    
-}    
+    raceManager.racers = arrRacers;
+    raceManager.rotation = new Quaternion(0,1,0);
+    raceManager.raceGates = arrRaceGates.gates;
+    raceManager.sortRaceGates();
+    raceManager.raceLineup();
+    // raceManager.raceCountdown();
+
+    // addArrows(); // debugger
+    console.log("Tick started");
+    tick();
+  }
+}
 
 // it's math
