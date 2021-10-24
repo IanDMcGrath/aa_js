@@ -246,3 +246,9 @@ div#game-viewport:fullscreen > canvas.webgl {
   width: 100%;
   height: 100%;
 }
+
+.racer-speed-bar-fill {
+  /* content: url('../static/widgets/progress_bar/progress_bar_fill.png'); */
+  mask-image: url('../static/widgets/progress_bar/progress_bar_flow.png');
+  opacity: 80%;
+}

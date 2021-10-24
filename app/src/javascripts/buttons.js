@@ -2,8 +2,6 @@
 const fullscreenButton = document.querySelector("#button-fullscreen");
 const canvas = document.querySelector('canvas');
 const hud = document.querySelector('.mid');
-console.log('was the hud found ?:...');
-console.log(hud);
 
 const fullscreenClick = e => {
   e.stopPropagation();
@@ -20,8 +18,8 @@ const getCursorPosition = (canvas, event) => {
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  console.log("x: " + x + " y: " + y);
-  clickButton([x, y]);
+  // console.log("x: " + x + " y: " + y);
+  // clickButton([x, y]);
 };
 
 canvas.addEventListener('mousedown', function (e) {
