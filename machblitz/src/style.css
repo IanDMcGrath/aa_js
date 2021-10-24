@@ -243,6 +243,6 @@ div.bottom {
 }
 
 div#game-viewport:fullscreen > canvas.webgl {
-  width: 200%;
+  width: 100%;
   height: 100%;
 }
