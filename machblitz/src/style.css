@@ -238,7 +238,7 @@ div.bottom {
   height: 100%;
   width: 100%;
   position: absolute;
-  /* top: -100%; */
+  top: 0%;
   z-index: 11;
 }
 
