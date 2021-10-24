@@ -3,7 +3,7 @@ import './style.css';
 // import * as THREE from 'three';
 import {TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial, Mesh} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-// import * as dat from 'dat.gui';
+import * as dat from 'dat.gui';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
@@ -350,8 +350,13 @@ const sizes = {
 window.addEventListener('resize', () =>
 {
   // Update sizes
-  sizes.width = Util.clampFMax(window.innerWidth, 1200);
-  sizes.height = Util.clampFMax(window.innerHeight, 700);
+  if (isFullscreen) {
+    sizes.width = screen.width;
+    sizes.height = screen.height;
+  } else {
+    sizes.width = Util.clampFMax(window.innerWidth, 1200);
+    sizes.height = Util.clampFMax(window.innerHeight, 700);
+  }
 
   // Update camera
   camera.aspect = sizes.width / sizes.height;
@@ -362,6 +367,37 @@ window.addEventListener('resize', () =>
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+let isFullscreen = false;
+const gameViewport = document.querySelector('#game-viewport');
+gameViewport.addEventListener('fullscreenchange', () => { // set the resolution when maximizing / windowing the viewport // needs testing on windows machine
+  console.log('fullscreen status changed');
+  if (document.fullscreenElement) {
+    sizes.width = screen.width;
+    sizes.height = screen.height;
+    isFullscreen = true;
+  } else {
+    sizes.width = Util.clampFMax(window.innerWidth, 1200);
+    sizes.height = Util.clampFMax(window.innerHeight, 700);
+    isFullscreen = false;
+  }
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+// const ctx = canvas.getContext("webgl");
+// import buttons from "./javascripts/buttons";
+// const buttonExitFullscreen = buttons.exitFullscreen;
+// let img = document.createElement('img');
+// img.src = 'icons/expand.png';
+// buttonExitFullscreen.img = img;
+// const drawWidgets = () => {
+//   if (isFullscreen) {
+//     let {pos, size, img} = buttonExitFullscreen;
+//     void ctx.drawImage(img, pos[0], pos[1], size[0], size[1]);
+//   }
+// };
 /**
  * Camera
  */
@@ -490,6 +526,7 @@ function moveArrows() {
 const tick = () =>
 {
   const deltaTime = clock.getDelta();
+  // drawWidgets();
   // const elapsedTime = clock.getElapsedTime();
   // Update objects
   // console.log(skysphere.scene)

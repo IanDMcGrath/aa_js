@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap" rel="stylesheet">
   <title>aa js project</title>
 </head>
@@ -18,7 +19,13 @@
     <div class="top">
       <h1>MACH-BLITZ</h1>
     </div>
-    <div class="mid"><canvas class="webgl fullscreen"></canvas></div>
+    <div class="mid" id="game-viewport">
+      <canvas class="webgl"></canvas>
+      <div id="hud" class="hud">
+        <div class="button" id="button-fullscreen"><i class="fa fa-expand" style="font-size:24px"></i></div>
+      </div>
+      <script src="./javascripts/buttons.js"></script>
+    </div>
     <div class="bottom">
       <div class="group1">
         <h2 class="controls">CONTROLS</h2>

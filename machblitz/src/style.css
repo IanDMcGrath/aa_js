@@ -49,6 +49,12 @@ table {
 
 /* ^^^^ CSS RESET ^^^ */
 
+:root {
+  --white: rgb(241, 241, 241);
+  --white2: rgba(255, 255, 255, 0.281);
+  --screen: rgba(0, 0, 0, 0.247);
+}
+
 html, body {
   height: 100vh;
   width: 100vw;
@@ -65,6 +71,7 @@ html, body {
 a {
   color: white;
   text-decoration: none;
+  cursor: pointer;
 }
 
 li {
@@ -149,15 +156,15 @@ div.bottom {
   justify-content: space-between;
 }
 
-/* .mid {
-  width: 100px;
-  height: 100px;
-} */
+.animated-fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
 
-.fullscreen {
+/* DOP BUT HERE FOR REFERENCE */
+/* .animated-fullscreen {
   animation-name: fullscreen;
   animation-duration: 1s;
-  /* animation: 3s ease-in 1s 2 reverse both paused fullscreen; */
 }
 
 @keyframes fullscreen {
@@ -166,8 +173,8 @@ div.bottom {
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    width: 70vw;
-    height: 70vh;
+    width: 1vw;
+    height: 1vh;
   }
 
   to {
@@ -180,3 +187,62 @@ div.bottom {
   }
 }
 
+.animated-smallscreen {
+  animation-name: smallscreen;
+  animation-duration: 1s;
+}
+
+@keyframes smallscreen {
+  from {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 100vw;
+    height: 100vh;
+  }
+
+  to {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 1vw;
+    height: 1vh;
+  }
+} */
+
+#button-fullscreen, #button-exitfullscreen{
+  border: solid 0.05rem var(--white2);
+  background-color: var(--screen);
+  height: 2rem;
+  width: 2rem;
+  z-index: 11;
+  position: absolute;
+  top:0%;
+  right:0%;
+  /* transform: translateX(10%) translateY(100%); */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-viewport {
+  width: 1200px;
+  height: 700px;
+  position: absolute;
+}
+
+#hud {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  /* top: -100%; */
+  z-index: 11;
+}
+
+div#game-viewport:fullscreen > canvas.webgl {
+  width: 200%;
+  height: 100%;
+}
