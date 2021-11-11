@@ -16,13 +16,13 @@ export class RaceManager {
     this.racerPositions = [];
     this.lapCount = 3;
     this.fanfare = {
-        raceFont: undefined
+      raceFont: undefined
     };
     this.elapsedTime = 0;
     // this.racerPosition = {
-    //     racerId: 0,
-    //     gateId: 0,
-    //     distance: 0
+      // racerId: 0,
+      // gateId: 0,
+      // distance: 0
     // };
   }
 
@@ -116,11 +116,11 @@ export class RaceManager {
             this.fanfare.raceFont.animLap2.play();
             // console.log('lap 22222222222');
           } else if (position.lap === 3) {
-              // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animLap3);
-          //     this.fanfare.raceFont.animLap3.setLoop(0,1);
-          //     this.fanfare.raceFont.animLap3.timeScale = 42;
-          //     this.fanfare.raceFont.animLap3.play();
-          //     console.log('lap 33333333333');
+            // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animLap3);
+            // this.fanfare.raceFont.animLap3.setLoop(0,1);
+            // this.fanfare.raceFont.animLap3.timeScale = 42;
+            // this.fanfare.raceFont.animLap3.play();
+            // console.log('lap 33333333333');
           // } else if (position.lap === 4) {
             // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animLapFinal);
             this.fanfare.raceFont.animLapFinal.setLoop(0,1);
