@@ -1,0 +1,208 @@
+
+:root {
+  --white: rgb(241, 241, 241);
+  --white2: rgba(255, 255, 255, 0.281);
+  --screen: rgba(0, 0, 0, 0.247);
+}
+
+html, body {
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Racing Sans One', cursive;
+  /* font-family: 'Poppins'; */
+  color: white;
+  background-color: rgb(0, 80, 133);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+li {
+  list-style: none;
+}
+
+div.main {
+  height:100%;
+  width: 100%;
+}
+
+div.main h1 {
+  text-align: center;
+  color: white;
+}
+
+div.top > h1 {
+  margin-bottom: 1rem;
+}
+
+div.main h1:before{
+  content: url('../../../static/pagestyle/stripestyling.png');
+  position: relative;
+  bottom: -0.5rem;
+  width: 200px;
+  /* display: inline-block; */
+  /* width: 50px; */
+}
+
+div.main h1:after{
+  content: "  "url('../../../static/pagestyle/stripestyling.png');
+  position: relative;
+  bottom: -0.5rem;
+}
+
+aside {
+  position: absolute;
+  right: 10%;
+}
+
+aside ul li{
+  padding: 5px;
+}
+
+aside ul {
+  padding-top: 400px;
+  padding-left: 20px;
+}
+
+aside a.twitter {
+  color: white;
+}
+aside img.twitter {
+  width: 16px;
+}
+
+aside a.git {
+  color: white;
+}
+
+
+h2.controls {
+  padding: 10px;
+  padding-left: 20px;
+  text-justify: center;
+}
+
+div.controls {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+}
+
+div.controls-keys {
+  padding-right: 30px;
+}
+
+.controls {
+  border: solid 1px black;
+}
+
+div.bottom {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.animated-fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* DOP BUT HERE FOR REFERENCE */
+/* .animated-fullscreen {
+  animation-name: fullscreen;
+  animation-duration: 1s;
+}
+
+@keyframes fullscreen {
+  from {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 1vw;
+    height: 1vh;
+  }
+
+  to {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+.animated-smallscreen {
+  animation-name: smallscreen;
+  animation-duration: 1s;
+}
+
+@keyframes smallscreen {
+  from {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 100vw;
+    height: 100vh;
+  }
+
+  to {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 1vw;
+    height: 1vh;
+  }
+} */
+
+#button-fullscreen, #button-exitfullscreen{
+  border: solid 0.05rem var(--white2);
+  background-color: var(--screen);
+  height: 2rem;
+  width: 2rem;
+  z-index: 11;
+  position: absolute;
+  top:0%;
+  right:0%;
+  /* transform: translateX(10%) translateY(100%); */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-viewport {
+  width: 1200px;
+  height: 700px;
+  position: absolute;
+}
+
+#hud {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0%;
+  z-index: 11;
+}
+
+div#game-viewport:fullscreen > canvas.webgl {
+  width: 100%;
+  height: 100%;
+}
+
+/* .racer-speed-bar-fill {
+  content: url('../static/widgets/progress_bar/progress_bar_fill.png');
+  mask-image: url('../static/widgets/progress_bar/progress_bar_flow.png');
+  opacity: 80%;
+} */

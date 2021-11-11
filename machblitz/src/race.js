@@ -32,20 +32,20 @@ export class RaceManager {
         }
 
         const that = this;
-        setTimeout(()=>{that.raceCountdown()}, 3000);
+        setTimeout(()=>{that.raceCountdown();}, 3000);
     }
 
     raceCountdown() {
         const that = this;
         // delay race start //
-        this.delayRaceStart = () => {that.raceStart()};
+        this.delayRaceStart = () => {that.raceStart();};
         setTimeout(this.delayRaceStart, 3000);
-        
+
         // countdown //
-        this.delayCtd0 = () => {that.displayCtdNumber(0)}; // display GO! event object // forgot how I bound these events in the vehicle class so i'm just copying what it is now...
-        this.delayCtd1 = () => {that.displayCtdNumber(1)}; // display 1! event object
-        this.delayCtd2 = () => {that.displayCtdNumber(2)}; // display 2! event object
-        this.delayCtd3 = () => {that.displayCtdNumber(3)}; // display 3! event object
+        this.delayCtd0 = () => {that.displayCtdNumber(0);}; // display GO! event object // forgot how I bound these events in the vehicle class so i'm just copying what it is now...
+        this.delayCtd1 = () => {that.displayCtdNumber(1);}; // display 1! event object
+        this.delayCtd2 = () => {that.displayCtdNumber(2);}; // display 2! event object
+        this.delayCtd3 = () => {that.displayCtdNumber(3);}; // display 3! event object
         setTimeout(this.delayCtd3, 0); // delay display numbers
         setTimeout(this.delayCtd2, 1000);
         setTimeout(this.delayCtd1, 2000);

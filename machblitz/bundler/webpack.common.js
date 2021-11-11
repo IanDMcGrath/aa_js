@@ -32,10 +32,6 @@ module.exports = {
       {
         test: /\.(html)$/,
         loader: 'html-loader'
-        // options: {
-        //   // THIS will resolve relative URLs to reference from the app/ directory
-        //   root: path.resolve(__dirname, 'src')
-        // }
       },
 
       // JS
