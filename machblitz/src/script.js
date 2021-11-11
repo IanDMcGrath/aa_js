@@ -6,6 +6,7 @@ import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongM
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
+import { setSpeedGauge } from './javascripts/player_interface';
 
 // import my files
 import { Vehicle } from './vehicle';
@@ -551,6 +552,11 @@ const tick = () =>
   window.requestAnimationFrame(tick);
 };
 
+const uiTick = () => {
+  setSpeedGauge();
+
+};
+
 var prepTick = setInterval(tryTick, 100);
 
 function tryTick() {
@@ -577,6 +583,7 @@ function tryTick() {
     // addArrows(); // debugger
     console.log("Tick started");
     tick();
+    setInterval(uiTick, 100);
   }
 }
 

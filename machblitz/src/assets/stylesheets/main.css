@@ -188,14 +188,6 @@ div.bottom {
   position: absolute;
 }
 
-#hud {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0%;
-  z-index: 11;
-}
-
 div#game-viewport:fullscreen > canvas.webgl {
   width: 100%;
   height: 100%;

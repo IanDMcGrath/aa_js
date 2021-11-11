@@ -1,0 +1,40 @@
+#hud {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0%;
+  z-index: 1000;
+}
+
+.racer-speed-container {
+  background-color: rgba(0, 0, 0, 0.192);
+  border-radius: 0.5rem;
+  position: absolute;
+  bottom: 0;
+  margin: 1rem;
+}
+
+.racer-speed {
+  margin: 0.5rem;
+}
+
+.speed-number-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.racer-speed-bar {
+  border: solid white 0.2rem;
+  height: 1rem;
+  width: 10rem;
+  border-radius: 1rem;
+}
+
+.racer-speed-bar-fill {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  content: 'here for japes';
+  z-index: 1000;
+  transition: width 0.1s;
+}
