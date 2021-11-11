@@ -365,6 +365,20 @@ window.addEventListener('resize', () =>
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+const fullscreenButton = document.querySelector("#button-fullscreen");
+const hud = document.querySelector('.mid');
+
+const fullscreenClick = e => {
+  e.stopPropagation();
+  if (!document.fullscreenElement) {
+    hud.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+fullscreenButton.addEventListener('click', fullscreenClick);
+
 let isFullscreen = false;
 const gameViewport = document.querySelector('#game-viewport');
 gameViewport.addEventListener('fullscreenchange', () => { // set the resolution when maximizing / windowing the viewport // needs testing on windows machine

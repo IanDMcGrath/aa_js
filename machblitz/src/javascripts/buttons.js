@@ -1,30 +1,30 @@
 // FULLSCREEN BUTTON
-const fullscreenButton = document.querySelector("#button-fullscreen");
-const canvas = document.querySelector('canvas');
-const hud = document.querySelector('.mid');
+// const canvas = document.querySelector('canvas');
+// const fullscreenButton = document.querySelector("#button-fullscreen");
+// const hud = document.querySelector('.mid');
 
-const fullscreenClick = e => {
-  e.stopPropagation();
-  if (!document.fullscreenElement) {
-    hud.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-};
+// const fullscreenClick = e => {
+//   e.stopPropagation();
+//   if (!document.fullscreenElement) {
+//     hud.requestFullscreen();
+//   } else {
+//     document.exitFullscreen();
+//   }
+// };
 
-fullscreenButton.addEventListener('click', fullscreenClick);
+// fullscreenButton.addEventListener('click', fullscreenClick);
 
-const getCursorPosition = (canvas, event) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  // console.log("x: " + x + " y: " + y);
-  // clickButton([x, y]);
-};
+// const getCursorPosition = (canvas, event) => {
+//   const rect = canvas.getBoundingClientRect();
+//   const x = event.clientX - rect.left;
+//   const y = event.clientY - rect.top;
+//   // console.log("x: " + x + " y: " + y);
+//   // clickButton([x, y]);
+// };
 
-canvas.addEventListener('mousedown', function (e) {
-  getCursorPosition(canvas, e);
-});
+// canvas.addEventListener('mousedown', function (e) {
+//   getCursorPosition(canvas, e);
+// });
 
 
 // DOP BUT HERE FOR REFERENCE
