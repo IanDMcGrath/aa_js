@@ -6,7 +6,7 @@ import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongM
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
-import { setSpeedGauge } from './javascripts/player_interface';
+import { setSpeedGauge, setElapsedTime } from './javascripts/player_interface';
 
 // import my files
 import { Vehicle } from './vehicle';
@@ -266,13 +266,13 @@ function addRaceFont() {
     raceManager.fanfare.raceFont.animLapFinal = animMixer.clipAction(gltf.animations[2]);
     raceManager.fanfare.raceFont.animLap3 = animMixer.clipAction(gltf.animations[3]);
     raceManager.fanfare.raceFont.animLap2 = animMixer.clipAction(gltf.animations[4]);
-    console.log(raceManager.fanfare);
+    // console.log(raceManager.fanfare);
     // animAction.timeScale = 42;
     // animAction.play();
     animMixers.push(animMixer);
 
-    console.log('add race font: ');
-    console.log(gltf);
+    // console.log('add race font: ');
+    // console.log(gltf);
     // gltf.scene.children[0].children[5].material = matRails
     let mat = gltf.scene.children[0].children[8].material;
     let texMap = textureLoader.load('fanfare/race_start/racingFont.jpg');
@@ -546,6 +546,7 @@ const tick = () =>
 
 
   // Render
+  setElapsedTime(raceManager.updateElapsedTime());
 
 
   // Call tick again on the next frame
@@ -554,7 +555,6 @@ const tick = () =>
 
 const uiTick = () => {
   setSpeedGauge();
-
 };
 
 var prepTick = setInterval(tryTick, 100);

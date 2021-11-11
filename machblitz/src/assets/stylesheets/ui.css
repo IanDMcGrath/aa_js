@@ -23,6 +23,16 @@
   justify-content: flex-end;
 }
 
+.speed-number {
+  font-size: 2rem;
+}
+
+.speed-unit {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
 .racer-speed-bar {
   border: solid white 0.2rem;
   height: 1rem;
@@ -37,4 +47,27 @@
   content: 'here for japes';
   z-index: 1000;
   transition: width 0.1s;
+}
+
+.elapsed-time-container {
+  margin: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.192);
+  position: absolute;
+  width: 15rem;
+}
+
+.elapsed-time {
+  margin: 0.5rem;
+  display: flex;
+}
+
+.time-label {
+  margin-right: 1rem;
+}
+
+.racer-timer {
+  font-kerning: none;
+  letter-spacing: 0px;
+  font-size: 2rem;
 }

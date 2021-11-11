@@ -11,7 +11,7 @@ export class RaceFont {
   }
 
   animate() {
-    console.log(this.obj);
+    // console.log(this.obj);
     let clip = new AnimationClip('countdown', 1, [0])
     // clip.play();
   }

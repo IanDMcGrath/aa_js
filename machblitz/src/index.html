@@ -19,11 +19,12 @@
     <div class="top">
       <h1>MACH-BLITZ</h1>
     </div>
-    <div class="mid" id="game-viewport">
+    <div class="mid-container"><div class="mid" id="game-viewport">
       <canvas class="webgl"></canvas>
       <div id="hud" class="hud">
+        <div class="button" id="button-fullscreen"><i class="fa fa-expand" style="font-size:24px"></i></div>
         <div class="racer-speed-container"><div class="racer-speed">
-          <div class="speed-number-container"><div class="speed-number"></div><div>MPH</div></div>
+          <div class="speed-number-container"><div class="speed-number"></div><div class="speed-unit">KM/h</div></div>
           <div class="racer-speed-bar">
             <!-- <img src="../static/widgets/progress_bar/progress_bar_outline.png"> -->
             <!-- <img class="racer-speed-bar-fill" src="./assets/images/progress_bar_fill.png"> -->
@@ -31,11 +32,13 @@
             <!-- <img src="../static/widgets/progress_bar/progress_bar_flow.png"> -->
           </div>
         </div></div>
-        <div class="button" id="button-fullscreen"><i class="fa fa-expand" style="font-size:24px"></i></div>
+        <div class="elapsed-time-container"><div class="elapsed-time">
+          <div class="time-label">TIME:</div><div class="racer-timer"></div>
+        </div></div>
       </div>
       <script src="./javascripts/buttons.js"></script>
-    </div>
-    <div class="bottom">
+    </div></div>
+    <div class="bottom-container"><div class="bottom">
       <div class="group1">
         <h2 class="controls">CONTROLS</h2>
         <div class="controls">
@@ -61,6 +64,14 @@
           </div>
         </div>
       </div>
+      <div class="group3">
+        <ul>
+          <li><a href="https://www.linkedin.com/in/ianmcgrath-techartist/">LinkedIn</a></li>
+          <li><a href="https://twitter.com/NotSo_Accurate" class="twitter">@NotSo_Accurate</a> on Twitter<img class="twitter"
+              src="https://abs.twimg.com/favicons/twitter.ico"></li>
+          <li><a href="https://github.com/IanDMcGrath/machblitz-racing" class="git">Github</a></li>
+        </ul>
+      </div>
       <div class="group2">
         <h2 class="madewith">MADE WITH</h2>
         <div class="madewith">
@@ -72,14 +83,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div></div>
   </div>
-  <aside>
-    <ul>
-      <li><a href="https://www.linkedin.com/in/ianmcgrath-techartist/">LinkedIn</a></li>
-      <li><a href="https://twitter.com/NotSo_Accurate" class="twitter">@NotSo_Accurate</a> on Twitter<img class="twitter" src="https://abs.twimg.com/favicons/twitter.ico"></li>
-      <li><a href="https://github.com/IanDMcGrath/machblitz-racing" class="git">Github</a></li>
-    </ul>
-  </aside>
 </body>
 </html>

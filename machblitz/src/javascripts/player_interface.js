@@ -7,5 +7,12 @@ export const setSpeedGauge = () => {
   let speedActual = Math.min(Math.floor(Math.abs(playerSpeed.speed) * 100), 1000);
   let speedPercent = speedActual * 0.1;
   racerSpeedBarFill.setAttribute('style', `width: ${speedPercent}%`);
-  racerSpeedNumber.innerHTML = speedActual.toString();
+  racerSpeedNumber.innerHTML = speedActual;
 };
+
+
+const racerTimer = document.querySelector('.racer-timer');
+
+export const setElapsedTime = (time) => {
+  racerTimer.innerHTML = time;
+}

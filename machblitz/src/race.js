@@ -18,7 +18,14 @@ export class RaceManager {
     this.fanfare = {
       raceFont: undefined
     };
-    this.elapsedTime = 0;
+    this.elapsedTime = { mm:0, ss:0, ms:0 };
+    this.currentTime = 0;
+    this.timeStart = new Date().getTime();
+    this.d = new Date();
+    this.isRaceStarted = false;
+    this.isRaceEnded = false;
+    this.updateElapsedSeconds = this.updateElapsedSeconds.bind(this);
+    this.updateElapsedMinutes = this.updateElapsedMinutes.bind(this);
     // this.racerPosition = {
       // racerId: 0,
       // gateId: 0,
@@ -52,6 +59,11 @@ export class RaceManager {
     setTimeout(this.delayCtd1, 2000);
     setTimeout(this.delayCtd0, 3000); // delay display GO!
     // this.fanfare.raceFont.animAction.setDuration(1);
+
+    // console.log(this.racers[0]);
+    // console.log(this.fanfare.raceFont);
+    this.racers[0].cam.obj.attach(this.fanfare.raceFont.obj.scene);
+
     this.fanfare.raceFont.animCountdown.setLoop(0,1);
     this.fanfare.raceFont.animCountdown.play();
   }
@@ -68,7 +80,43 @@ export class RaceManager {
   }
 
   raceStart() {
+    this.isRaceStarted = true;
     this.racers[0].bindControls();
+    this.timeStart = new Date().getTime();
+    const timerSeconds = setInterval(this.updateElapsedSeconds, 1000);
+    const timerMinutes = setInterval(this.updateElapsedMinutes, 60000);
+    this.clearTimers = () => {
+      // not working
+      clearInterval(timerSeconds);
+      clearInterval(timerMinutes);
+    }
+  }
+
+  updateElapsedSeconds() {
+    this.elapsedTime.ss = Math.round(this.currentTime * 0.001) % 60;
+  }
+
+  updateElapsedMinutes() {
+    this.elapsedTime.mm = Math.round(this.currentTime * 0.000016666666667);
+  }
+
+  updateElapsedTime() {
+    if (!this.isRaceStarted) { return '00:00:000' }
+    if (this.isRaceEnded) { return this.formatElapsedTime() }
+
+    this.currentTime = new Date().getTime() - this.timeStart;
+    this.elapsedTime.ms = this.currentTime % 1000;
+
+    return this.formatElapsedTime();
+  }
+
+  formatElapsedTime() {
+    let { mm, ss, ms } = this.elapsedTime;
+    if (ms < 10) { ms = `00${ms}` } else if (ms < 100) { ms = `0${ms}` }
+    if (ss < 10) { ss = `0${ss}` }
+    if (mm < 10) { mm = `0${mm}` }
+
+    return `${mm}:${ss}:${ms}`;
   }
 
   sortRaceGates() {
@@ -81,10 +129,6 @@ export class RaceManager {
 
   this.raceGates = sortedGates;
   this.initPositions();
-  }
-
-  updateElapsedTime() {
-
   }
 
   initPositions() {
@@ -147,6 +191,8 @@ export class RaceManager {
     this.fanfare.raceFont.animFinish.setLoop(0,1);
     // this.fanfare.raceFont.animFinish.timeScale = 42;
     this.fanfare.raceFont.animFinish.play();
+    this.isRaceEnded = true;
+    this.clearTimers();
   }
 }
 
