@@ -43,7 +43,7 @@ div.main h1 {
 }
 
 div.top > h1 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 div.main h1:before{
@@ -82,7 +82,7 @@ div.main h1:after{
   width: 16px;
 }
 
-.group3 a.git {
+.group3 a.github {
   color: white;
 }
 

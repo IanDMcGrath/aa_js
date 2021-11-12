@@ -6,7 +6,7 @@ import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongM
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
-import { setSpeedGauge, setElapsedTime } from './javascripts/player_interface';
+import { setSpeedGauge, setElapsedTime } from './javascripts/UI';
 
 // import my files
 import { Vehicle } from './vehicle';

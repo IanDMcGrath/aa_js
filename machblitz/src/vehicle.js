@@ -1,5 +1,5 @@
 import {Vector3, Quaternion, Euler, Raycaster, ArrowHelper} from 'three';
-import { playerSpeed } from './javascripts/player_interface';
+import { playerSpeed } from './javascripts/UI';
 const Util = require('./utils');
 const Quat = Quaternion; // because it's easier to type and read
 
@@ -288,7 +288,11 @@ export class Vehicle {
   playerLeft(pressed) {
     this.leftPressed = pressed;
     if (!pressed) {
-      if (this.rightPressed) {this.playerRight(true);}
+      if (this.rightPressed) {
+        this.playerRight(true);
+      } else {
+        this.playerRight(false)
+      }
     }
   }
 
