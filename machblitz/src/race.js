@@ -73,9 +73,6 @@ export class RaceManager {
     // scene.add()
     if (num > 0) {
       // console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
-    } else {
-      // console.log('### GO! GO! GO! GO! GO! ###');
-      this.raceStart();
     }
   }
 

@@ -11,6 +11,7 @@ export class Vehicle {
     this.position = new Vector3(0,5,0);
     this.rotation = new Quat();
     this.throttle = 0;
+    this.steer = 0;
     this.speed = 0;
     this.linearVelocity = new Vector3(); //[0.1,0,0]; // x, y, z : right, up, forward
     this.rotationalVelocity = new Quat();
@@ -153,13 +154,10 @@ export class Vehicle {
   }
 
   addTurn(deltaTime) {
-    this.currentTurn = (this.leftPressed ? 1 : this.rightPressed ? -1 : 0);
+    // this.currentTurn = (this.leftPressed ? 1 : this.rightPressed ? -1 : 0);
+    this.currentTurn = this.steer;
     if (this.brakePressed) {this.currentTurn = this.currentTurn * 2;}
     this.rotationalVelocity.y = this.currentTurn * deltaTime;
-  }
-
-  render() {
-
   }
 
   // // --->> HANDLE INPUTS <<---
@@ -174,27 +172,37 @@ export class Vehicle {
     window.addEventListener("keyup",this.keyup);
   }
 
-  handleInput(event, down) {
-    event.preventDefault();
+  handleInput(e, down) {
+    e.preventDefault();
     // console.log(event.key)
     switch(event.key) {
       case "w": case "W": case "ArrowUp":
         this.playerForward(down);
+        e.stopPropagation();
         break;
       case "s": case "S": case "ArrowDown":
         this.playerBackward(down);
+        e.stopPropagation();
         break;
       case "a": case "A": case "ArrowLeft":
+        this.leftPressed = down;
+        console.log(down ? 'LeftPressed' : 'LeftReleased');
         this.playerLeft(down);
+        e.stopPropagation();
         break;
       case "d": case "D": case "ArrowRight":
+        this.rightPressed = down;
+        console.log(down ? 'RightPressed' : 'RightReleased');
         this.playerRight(down);
+        e.stopPropagation();
         break;
       case "r": case "R":
         if (down) this.resetPosition();
+        e.stopPropagation();
         break;
       case " ":
         this.brake(down);
+        e.stopPropagation();
         break;
       default: return;
     }
@@ -286,20 +294,23 @@ export class Vehicle {
   }
 
   playerLeft(pressed) {
-    this.leftPressed = pressed;
+    // this.leftPressed = pressed;
+    this.steer = pressed ? 1 : 0;
     if (!pressed) {
       if (this.rightPressed) {
         this.playerRight(true);
-      } else {
-        this.playerRight(false)
       }
     }
   }
 
   playerRight(pressed) {
-    this.rightPressed = pressed;
+    // this.rightPressed = pressed;
+    this.steer = pressed ? -1 : 0;
     if (!pressed) {
-      if (this.leftPressed) {this.playerLeft(true);}
+      if (this.leftPressed) {
+        this.playerLeft(true);
+      }
+      // this.playerLeft(this.leftPressed);
     }
   }
 

@@ -31,10 +31,11 @@ const startMenuHud = document.querySelector('.start-menu-hud');
 const inputPressStart = e => {
   e.preventDefault();
   e.stopPropagation();
-  console.log(e);
+  // console.log(e);
+  // startMenu.selectedButton = startMenu.keyNav.buttons[0];
   showMenu('start-menu-hud');
   document.removeEventListener("keydown", inputPressStart);
-  addMouseOverEvents(startMenu.buttons, hoverMenuButtons);
+  addMouseOverEvents(startMenu.keyNav.buttons, hoverMenuButtons);
   // document.removeEventListener("mousedown", inputPressStart);
   document.removeEventListener("click", inputPressStart);
   document.addEventListener("keydown", inputNavMenu);
@@ -43,13 +44,50 @@ const inputPressStart = e => {
 };
 
 const showPressStartMenu = () => {
-  console.log('invoking showMenu()');
+  // console.log('invoking showMenu()');
   // showMenu('press-start-hud');
   document.addEventListener("keydown", inputPressStart);
   document.addEventListener("click", inputPressStart);
   // document.addEventListener("mousedown", inputPressStart);
   document.removeEventListener("keydown", inputNavMenu);
   // document.removeEventListener("mousedown", inputNavMenu);
+};
+
+const hideMenuAndStartGame = () => {
+  document.removeEventListener("keydown", inputNavMenu);
+  document.addEventListener("keydown", pauseMenu);
+  showMenu('play-hud');
+
+};
+
+
+
+// // // PAUSE MENU // // //
+
+const pauseMenuHud = document.querySelector('.pause-menu-hud');
+
+const pauseMenu = e => {
+  switch (e.code) {
+    case "Escape": case "Tab":
+      e.preventDefault();
+      e.stopPropagation();
+      togglePause();
+
+    return;
+      default: return;
+  }
+};
+
+const togglePause = () => {
+  startMenu.gameState.isPaused = !startMenu.gameState.isPaused;
+  console.log(`TOGGLEPAUSE: Is Paused?: ${startMenu.gameState.isPaused}`);
+  if (startMenu.gameState.isPaused) {
+    playHud.classList.add('invisible');
+    pauseMenuHud.classList.remove('invisible');
+  } else {
+    pauseMenuHud.classList.add('invisible');
+    playHud.classList.remove('invisible');
+  }
 };
 
 const inputNavMenu = e => {
@@ -63,23 +101,38 @@ const inputNavMenu = e => {
     case "KeyS": case "ArrowDown":
       navMenuButtons({isUp: false});
       return;
-    case "space": case "Enter":
-
+    case "Space": case "Enter":
+      if (startMenu.keyNav.buttonIdx === -1) {
+        initializeMenuPos();
+        return;
+      }
+      confirmMenuItem(startMenu.selectedButton.id);
       return;
     default: return;
   }
 };
 
 const clickNavMenu = e => {
-  confirmMenuItem(startMenu.buttons[startMenu.buttonIdx]);
+  if (!startMenu.selectedButton) {startMenu.keyNav.buttonIdx = 0; selectButton(); return;}
+  confirmMenuItem(startMenu.selectedButton.id);
 };
 
 const confirmMenuItem = (buttonIdx) => {
-  console.log(buttonIdx);
+  // console.log(buttonIdx);
   switch (buttonIdx) {
     case 'button-start':
-    case 'button-linkedin':
+      // console.log('YOU PRESSED START!');
+      hideMenuAndStartGame();
+      return;
+
     case 'button-github':
+      window.open('https://github.com/IanDMcGrath', '_blank').focus();
+      return;
+
+    case 'button-linkedin':
+      window.open('https://www.linkedin.com/in/ianmcgrath-techartist/', '_blank').focus();
+      return;
+
     default: return;
   }
 };
@@ -87,7 +140,7 @@ const confirmMenuItem = (buttonIdx) => {
 const hoverMenuButtons = e => {
   e.preventDefault();
   e.stopPropagation();
-  console.log(e.currentTarget.className);
+  // console.log(e.currentTarget.className);
   startMenu.selectedButton = e.currentTarget;
   unselectButtons();
   e.currentTarget.classList.add('selected');
@@ -119,36 +172,64 @@ const showMenu = menuName => {
   }
 };
 
-const startMenu = { buttons: [], buttonIdx: 0, buttonNames: {}, selectedButton: null };
-startMenu.buttons = Array.from(document.getElementsByClassName('start-menu-option'));
-startMenu.buttons.forEach(button => {
+// // // STARTMENU object // // //
+const startMenu = {
+  keyNav: {
+    buttons: [],
+    buttonIdx: -1,
+  },
+  buttonNames: {},
+  selectedButton: null,
+  gameState: {
+    isPaused: false,
+    isInPlay: false,
+  },
+};
+
+startMenu.keyNav.buttons = Array.from(document.getElementsByClassName('start-menu-option'));
+startMenu.keyNav.buttons.forEach(button => {
   startMenu.buttonNames[button.className] = button;
 });
 
+
+
+
+
 const unselectButtons = () => {
-  startMenu.buttons.forEach(button => {
+  startMenu.keyNav.buttons.forEach(button => {
     button.classList.remove('selected');
   });
 };
 
 const selectButton = () => {
-  startMenu.buttons[startMenu.buttonIdx].classList.add('selected');
-  // startMenu.buttons[startMenu.buttonIdx].hover(); // this don't work // :hover is an "untrusted" event
+  let button = startMenu.keyNav.buttons[startMenu.keyNav.buttonIdx];
+  button.classList.add('selected');
+  startMenu.selectedButton = button;
+  // startMenu.keyNav.buttons[startMenu.keyNav.buttonIdx].hover(); // this don't work // :hover is an "untrusted" event
+};
+
+const initializeMenuPos = () => {
+  startMenu.keyNav.buttonIdx = 0;
+  selectButton();
 };
 
 const navMenuButtons = ( { isUp } ) => {
   console.log(startMenu);
   unselectButtons();
-  let numButtons = Object.keys(startMenu.buttons).length;
+  let numButtons = Object.keys(startMenu.keyNav.buttons).length;
+  if (startMenu.keyNav.buttonIdx === -1) {
+    initializeMenuPos();
+    return;
+  }
   if (!isUp) {
-    startMenu.buttonIdx = startMenu.buttonIdx + 1;
-    if (startMenu.buttonIdx >= numButtons) {startMenu.buttonIdx = 0}
+    startMenu.keyNav.buttonIdx = startMenu.keyNav.buttonIdx + 1;
+    if (startMenu.keyNav.buttonIdx >= numButtons) {startMenu.keyNav.buttonIdx = 0}
   } else {
-    startMenu.buttonIdx = startMenu.buttonIdx - 1;
-    if (startMenu.buttonIdx < 0) {startMenu.buttonIdx = numButtons - 1}
+    startMenu.keyNav.buttonIdx = startMenu.keyNav.buttonIdx - 1;
+    if (startMenu.keyNav.buttonIdx < 0) {startMenu.keyNav.buttonIdx = numButtons - 1}
   }
   selectButton();
-  console.log(startMenu.buttons[startMenu.buttonIdx].className);
+  console.log(startMenu.keyNav.buttons[startMenu.keyNav.buttonIdx].className);
 };
 
 
