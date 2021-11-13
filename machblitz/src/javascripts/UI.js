@@ -71,12 +71,12 @@ const inputNavMenu = e => {
 };
 
 const clickNavMenu = e => {
-  confirmMenuItem(startMenu.buttons[startMenu.buttonId].id);
+  confirmMenuItem(startMenu.buttons[startMenu.buttonIdx]);
 };
 
-const confirmMenuItem = (buttonId) => {
-  console.log(buttonId);
-  switch (buttonId) {
+const confirmMenuItem = (buttonIdx) => {
+  console.log(buttonIdx);
+  switch (buttonIdx) {
     case 'button-start':
     case 'button-linkedin':
     case 'button-github':
@@ -88,6 +88,7 @@ const hoverMenuButtons = e => {
   e.preventDefault();
   e.stopPropagation();
   console.log(e.currentTarget.className);
+  startMenu.selectedButton = e.currentTarget;
   unselectButtons();
   e.currentTarget.classList.add('selected');
 };
@@ -118,7 +119,7 @@ const showMenu = menuName => {
   }
 };
 
-const startMenu = { buttons: [], buttonId: 0, buttonNames: {} };
+const startMenu = { buttons: [], buttonIdx: 0, buttonNames: {}, selectedButton: null };
 startMenu.buttons = Array.from(document.getElementsByClassName('start-menu-option'));
 startMenu.buttons.forEach(button => {
   startMenu.buttonNames[button.className] = button;
@@ -131,8 +132,8 @@ const unselectButtons = () => {
 };
 
 const selectButton = () => {
-  startMenu.buttons[startMenu.buttonId].classList.add('selected');
-  // startMenu.buttons[startMenu.buttonId].hover(); // this don't work // :hover is an "untrusted" event
+  startMenu.buttons[startMenu.buttonIdx].classList.add('selected');
+  // startMenu.buttons[startMenu.buttonIdx].hover(); // this don't work // :hover is an "untrusted" event
 };
 
 const navMenuButtons = ( { isUp } ) => {
@@ -140,14 +141,14 @@ const navMenuButtons = ( { isUp } ) => {
   unselectButtons();
   let numButtons = Object.keys(startMenu.buttons).length;
   if (!isUp) {
-    startMenu.buttonId = startMenu.buttonId + 1;
-    if (startMenu.buttonId >= numButtons) {startMenu.buttonId = 0}
+    startMenu.buttonIdx = startMenu.buttonIdx + 1;
+    if (startMenu.buttonIdx >= numButtons) {startMenu.buttonIdx = 0}
   } else {
-    startMenu.buttonId = startMenu.buttonId - 1;
-    if (startMenu.buttonId < 0) {startMenu.buttonId = numButtons - 1}
+    startMenu.buttonIdx = startMenu.buttonIdx - 1;
+    if (startMenu.buttonIdx < 0) {startMenu.buttonIdx = numButtons - 1}
   }
   selectButton();
-  console.log(startMenu.buttons[startMenu.buttonId].className);
+  console.log(startMenu.buttons[startMenu.buttonIdx].className);
 };
 
 
