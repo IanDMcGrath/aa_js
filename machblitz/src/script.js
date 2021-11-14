@@ -534,10 +534,24 @@ function moveArrows() {
   // console.log(arrows[3].position);
 }
 
+class GameState {
+  constructor() {
+    this.paused = false;
+    this.gameStarted = false;
+  };
+};
 
+const gameState = new GameState;
+
+// export let isPaused = false;
 const tick = () =>
 {
-  const deltaTime = clock.getDelta();
+  let deltaTime = 0;
+  if (gameState.isPaused) {
+    deltaTime = 0;
+  } else {
+    deltaTime = clock.getDelta();
+  }
   // drawWidgets();
   // const elapsedTime = clock.getElapsedTime();
   // Update objects

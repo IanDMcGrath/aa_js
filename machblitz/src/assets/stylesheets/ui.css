@@ -125,12 +125,23 @@
   font-size: 5rem;
 }
 
-.start-menu-option.selected {
+.start-menu-option.selected, .pause-menu-option.selected {
   outline: solid 0.2rem white;
   margin: 0.4rem;
 }
 
-.start-menu-option {
+.start-menu-option, .pause-menu-option{
   margin: 0.4rem;
   outline: solid 0.2rem rgba(255, 255, 255, 0);
+}
+
+.pause-menu {
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+.pause-menu-title {
+  font-size: 5rem;
 }

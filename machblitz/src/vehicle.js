@@ -186,13 +186,13 @@ export class Vehicle {
         break;
       case "a": case "A": case "ArrowLeft":
         this.leftPressed = down;
-        console.log(down ? 'LeftPressed' : 'LeftReleased');
+        // console.log(down ? 'LeftPressed' : 'LeftReleased');
         this.playerLeft(down);
         e.stopPropagation();
         break;
       case "d": case "D": case "ArrowRight":
         this.rightPressed = down;
-        console.log(down ? 'RightPressed' : 'RightReleased');
+        // console.log(down ? 'RightPressed' : 'RightReleased');
         this.playerRight(down);
         e.stopPropagation();
         break;
