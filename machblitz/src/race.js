@@ -1,5 +1,5 @@
 import scene from './script.js';
-import { Quaternion, Vector3 } from 'three';
+import { LoopOnce, Quaternion, Vector3 } from 'three';
 import { RaceFont } from './fanfare.js';
 
 
@@ -26,6 +26,18 @@ export class RaceManager {
     this.isRaceEnded = false;
     this.updateElapsedSeconds = this.updateElapsedSeconds.bind(this);
     this.updateElapsedMinutes = this.updateElapsedMinutes.bind(this);
+    this.raceLineup = this.raceLineup.bind(this);
+    this.raceCountdown = this.raceCountdown.bind(this);
+    this.raceStart = this.raceStart.bind(this);
+    this.updateElapsedMinutes = this.updateElapsedMinutes.bind(this);
+    this.updateElapsedSeconds = this.updateElapsedSeconds.bind(this);
+    this.updateElapsedTime = this.updateElapsedTime.bind(this);
+    this.formatElapsedTime = this.formatElapsedTime.bind(this);
+    this.sortRaceGates = this.sortRaceGates.bind(this);
+    this.initPositions = this.initPositions.bind(this);
+    this.updatePositions = this.updatePositions.bind(this);
+    this.raceFinish = this.raceFinish.bind(this);
+
     // this.racerPosition = {
       // racerId: 0,
       // gateId: 0,
@@ -39,70 +51,62 @@ export class RaceManager {
       this.racers[i].rotation = this.rotation.clone();
     }
 
-    const that = this;
-    setTimeout(()=>{that.raceCountdown();}, 3000);
+    const { animCountdown } = this.fanfare.raceFont;
+    animCountdown.stop();
+
+    if (this.timeoutRaceCountDown) {clearTimeout(this.timeoutRaceCountDown)}
+    if (this.timeoutRaceStart) {clearTimeout(this.timeoutRaceStart)}
+
+    this.timeoutRaceCountDown = setTimeout(this.raceCountdown, 3000);
+
+    this.isRaceStarted = false;
   }
 
   raceCountdown() {
-    const that = this;
-    // delay race start //
-    this.delayRaceStart = () => {that.raceStart();};
-    setTimeout(this.delayRaceStart, 3000);
+    this.timeoutRaceStart = setTimeout(this.raceStart, 3000);
 
-    // countdown //
-    this.delayCtd0 = () => {that.displayCtdNumber(0);}; // display GO! event object // forgot how I bound these events in the vehicle class so i'm just copying what it is now...
-    this.delayCtd1 = () => {that.displayCtdNumber(1);}; // display 1! event object
-    this.delayCtd2 = () => {that.displayCtdNumber(2);}; // display 2! event object
-    this.delayCtd3 = () => {that.displayCtdNumber(3);}; // display 3! event object
-    setTimeout(this.delayCtd3, 0); // delay display numbers
-    setTimeout(this.delayCtd2, 1000);
-    setTimeout(this.delayCtd1, 2000);
-    setTimeout(this.delayCtd0, 3000); // delay display GO!
-    // this.fanfare.raceFont.animAction.setDuration(1);
-
-    // console.log(this.racers[0]);
-    // console.log(this.fanfare.raceFont);
     this.racers[0].cam.obj.attach(this.fanfare.raceFont.obj.scene);
 
-    this.fanfare.raceFont.animCountdown.setLoop(0,1);
-    this.fanfare.raceFont.animCountdown.play();
-  }
-
-  displayCtdNumber(num) {
-    let raceFont = new RaceFont(this.fanfare.raceFont, num);
-    // scene.add()
-    if (num > 0) {
-      // console.log(`COUNTDOWN: ${num}${num}${num}${num}${num}!`);
-    }
+    const { animCountdown } = this.fanfare.raceFont;
+    animCountdown.stop();
+    animCountdown.setLoop( LoopOnce );
+    animCountdown.play();
   }
 
   raceStart() {
     this.isRaceStarted = true;
     this.racers[0].bindControls();
     this.timeStart = new Date().getTime();
-    const timerSeconds = setInterval(this.updateElapsedSeconds, 1000);
-    const timerMinutes = setInterval(this.updateElapsedMinutes, 60000);
-    this.clearTimers = () => {
-      // not working
-      clearInterval(timerSeconds);
-      clearInterval(timerMinutes);
-    }
+    this.currentTime = 0;
+    // const timerSeconds = setInterval(this.updateElapsedSeconds, 1000);
+    // const timerMinutes = setInterval(this.updateElapsedMinutes, 60000);
+    // this.clearTimers = () => {
+    //   // not working
+    //   clearInterval(timerSeconds);
+    //   clearInterval(timerMinutes);
+    // }
   }
 
   updateElapsedSeconds() {
-    this.elapsedTime.ss = Math.round(this.currentTime * 0.001) % 60;
+    this.elapsedTime.ss = Math.floor(this.currentTime * 0.001) % 60;
   }
 
   updateElapsedMinutes() {
-    this.elapsedTime.mm = Math.round(this.currentTime * 0.000016666666667);
+    this.elapsedTime.mm = Math.floor(this.currentTime * 0.000016666666667);
   }
 
-  updateElapsedTime() {
+  updateElapsedTime(deltaTime) {
     if (!this.isRaceStarted) { return '00:00:000' }
     if (this.isRaceEnded) { return this.formatElapsedTime() }
 
-    this.currentTime = new Date().getTime() - this.timeStart;
-    this.elapsedTime.ms = this.currentTime % 1000;
+    // this.currentTime = new Date().getTime() - this.timeStart;
+    // this.elapsedTime.ms = this.currentTime % 1000;
+
+    const { elapsedTime } = this;
+    this.currentTime += (deltaTime * 1000); // convert seconds to milliseconds
+    this.elapsedTime.ms = Math.round(this.currentTime % 1000);
+    this.updateElapsedSeconds();
+    this.updateElapsedMinutes();
 
     return this.formatElapsedTime();
   }
@@ -182,14 +186,14 @@ export class RaceManager {
     }
   }
 
-  raceFinish(){
+  raceFinish() {
     // console.log('!race finished!');
     // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animFinish);
     this.fanfare.raceFont.animFinish.setLoop(0,1);
     // this.fanfare.raceFont.animFinish.timeScale = 42;
     this.fanfare.raceFont.animFinish.play();
     this.isRaceEnded = true;
-    this.clearTimers();
+    // this.clearTimers();
   }
 }
 

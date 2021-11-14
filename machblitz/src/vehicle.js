@@ -6,6 +6,11 @@ const Quat = Quaternion; // because it's easier to type and read
 
 export class Vehicle {
   constructor(obj, isPlayer=false) {
+    this.handleInput = this.handleInput.bind(this);
+    this.keyup = (e) => this.handleInput(e, false);
+    this.keydown = (e) => this.handleInput(e, true);
+    this.unbindControls = this.unbindControls.bind(this);
+
     this.prevNormalTotal = new Vector3(0,1,0);
     this.scale = [1,1,1];
     this.position = new Vector3(0,5,0);
@@ -45,6 +50,34 @@ export class Vehicle {
       this.rightPressed = false;
       this.brakePressed = false;
     }
+  }
+
+  restart() {
+    this.prevNormalTotal = new Vector3(0, 1, 0);
+    this.scale = [1, 1, 1];
+    this.position = new Vector3(0, 5, 0);
+    this.rotation = new Quat();
+    this.throttle = 0;
+    this.steer = 0;
+    this.speed = 0;
+    this.linearVelocity = new Vector3(); //[0.1,0,0]; // x, y, z : right, up, forward
+    this.rotationalVelocity = new Quat();
+    this.forwardDir = new Vector3(0, 0, 1);
+    this.upDir = new Vector3(0, 1, 0);
+    this.rightDir = new Vector3(1, 0, 0);
+    this.camOffset = new Vector3(0, 10, -10);
+    this.isFalling = false;
+    this.gravityDir = new Vector3(0, -1, 0);
+    this.gravityTotal = new Vector3(0, 0, 0);
+    this.trueVelocity = new Vector3(0, 0, 0);
+    this.secondPos = new Vector3();
+    this.currentTurn = 0;
+    this.surface = "road";
+    this.resetPos = { pos: new Vector3(), rot: new Quaternion(0, 1, 0) };
+    this.jumping = false;
+    this.wallBounced = 1;
+
+    this.unbindControls();
   }
 
 
@@ -160,16 +193,21 @@ export class Vehicle {
     this.rotationalVelocity.y = this.currentTurn * deltaTime;
   }
 
-  // // --->> HANDLE INPUTS <<---
+  // // // --->> HANDLE INPUTS <<--- // // //
   bindControls() {
     console.log('binding keys');
-    const that = this;
+    // const that = this;
 
-    this.keydown = (event) => {that.handleInput(event, true);}; // remove event listener proof for darrick #1
-    this.keyup = (event) => {that.handleInput(event, false);};
+    // this.keydown = (event) => {that.handleInput(event, true);}; // remove event listener proof for darrick #1
+    // this.keyup = (event) => {that.handleInput(event, false);};
 
     window.addEventListener("keydown", this.keydown);
-    window.addEventListener("keyup",this.keyup);
+    window.addEventListener("keyup", this.keyup);
+  }
+
+  unbindControls() {
+    window.removeEventListener("keydown", this.keydown);
+    window.removeEventListener("keyup", this.keyup);
   }
 
   handleInput(e, down) {

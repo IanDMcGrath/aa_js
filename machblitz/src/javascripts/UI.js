@@ -78,7 +78,7 @@ class UIManager {
 
   inputPause(e) {
     const { pauseMenu } = this.menus;
-    if (pauseMenu.gameState.isPaused) {
+    if (this.gameState.isPaused) {
       e.preventDefault();
       e.stopPropagation();
       switch (e.code) {
@@ -104,9 +104,9 @@ class UIManager {
   togglePause() {
     const { pauseMenu, playHud } = this.menus;
     console.log(this.menus);
-    pauseMenu.gameState.isPaused = !pauseMenu.gameState.isPaused;
-    console.log(`TOGGLEPAUSE: Is Paused?: ${pauseMenu.gameState.isPaused}`);
-    if (pauseMenu.gameState.isPaused) {
+    this.gameState.isPaused = !this.gameState.isPaused;
+    console.log(`TOGGLEPAUSE: Is Paused?: ${this.gameState.isPaused}`);
+    if (this.gameState.isPaused) {
       playHud.canvasElement.classList.add('invisible');
       pauseMenu.canvasElement.classList.remove('invisible');
       pauseMenu.focus();
@@ -154,6 +154,9 @@ class UIManager {
           return;
 
         case 'button-restart':
+          this.togglePause();
+          pauseMenu.initializeMenuPos();
+          this.gameState.raceReady();
           return;
 
         case 'button-quit':
@@ -182,10 +185,12 @@ class UIManager {
 
         case 'button-github':
           window.open('https://github.com/IanDMcGrath', '_blank').focus();
+          startMenu.initializeMenuPos();
           return;
 
         case 'button-linkedin':
           window.open('https://www.linkedin.com/in/ianmcgrath-techartist/', '_blank').focus();
+          startMenu.initializeMenuPos();
           return;
 
         default: return;

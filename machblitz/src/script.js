@@ -534,6 +534,13 @@ function moveArrows() {
   // console.log(arrows[3].position);
 }
 
+const raceReady = () => {
+  arrRacers.forEach(racer => {
+    racer.restart();
+  });
+  raceManager.raceLineup();
+};
+
 class GameState {
   constructor() {
     this.paused = false;
@@ -542,8 +549,10 @@ class GameState {
 };
 
 const gameState = new GameState;
+gameState.raceReady = raceReady;
 
 const uiManager = new UIManager;
+uiManager.gameState = gameState;
 
 // export let isPaused = false;
 const tick = () =>
@@ -551,6 +560,7 @@ const tick = () =>
   let deltaTime = 0;
   if (gameState.isPaused) {
     deltaTime = 0;
+    clock.getDelta();
   } else {
     deltaTime = clock.getDelta();
   }
@@ -561,12 +571,16 @@ const tick = () =>
   // skysphere.scene.position.set(camera.position.x,camera.position.y,camera.position.z - 50)
   // renderSky();
   // playCam.obj.lookAt(arrRacers[0].position)
-  renderRacers(deltaTime);
-  raceManager.updatePositions();
-  playCam.move(deltaTime);
-  // moveArrows();
+  if (!gameState.isPaused) {
 
-  animate(deltaTime);
+    renderRacers(deltaTime);
+    raceManager.updatePositions();
+    playCam.move(deltaTime);
+    // moveArrows();
+
+    animate(deltaTime);
+    uiManager.setElapsedTime(raceManager.updateElapsedTime(deltaTime));
+  }
 
   renderer.render(scene, camera);
   // Update Orbital Controls
@@ -576,7 +590,6 @@ const tick = () =>
 
 
   // Render
-  uiManager.setElapsedTime(raceManager.updateElapsedTime());
 
 
   // Call tick again on the next frame
@@ -599,7 +612,7 @@ function tryTick() {
     clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
 
     arrRacers[0].isPlayer = true;
-    console.log('ARRRACERS[0].SPEED');  
+    console.log('ARRRACERS[0].SPEED');
     console.log(arrRacers[0].speed);
 
 
@@ -611,7 +624,7 @@ function tryTick() {
     raceManager.rotation = new Quaternion(0,1,0);
     raceManager.raceGates = arrRaceGates.gates;
     raceManager.sortRaceGates();
-    raceManager.raceLineup();
+    raceReady();
     // raceManager.raceCountdown();
 
     // addArrows(); // debugger
@@ -620,5 +633,8 @@ function tryTick() {
     setInterval(uiTick, 100);
   }
 }
+
+
+
 
 // it's math
