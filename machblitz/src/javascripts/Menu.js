@@ -29,6 +29,7 @@ class Menu {
   };
 
   initializeMenuPos() {
+    this.unselectButtons();
     this.keyNav.buttonIdx = 0;
     this.selectButton();
   };

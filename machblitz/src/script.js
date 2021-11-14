@@ -6,7 +6,7 @@ import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongM
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
-import { setSpeedGauge, setElapsedTime } from './javascripts/UI';
+import UIManager from './javascripts/UI';
 
 // import my files
 import { Vehicle } from './vehicle';
@@ -543,6 +543,8 @@ class GameState {
 
 const gameState = new GameState;
 
+const uiManager = new UIManager;
+
 // export let isPaused = false;
 const tick = () =>
 {
@@ -574,7 +576,7 @@ const tick = () =>
 
 
   // Render
-  setElapsedTime(raceManager.updateElapsedTime());
+  uiManager.setElapsedTime(raceManager.updateElapsedTime());
 
 
   // Call tick again on the next frame
@@ -582,7 +584,8 @@ const tick = () =>
 };
 
 const uiTick = () => {
-  setSpeedGauge();
+  uiManager.menus.playHud.playerSpeed.speed = arrRacers[0].speed;
+  uiManager.setSpeedGauge();
 };
 
 var prepTick = setInterval(tryTick, 100);
@@ -596,6 +599,9 @@ function tryTick() {
     clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
 
     arrRacers[0].isPlayer = true;
+    console.log('ARRRACERS[0].SPEED');  
+    console.log(arrRacers[0].speed);
+
 
     // arrRacers[0].bindControls();
     playCam.player = arrRacers[0];

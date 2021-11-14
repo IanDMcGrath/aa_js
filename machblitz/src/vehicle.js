@@ -1,5 +1,5 @@
-import {Vector3, Quaternion, Euler, Raycaster, ArrowHelper} from 'three';
-import { playerSpeed } from './javascripts/UI';
+import { Vector3, Quaternion, Euler, Raycaster, ArrowHelper } from 'three';
+// import { playerSpeed } from './javascripts/UI';
 const Util = require('./utils');
 const Quat = Quaternion; // because it's easier to type and read
 
@@ -81,12 +81,12 @@ export class Vehicle {
     this.obj.scene.position.set(...this.position.toArray());
     // this.obj.scene.rotation.setFromQuaternion(this.rotation.clone());
     this.obj.scene.rotation.setFromQuaternion(new Quat().setFromEuler(this.obj.scene.rotation).rotateTowards(this.rotation, 0.1));
-    if (this.isPlayer) {this.updatePlayerInterface();}
+    // if (this.isPlayer) {this.updatePlayerInterface();}
   }
 
-  updatePlayerInterface() {
-    playerSpeed.speed = this.speed;
-  }
+  // updatePlayerInterface() {
+  //   playerSpeed.speed = this.speed;
+  // }
 
   gravity(deltaTime) {
     // this.gravityTotal.add(this.gravityDir.clone());
