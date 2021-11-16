@@ -180,7 +180,7 @@ class UIManager {
           return;
 
         case 'button-github':
-          window.open('https://github.com/IanDMcGrath', '_blank').focus();
+          window.open('https://github.com/IanDMcGrath/aa_js', '_blank').focus();
           pauseMenu.initializeMenuPos();
           return;
 
@@ -202,7 +202,7 @@ class UIManager {
           return;
 
         case 'button-github':
-          window.open('https://github.com/IanDMcGrath', '_blank').focus();
+          window.open('https://github.com/IanDMcGrath/aa_js', '_blank').focus();
           startMenu.initializeMenuPos();
           return;
 
@@ -232,7 +232,7 @@ class UIManager {
           return;
 
         case 'button-github':
-          window.open('https://github.com/IanDMcGrath', '_blank').focus();
+          window.open('https://github.com/IanDMcGrath/aa_js', '_blank').focus();
           resultsMenu.initializeMenuPos();
           return;
 
