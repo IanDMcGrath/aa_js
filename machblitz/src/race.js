@@ -1,6 +1,7 @@
 import scene from './script.js';
 import { LoopOnce, Quaternion, Vector3 } from 'three';
 import { RaceFont } from './fanfare.js';
+import Timer from './javascripts/Timer.js';
 
 
 export class RaceManager {
@@ -15,6 +16,7 @@ export class RaceManager {
     this.raceGates = [];
     this.racerPositions = [];
     this.lapCount = 3;
+    this.timers = {};
     this.fanfare = {
       raceFont: undefined
     };
@@ -37,6 +39,7 @@ export class RaceManager {
     this.initPositions = this.initPositions.bind(this);
     this.updatePositions = this.updatePositions.bind(this);
     this.raceFinish = this.raceFinish.bind(this);
+    this.raceTogglePause = this.raceTogglePause.bind(this);
 
     // this.racerPosition = {
       // racerId: 0,
@@ -54,16 +57,15 @@ export class RaceManager {
     const { animCountdown } = this.fanfare.raceFont;
     animCountdown.stop();
 
-    if (this.timeoutRaceCountDown) {clearTimeout(this.timeoutRaceCountDown)}
-    if (this.timeoutRaceStart) {clearTimeout(this.timeoutRaceStart)}
-
-    this.timeoutRaceCountDown = setTimeout(this.raceCountdown, 3000);
+    if (this.timers.raceCountDown) {this.timers.raceCountDown.clear()}
+    if (this.timers.raceStart) {this.timers.raceStart.clear()}
 
     this.isRaceStarted = false;
   }
 
   raceCountdown() {
-    this.timeoutRaceStart = setTimeout(this.raceStart, 3000);
+    this.timers.raceCountDown = null;
+    this.timers.raceStart = new Timer(this.raceStart, 3000);
 
     this.racers[0].cam.obj.attach(this.fanfare.raceFont.obj.scene);
 
@@ -71,13 +73,45 @@ export class RaceManager {
     animCountdown.stop();
     animCountdown.setLoop( LoopOnce );
     animCountdown.play();
+    this.initPositions();
+  }
+
+  raceDelayStart() {
+    this.timers.raceCountDown = new Timer(this.raceCountdown, 3000);
+  }
+
+  raceTogglePause(isPausing) {
+    if (this.isRaceStarted) return;
+    const { raceCountDown, raceStart} = this.timers;
+    if (isPausing) {
+      if (raceCountDown) {
+        raceCountDown.pause();
+      } else if (raceStart) {
+        raceStart.pause();
+      }
+    } else {
+      if (raceCountDown) {
+        raceCountDown.resume();
+      } else if (raceStart) {
+        this.timers.raceStart.resume();
+      }
+    }
   }
 
   raceStart() {
+    this.timers.raceStart = null;
+
     this.isRaceStarted = true;
     this.racers[0].bindControls();
     this.timeStart = new Date().getTime();
     this.currentTime = 0;
+    this.isRaceEnded = false;
+    this.times = {
+      lap1: 'DNF',
+      lap2: 'DNF',
+      lap3: 'DNF',
+      total: 'DNF',
+    }
     // const timerSeconds = setInterval(this.updateElapsedSeconds, 1000);
     // const timerMinutes = setInterval(this.updateElapsedMinutes, 60000);
     // this.clearTimers = () => {
@@ -120,6 +154,18 @@ export class RaceManager {
     return `${mm}:${ss}:${ms}`;
   }
 
+  formatTime(time) {
+    let ms = Math.floor(time % 1000);
+    let ss = Math.floor(time * 0.001 % 60);
+    let mm = Math.floor(time * 0.0000166667);
+
+    if (ms < 10) { ms = `00${ms}` } else if (ms < 100) { ms = `0${ms}` }
+    if (ss < 10) { ss = `0${ss}` }
+    if (mm < 10) { mm = `0${mm}` }
+
+    return `${mm}:${ss}:${ms}`;
+  }
+
   sortRaceGates() {
     let sortedGates = Array(this.raceGates.length);
 
@@ -133,6 +179,7 @@ export class RaceManager {
   }
 
   initPositions() {
+    this.racerPositions = [];
     for (let i=0; i<this.racers.length; i++) {
       this.racerPositions.push({
         racerId: i,
@@ -154,9 +201,11 @@ export class RaceManager {
       if (position.distance < 1500) {
         if (position.gateId === 0) {
           position.lap += 1;
+          if (position.lap > 1) {this.setLapTime(position.lap - 1)};
           if (position.lap === 2) {
             // this.fanfare.raceFont.animMixer.clipAction(this.fanfare.raceFont.animLap2);
-            this.fanfare.raceFont.animLap2.setLoop(0,1);
+            this.fanfare.raceFont.animLap2.stop();
+            this.fanfare.raceFont.animLap2.setLoop(LoopOnce);
             // this.fanfare.raceFont.animLap2.timeScale = 42;
             this.fanfare.raceFont.animLap2.play();
             // console.log('lap 22222222222');
@@ -168,7 +217,8 @@ export class RaceManager {
             // console.log('lap 33333333333');
           // } else if (position.lap === 4) {
             // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animLapFinal);
-            this.fanfare.raceFont.animLapFinal.setLoop(0,1);
+            this.fanfare.raceFont.animLapFinal.stop();
+            this.fanfare.raceFont.animLapFinal.setLoop(LoopOnce);
             // this.fanfare.raceFont.animLapFinal.timeScale= 42;
             this.fanfare.raceFont.animLapFinal.play();
             // console.log('lap FFIINNAALL');
@@ -186,14 +236,45 @@ export class RaceManager {
     }
   }
 
+  setLapTime(lap) {
+    switch(lap) {
+      case 1:
+        this.times.lap1 = this.currentTime;
+        return;
+
+      case 2:
+        this.times.lap2 = this.currentTime - this.times.lap1;
+        return;
+
+      case 3:
+        this.times.lap3 = (this.currentTime - this.times.lap2 - this.times.lap1);
+        this.times.total = this.currentTime;
+        this.times.lap1 = this.formatTime(this.times.lap1);
+        this.times.lap2 = this.formatTime(this.times.lap2);
+        this.times.lap3 = this.formatTime(this.times.lap3);
+        this.times.total = this.formatTime(this.times.total);
+        return;
+
+      default: return;
+    }
+  };
+
   raceFinish() {
     // console.log('!race finished!');
     // this.fanfare.animMixer.clipAction(this.fanfare.raceFont.animFinish);
-    this.fanfare.raceFont.animFinish.setLoop(0,1);
+    // this.setLapTime(3);
+    const { times: { lap1, lap2, lap3, total } } = this;
+    document.getElementById('time-lap1').innerHTML=lap1;
+    document.getElementById('time-lap2').innerHTML = lap2;
+    document.getElementById('time-lap3').innerHTML = lap3;
+    document.getElementById('time-total').innerHTML = total;
+    this.fanfare.raceFont.animFinish.stop();
+    this.fanfare.raceFont.animFinish.setLoop(LoopOnce);
     // this.fanfare.raceFont.animFinish.timeScale = 42;
     this.fanfare.raceFont.animFinish.play();
     this.isRaceEnded = true;
+    this.gameState.raceComplete();
     // this.clearTimers();
-  }
+  };
 }
 

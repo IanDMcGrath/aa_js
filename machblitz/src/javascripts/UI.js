@@ -14,12 +14,16 @@ class UIManager {
     this.hideMenuAndStartGame = this.hideMenuAndStartGame.bind(this);
     this.configureMenuActions = this.configureMenuActions.bind(this);
     this.showMenu = this.showMenu.bind(this);
+    this.raceComplete = this.raceComplete.bind(this);
+    this.quit = this.quit.bind(this);
+
+    this.buttonDown = false;
 
     this.initializeUI();
   };
 
   initializeUI() {
-    console.log('initializeUI');
+    // console.log('initializeUI');
     this.createHUD();
     this.createMenus();
     this.configureMenuActions();
@@ -39,12 +43,12 @@ class UIManager {
     playHud.racerSpeedBarFill = document.querySelector('.racer-speed-bar-fill');
     playHud.racerSpeedNumber = document.querySelector('.speed-number');
     playHud.canvasElement = document.querySelector('.play-hud');
-    console.log('THIS.MENUS.PLAYHUD');
-    console.log(playHud);
+    // console.log('THIS.MENUS.PLAYHUD');
+    // console.log(playHud);
   };
 
   setSpeedGauge() {
-    const { playHud: { racerSpeedBarFill, racerSpeedNumber, playerSpeed }} = this.menus;
+    const { racerSpeedBarFill, racerSpeedNumber, playerSpeed } = this.menus.playHud;
     let speedActual = Math.min(Math.floor(Math.abs(playerSpeed.speed) * 100), 1000);
     let speedPercent = speedActual * 0.1;
     racerSpeedBarFill.setAttribute('style', `width: ${speedPercent}%`);
@@ -74,6 +78,12 @@ class UIManager {
     const { pauseMenu } = this.menus;
     pauseMenu.canvasElement = document.querySelector('.pause-menu-hud');
     pauseMenu.setButtons('pause-menu-option');
+
+    // // // RESULTS MENU // // //
+    this.menus.resultsMenu = new Menu;
+    const { resultsMenu } = this.menus;
+    resultsMenu.canvasElement = document.querySelector('.results-menu-hud');
+    resultsMenu.setButtons('results-menu-option');
   };
 
   inputPause(e) {
@@ -103,9 +113,9 @@ class UIManager {
 
   togglePause() {
     const { pauseMenu, playHud } = this.menus;
-    console.log(this.menus);
-    this.gameState.isPaused = !this.gameState.isPaused;
-    console.log(`TOGGLEPAUSE: Is Paused?: ${this.gameState.isPaused}`);
+    // console.log(this.menus);
+    this.gameState.gamePause(!this.gameState.isPaused);
+    // console.log(`TOGGLEPAUSE: Is Paused?: ${this.gameState.isPaused}`);
     if (this.gameState.isPaused) {
       playHud.canvasElement.classList.add('invisible');
       pauseMenu.canvasElement.classList.remove('invisible');
@@ -118,6 +128,7 @@ class UIManager {
   };
 
   inputPressStart(e) {
+    console.log(e);
     const { startMenu } = this.menus;
     e.preventDefault();
     e.stopPropagation();
@@ -129,7 +140,9 @@ class UIManager {
   };
 
   showPressStartMenu() {
-    const { startMenu } = this.menus;
+    const { startMenu, pressStartHud } = this.menus;
+    pressStartHud.focus();
+    this.showMenu('press-start-hud');
     document.addEventListener("keydown", this.inputPressStart);
     document.addEventListener("click", this.inputPressStart);
     startMenu.unfocus();
@@ -143,7 +156,8 @@ class UIManager {
   };
 
   configureMenuActions() {
-    const { pauseMenu, startMenu } = this.menus;
+    const { pauseMenu, startMenu, resultsMenu } = this.menus;
+    const { gameState } = this;
 
     // // // CONFIGURE PAUSE MENU ACTIONS // // //
     pauseMenu.confirmMenuItem = (buttonIdx) => {
@@ -156,10 +170,13 @@ class UIManager {
         case 'button-restart':
           this.togglePause();
           pauseMenu.initializeMenuPos();
-          this.gameState.raceReady();
+          this.gameState.raceRestart();
           return;
 
         case 'button-quit':
+          pauseMenu.initializeMenuPos();
+          pauseMenu.unfocus();
+          this.quit();
           return;
 
         case 'button-github':
@@ -181,6 +198,7 @@ class UIManager {
       switch (buttonIdx) {
         case 'button-start':
           this.hideMenuAndStartGame();
+          this.gameState.raceStart();
           return;
 
         case 'button-github':
@@ -196,13 +214,45 @@ class UIManager {
         default: return;
       }
     };
+
+    // // // CONFIGURE RESULTS MENU ACTIONS // // //
+    resultsMenu.confirmMenuItem = (buttonIdx) => {
+      switch (buttonIdx) {
+        case 'button-restart':
+          resultsMenu.initializeMenuPos();
+          this.gameState.raceRestart();
+          resultsMenu.unfocus();
+          this.hideMenuAndStartGame();
+          return;
+
+        case 'button-quit':
+          resultsMenu.initializeMenuPos();
+          resultsMenu.unfocus();
+          this.quit();
+          return;
+
+        case 'button-github':
+          window.open('https://github.com/IanDMcGrath', '_blank').focus();
+          resultsMenu.initializeMenuPos();
+          return;
+
+        case 'button-linkedin':
+          window.open('https://www.linkedin.com/in/ianmcgrath-techartist/', '_blank').focus();
+          resultsMenu.initializeMenuPos();
+          return;
+
+        default: return;
+      }
+    };
   };
 
   showMenu(menuName) {
-    const { pressStartHud, startMenu, playHud } = this.menus;
+    const { pressStartHud, startMenu, playHud, pauseMenu, resultsMenu } = this.menus;
     pressStartHud.classList.add('invisible');
     startMenu.canvasElement.classList.add('invisible');
-    this.menus.playHud.canvasElement.classList.add('invisible');
+    playHud.canvasElement.classList.add('invisible');
+    pauseMenu.canvasElement.classList.add('invisible');
+    resultsMenu.canvasElement.classList.add('invisible');
     switch (menuName) {
       case 'press-start-hud':
         pressStartHud.classList.remove('invisible');
@@ -213,8 +263,26 @@ class UIManager {
       case 'play-hud':
         playHud.canvasElement.classList.remove('invisible');
         return;
+      case 'results-menu-hud':
+        resultsMenu.canvasElement.classList.remove('invisible');
       default: return;
     }
+  };
+
+  quit() {
+    const { gameState } = this;
+    this.showPressStartMenu();
+    gameState.gameQuit();
+  };
+
+  raceComplete() {
+    const { resultsMenu } = this.menus;
+    setTimeout(() => {
+      this.showMenu('results-menu-hud');
+      resultsMenu.focus();
+      document.removeEventListener("keydown", this.inputPause);
+    }, 2000);
+
   };
 };
 

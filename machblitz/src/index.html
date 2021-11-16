@@ -21,6 +21,7 @@
     </div>
     <div class="mid-container"><div class="mid" id="game-viewport">
       <canvas class="webgl"></canvas>
+      <div id="fader"></div>
       <div id="hud" class="hud">
         <div class="button" id="button-fullscreen"><i class="fa fa-expand" style="font-size:24px"></i></div>
         <div class="play-hud ui-canvas invisible">
@@ -37,7 +38,7 @@
             <div class="time-label">TIME:</div><div class="racer-timer"></div>
           </div></div>
         </div>
-        <div class="press-start-hud ui-canvas visible">
+        <div class="press-start-hud ui-canvas">
           <div class="press-start-menu">
             <div class="press-start-title">MACH-BLITZ</div>
             <div class="press-start blinking">Press any key to start</div>
@@ -48,7 +49,7 @@
             <div class="start-menu-title">MACH-BLITZ</div>
             <div class="start-menu-body">
               <ul class="start-menu-options">
-                <li class="start-menu-option start" id="button-start">Start</li>
+                <li class="start-menu-option start" id="button-start">RACE</li>
                 <li class="start-menu-option goto-github" id="button-github">Github</li>
                 <li class="start-menu-option goto-linkedin" id="button-linkedin">LinkedIn</li>
               </ul>
@@ -58,13 +59,34 @@
         <div class="pause-menu-hud ui-canvas invisible">
           <div class="pause-menu">
             <div class="pause-menu-title">PAUSED</div>
-            <ul class="pause-menu-options">
-              <li class="pause-menu-option resume" id="button-resume">Resume</li>
-              <li class="pause-menu-option restart" id="button-restart">Restart</li>
-              <li class="pause-menu-option quit" id="button-quit">Quit</li>
-              <li class="pause-menu-option goto-github" id="button-github">Github</li>
-              <li class="pause-menu-option goto-linkedin" id="button-linkedin">LinkedIn</li>
-            </ul>
+            <div class="pause-menu-body">
+              <ul class="pause-menu-options">
+                <li class="pause-menu-option resume" id="button-resume">Resume</li>
+                <li class="pause-menu-option restart" id="button-restart">Restart</li>
+                <li class="pause-menu-option quit" id="button-quit">Quit</li>
+                <li class="pause-menu-option goto-github" id="button-github">Github</li>
+                <li class="pause-menu-option goto-linkedin" id="button-linkedin">LinkedIn</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="results-menu-hud ui-canvas invisible">
+          <div class="results-menu">
+            <div class="results-menu-title">Results</div>
+            <div class="results-menu-body">
+              <ul class="results-menu-options">
+                <li class="results-menu-option restart" id="button-restart">Restart</li>
+                <li class="results-menu-option quit" id="button-quit">Quit</li>
+                <li class="results-menu-option goto-github" id="button-github">Github</li>
+                <li class="results-menu-option goto-linkedin" id="button-linkedin">LinkedIn</li>
+              </ul>
+              <ul class="results-menu-times">
+                <li class="results-menu-time"><div class="time-label">Lap 1 - </div><div id="time-lap1"></div></li>
+                <li class="results-menu-time"><div class="time-label">Lap 2 - </div><div id="time-lap2"></div></li>
+                <li class="results-menu-time"><div class="time-label">Lap 3 - </div><div id="time-lap3"></div></li>
+                <li class="results-menu-time"><div class="time-label">Total - </div><div id="time-total"></div></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -72,18 +94,8 @@
     </div></div>
     <div class="bottom-container"><div class="bottom">
       <div class="group1">
-        <h2 class="controls">CONTROLS</h2>
+        <h2 class="controls">RACING CONTROLS</h2>
         <div class="controls">
-          <div class="controls-keys">
-            <ul>
-              <li>W / Up-arrow</li>
-              <li>S / Down-arrow</li>
-              <li>A / Left-arrow</li>
-              <li>D / Right-arrow</li>
-              <li>Space</li>
-              <li>R</li>
-            </ul>
-          </div>
           <div class="controls-action">
             <ul>
               <li>Accelerate</li>
@@ -94,6 +106,37 @@
               <li>Reset Position</li>
             </ul>
           </div>
+          <div class="controls-keys">
+            <ul>
+              <li>W / Up-arrow</li>
+              <li>S / Down-arrow</li>
+              <li>A / Left-arrow</li>
+              <li>D / Right-arrow</li>
+              <li>Space</li>
+              <li>R</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+      <div class="group1">
+        <h2 class="controls">MENU CONTROLS</h2>
+        <div class="controls">
+          <div class="controls-action">
+            <ul>
+              <li>Pause Menu</li>
+              <li>Navigate Menu</li>
+              <li>Confirm</li>
+            </ul>
+          </div>
+          <div class="controls-keys">
+            <ul>
+              <li>Esc / Tab</li>
+              <li>W / S / Up-arrow / Down-arrow</li>
+              <li>Enter / Space</li>
+            </ul>
+          </div>
+
         </div>
       </div>
       <div class="group3">
