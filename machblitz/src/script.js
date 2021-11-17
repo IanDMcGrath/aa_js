@@ -28,6 +28,7 @@ const arrSky = [];
 const arrColliders = {road: undefined, walls: undefined};
 const arrRaceGates = {gates: undefined, finishLine: undefined};
 const animMixers = [];
+const UTIL_MESHES = {};
 
 // Game classes
 const raceManager = new RaceManager();
@@ -94,6 +95,15 @@ function meshesMaterial(meshArr=[], material=null) {
 // }, undefined, function ( error ) {
 //     console.error( error );
 // } );
+
+gltfLoader.load('./util/debugLine.glb', function (gltf) {
+  let line = gltf.scene.children[0];
+  UTIL_MESHES.debugLine = line;
+  // console.log(line);
+
+}, undefined, function (error) {
+  console.error(error);
+});
 
 function addWalls() {
   gltfLoader.load('./environment/road/track01_walls.gltf', function ( gltf ) {
@@ -316,8 +326,8 @@ function addFlyCam() {
     const animMixer = new AnimationMixer(glb.scene);
     fanfare.flycamStart.animMixer = animMixer;
     fanfare.flycamStart.anim = animMixer.clipAction(glb.animations[0]);
-    console.log('PRINTING ANIM MIXER...');
-    console.log(glb);
+    // console.log('PRINTING ANIM MIXER...');
+    // console.log(glb);
     // // console.log(fanfare.flycamStart.obj);
     animMixers.push(animMixer);
     // // fanfare.flycamStart.anim.setLoop(LoopRepeat);

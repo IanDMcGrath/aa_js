@@ -10,6 +10,7 @@ export class Vehicle {
     this.keyup = (e) => this.handleInput(e, false);
     this.keydown = (e) => this.handleInput(e, true);
     this.unbindControls = this.unbindControls.bind(this);
+    this.wallUnbounce = this.wallUnbounce.bind(this);
 
     this.prevNormalTotal = new Vector3(0,1,0);
     this.scale = [1,1,1];
@@ -173,7 +174,7 @@ export class Vehicle {
     clearTimeout(this.tohWallUnbounce);
     // console.log("bounced!");
     this.wallBounced = 0.01;
-    this.tohWallUnbounce = setTimeout(this.wallUnbounce.bind(this), 100);
+    this.tohWallUnbounce = setTimeout(this.wallUnbounce, 100);
   }
 
   wallUnbounce() {
@@ -182,7 +183,7 @@ export class Vehicle {
     // console.log(this.wallBounced);
     this.wallBounced = Math.min(this.wallBounced * 2, 1);
     if (this.wallBounced < 1) {
-      setTimeout(this.wallUnbounce.bind(this), 100);
+      setTimeout(this.wallUnbounce, 100);
     }
   }
 
@@ -444,7 +445,7 @@ export class Vehicle {
     let wallTraceRight = { origin: this.position.clone(), dir: this.rightDir.clone(), hits: [] };
 
     this.raycasterWallVel.set(wallTraceCenter.origin, wallTraceCenter.dir);
-    this.raycasterWallVel.far = Math.max(this.linearVelocity.length() * deltaTime * 1.25, 3);
+    this.raycasterWallVel.far = Math.max(this.linearVelocity.length(), 3);
 
     this.raycasterWallL.set(wallTraceLeft.origin, wallTraceLeft.dir);
     this.raycasterWallR.set(wallTraceRight.origin, wallTraceRight.dir);
@@ -487,12 +488,23 @@ export class Vehicle {
     return furthestHitPoint;
   }
 
+  getFirstHitPoint(hitPoints) {
+    if (hitPoints.length < 1) return this.position.clone();
+    let firstHitPoint = hitPoints[0];
+    hitPoints.forEach(point => {
+      if (firstHitPoint.lengthSq() < point.lengthSq()) {
+        firstHitPoint = point.clone();
+      }
+    });
+    return firstHitPoint;
+  }
+
   wallVelCollide(trace, deltaTime) {
     let hits = this.getHits([trace]);
     let hitNormal = hits.normal.normalize();
     let hitpoints = hits.points;
 
-    let point = this.getFurthestHitPoint(hitpoints);
+    let point = this.getFirstHitPoint(hitpoints);
     let offset = this.position.clone().sub(point);
 
     let dist = (this.raycasterWallVel.far - offset.length());
