@@ -42,7 +42,7 @@ export class PlayCam{
   offsetCam() {
     let offset = this.player.camOffset.clone().applyEuler(this.player.obj.scene.rotation);
     let targetPos = this.player.position.clone().add(offset);
-    targetPos.lerpVectors(targetPos, this.obj.position, 0.9);
+    targetPos.lerpVectors(targetPos, this.obj.position, 0.95);
 
     // let offsetDir = this.player.position.clone().sub(this.player.camOffset);
     // targetPos.projectOnVector(offsetDir.normalize());

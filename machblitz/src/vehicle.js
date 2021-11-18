@@ -11,6 +11,11 @@ export class Vehicle {
     this.keydown = (e) => this.handleInput(e, true);
     this.unbindControls = this.unbindControls.bind(this);
     this.wallUnbounce = this.wallUnbounce.bind(this);
+    this.boost = this.boost.bind(this);
+    this.effectThrottleLoop = this.effectThrottleLoop.bind(this);
+    this.effectThrottleUp = this.effectThrottleUp.bind(this);
+    this.effectThrottleDown = this.effectThrottleDown.bind(this);
+    this.lean = this.lean.bind(this);
 
     this.prevNormalTotal = new Vector3(0,1,0);
     this.scale = [1,1,1];
@@ -26,7 +31,7 @@ export class Vehicle {
     this.forwardDir = new Vector3(0,0,1);
     this.upDir = new Vector3(0,1,0);
     this.rightDir = new Vector3(1,0,0);
-    this.camOffset = new Vector3(0,10,-10);
+    this.camOffset = new Vector3(0,5,-5);
     this.cam = undefined;
     this.buildCollisions();
     this.road = undefined;
@@ -66,7 +71,7 @@ export class Vehicle {
     this.forwardDir = new Vector3(0, 0, 1);
     this.upDir = new Vector3(0, 1, 0);
     this.rightDir = new Vector3(1, 0, 0);
-    this.camOffset = new Vector3(0, 10, -10);
+    this.camOffset = new Vector3(0, 5, -6);
     this.isFalling = false;
     this.gravityDir = new Vector3(0, -1, 0);
     this.gravityTotal = new Vector3(0, 0, 0);
@@ -98,6 +103,7 @@ export class Vehicle {
     this.calcDirections();
     this.accelerate(deltaTime);
     this.addTurn(deltaTime);
+    // this.lean(deltaTime);
     if (this.isFalling) {
       this.gravity(deltaTime);
     } else {
@@ -114,7 +120,7 @@ export class Vehicle {
     // update the mesh to match the class transform;
     this.obj.scene.position.set(...this.position.toArray());
     // this.obj.scene.rotation.setFromQuaternion(this.rotation.clone());
-    this.obj.scene.rotation.setFromQuaternion(new Quat().setFromEuler(this.obj.scene.rotation).rotateTowards(this.rotation, 0.1));
+    this.obj.scene.rotation.setFromQuaternion(new Quat().setFromEuler(this.obj.scene.rotation).rotateTowards(this.rotation.clone().multiply(new Quat(0,0,this.steer * -deltaTime * 10).normalize()), 0.1));
     // if (this.isPlayer) {this.updatePlayerInterface();}
   }
 
@@ -145,6 +151,29 @@ export class Vehicle {
     this.secondPos = this.position.clone();
   }
 
+  lean(deltaTime) {
+    // if (this.steer > 0) {
+      this.obj.scene.rotation.setFromQuaternion((new Quaternion().setFromEuler(this.obj.scene.rotation)).multiply(new Quaternion(0,0,this.steer * -deltaTime * 5)));
+    // } else if (this.steer < 0) {
+
+    // }
+  }
+
+  boost() {
+    this.isBoosting = true;
+    this.throttle = 0.04;
+    if (!this.timers) this.timers = {};
+    clearTimeout(this.timers.endBoost);
+    this.timers.endBoost = setTimeout(() => {
+      this.isBoosting = false;
+      if (this.forwardPressed) {
+        this.throttle = 0.02;
+      } else {
+        this.throttle = Math.min(this.throttle, 0);
+      }
+    }, 1000);
+  }
+
   accelerate(deltaTime) {
     this.speed = this.speed + (this.throttle * (this.leftPressed || this.rightPressed ? 0.85 : 1));
     // speed = (this.speed + this.throttle);
@@ -157,6 +186,13 @@ export class Vehicle {
       this.speed = this.speed * 0.97;
     }
     // this.linearVelocity.set(...(this.gravityTotal.clone().add(this.forwardDir.clone().multiplyScalar(this.speed)).toArray()));
+    // let trueSpeed = Math.min(this.speed, 1);
+    // if (this.speed > this.isBoosting ? 2 : 1) {
+    //   trueSpeed += Math.log2(this.speed);
+    // }
+
+    // this.speed = Math.min(1, this.speed);
+    // console.log(trueSpeed);
     this.linearVelocity.lerp((this.gravityTotal.clone().add(this.forwardDir.clone().multiplyScalar(this.speed)).multiplyScalar(deltaTime * 100)), this.traction());
     // this.linearVelocity.lerp(new Vector3, 1)
     // console.log(this.linearVelocity)
@@ -214,33 +250,34 @@ export class Vehicle {
   handleInput(e, down) {
     e.preventDefault();
     // console.log(event.key)
-    switch(event.key) {
-      case "w": case "W": case "ArrowUp":
+    switch(e.code) {
+      case "KeyW": case "ArrowUp":
         this.playerForward(down);
         e.stopPropagation();
         break;
-      case "s": case "S": case "ArrowDown":
+      case "KeyS": case "ArrowDown":
         this.playerBackward(down);
         e.stopPropagation();
         break;
-      case "a": case "A": case "ArrowLeft":
+      case "KeyA": case "ArrowLeft":
         this.leftPressed = down;
         // console.log(down ? 'LeftPressed' : 'LeftReleased');
         this.playerLeft(down);
         e.stopPropagation();
         break;
-      case "d": case "D": case "ArrowRight":
+      case "KeyD": case "ArrowRight":
         this.rightPressed = down;
         // console.log(down ? 'RightPressed' : 'RightReleased');
         this.playerRight(down);
         e.stopPropagation();
         break;
-      case "r": case "R":
+      case "KeyR":
         if (down) this.resetPosition();
         e.stopPropagation();
         break;
-      case " ":
+      case "Space":
         this.brake(down);
+        // this.boost();
         e.stopPropagation();
         break;
       default: return;
@@ -315,13 +352,65 @@ export class Vehicle {
 
   playerForward(pressed) {
     // window.removeEventListener("keydown", this.keydown); // remove event listener proof for darrick #2
+    if (pressed && !this.forwardPressed ) {
+      this.effectThrottleUp();
+    }
+
     this.forwardPressed = pressed;
+    // if (this.isBoosting) {
+    //   this.throttle = 0.04;
+    //   return;
+    // }
     if (pressed) {
       this.throttle = 0.02;
     } else {
       this.backwardPressed ? this.playerBackward(true) : this.throttle = 0;
+      this.effectThrottleDown();
     }
   }
+
+  effectThrottleDown() {
+    if (!this.effects) {
+      this.effects = {};
+      return;
+    }
+    clearTimeout(this.effects.throttleLoop);
+    this.jets.objs.forEach(obj => {
+      obj.scale.set(0,0,0);
+    });
+    this.jets.anims1.forEach(anim => {
+      anim.stop();
+    });
+    this.jets.anims2.forEach(anim => {
+      anim.stop();
+    });
+    // console.log(this.jets);
+    this.jetLight.intensity = 0;
+  };
+  effectThrottleUp() {
+    if (!this.effects) this.effects = {};
+    this.effects.throttleLoop = setTimeout(this.effectThrottleLoop, 333);
+    // if (!this.jets || !this.jets.objs) return;
+    this.jets.objs.forEach(obj => {
+      obj.scale.set(0.5,0.5,1);
+    });
+    this.jets.anims2.forEach(anim => {
+      anim.play();
+    });
+  };
+  effectThrottleLoop() {
+    // console.log('throttle looping!!!!');
+    this.jets.anims1.forEach(anim => {
+      anim.play();
+    });
+    this.jets.anims2.forEach(anim => {
+      anim.stop();
+    });
+    this.jets.objs.forEach(obj => {
+      obj.scale.set(1, 1, 1);
+    });
+    this.jetLight.intensity = 2;
+  };
 
   playerBackward(pressed) {
     this.backwardPressed = pressed;

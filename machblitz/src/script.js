@@ -1,7 +1,7 @@
 // import threejs
 import './assets/stylesheets/stylesheets.css';
 // import * as THREE from 'three';
-import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial, Mesh, LoopRepeat, LoadingManager } from 'three';
+import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial, Mesh, LoopRepeat, LoadingManager, MeshLambertMaterial, PointLight, MeshStandardMaterial } from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
@@ -46,6 +46,7 @@ scene.background = textureLoader.load('environment/sky/skygradient.jpg');
 // const geometry = new SphereBufferGeometry( 10, 1, 16, 10 );
 
 
+
 // Materials
 
 const material = new MeshPhysicalMaterial();
@@ -53,7 +54,7 @@ material.metalness = 0;
 material.roughness = 1;
 material.color = new Color(0xffffff);
 
-const matRoad = new MeshMatcapMaterial();
+const matRoad = new MeshStandardMaterial({});
 matRoad.map = textureLoader.load('environment/road/roadTexture.jpg');
 
 const matRails = new MeshPhongMaterial({
@@ -65,6 +66,14 @@ const matRails = new MeshPhongMaterial({
   transparent : true,
   alphaTest : 0.5
 });
+let v2 = { x: 3, y: 1 };
+matRails.map.wrapS = RepeatWrapping;
+matRails.emissiveMap.wrapS = RepeatWrapping;
+matRails.alphaMap.wrapS = RepeatWrapping;
+// matRails.map.offset = { x: 0, y: 0 };
+matRails.map.repeat = v2;
+matRails.emissiveMap.repeat = v2;
+matRails.alphaMap.repeat = v2;
 // console.log(matRails);
 
 function meshesMaterial(meshArr=[], material=null) {
@@ -225,13 +234,13 @@ function addRacer() {
     let mesh = gltf.scene;
     // console.log('addRacer');
     // console.log(gltf.scene);
-    let mat = mesh.children[1].material;
-    let texColor = textureLoader.load("./vehicle/vehicle_BaseColor.jpg");
-    texColor.flipY = false;
-    mat.map = texColor;
-    mat.emissiveMap = texColor;
-    mat.emissive = new Color(0xFFFFFF);
-    mat.emissiveIntensity = 0.75;
+    // let mat = mesh.children[1].material;
+    // let texColor = textureLoader.load("./vehicle/vehicle_BaseColor.jpg");
+    // texColor.flipY = false;
+    // mat.map = texColor;
+    // mat.emissiveMap = texColor;
+    // mat.emissive = new Color(0xFFFFFF);
+    // mat.emissiveIntensity = 0.75;
     // mesh.castShadow = true;
     // mesh.receiveShadow = true;
     // console.log(mesh);
@@ -239,13 +248,65 @@ function addRacer() {
     // mesh.material = material;
     scene.add( mesh );
     let racer = new Vehicle(gltf);
+    const jetLight = new PointLight();
+    scene.add(jetLight);
+    jetLight.distance = 5;
+    jetLight.intensity = 0;
+    // jetLight.decay = 10;
+    console.log(jetLight);
+    jetLight.position.set(0,0,-2);
+    racer.obj.scene.attach(jetLight);
+    racer.jetLight = jetLight;
 
     RACERS.push(racer);
+    addRacerJets(racer);
   }, undefined, function ( error ) {
     console.error( error );
   } );
 }
 addRacer();
+
+
+const jetMat = new MeshLambertMaterial({emissive: new Color(1,1,1), emissiveIntensity: 255});
+const addRacerJets = (racer) => {
+gltfLoader.load('./vehicle/jet.glb', function (gltf) {
+  console.log(gltf);
+  const jet1 = gltf.scene;
+  jet1.children[0].material = jetMat;
+  const jet2 = jet1.clone();
+  const jet3 = jet1.clone();
+  jet1.animations = gltf.animations;
+  jet2.animations = gltf.animations;
+  jet3.animations = gltf.animations;
+  scene.add(jet1);
+  scene.add(jet2);
+  scene.add(jet3);
+  const animMixer1 = new AnimationMixer(jet1);
+  const animMixer2 = new AnimationMixer(jet2);
+  const animMixer3 = new AnimationMixer(jet3);
+  const jet1clip1 = animMixer1.clipAction(jet1.animations[0]);
+  const jet1clip2 = animMixer1.clipAction(jet1.animations[1]);
+  const jet2clip1 = animMixer2.clipAction(jet1.animations[0]);
+  const jet2clip2 = animMixer2.clipAction(jet1.animations[1]);
+  const jet3clip1 = animMixer3.clipAction(jet1.animations[0]);
+  const jet3clip2 = animMixer3.clipAction(jet1.animations[1]);
+  animMixers.push(animMixer1);
+  animMixers.push(animMixer2);
+  animMixers.push(animMixer3);
+  racer.obj.scene.attach(jet1);
+  racer.obj.scene.attach(jet2);
+  racer.obj.scene.attach(jet3);
+  jet1.position.set(0,0.6,-1.5);
+  jet2.position.set(0.6, 0.4, -1.4);
+  jet3.position.set(-0.6, 0.4, -1.4);
+  jet1.scale.set(0, 0, 0);
+  jet2.scale.set(0,0,0);
+  jet3.scale.set(0, 0, 0);
+  racer.jets = {objs: [jet1, jet2, jet3], anims1: [jet1clip1, jet2clip1, jet3clip1], anims2: [jet1clip2, jet2clip2, jet3clip2]};
+}, undefined, function (error) {
+  console.error(error);
+});
+}
 
 function assignRacerColliders() {
   if (arrColliders.road && arrColliders.walls) {      // check that both colliders were loaded and exist

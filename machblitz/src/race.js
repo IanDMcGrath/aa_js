@@ -68,6 +68,7 @@ export class RaceManager {
     this.timers.raceStart = new Timer(this.raceStart, 3000);
 
     this.racers[0].cam.obj.attach(this.fanfare.raceFont.obj.scene);
+    this.fanfare.raceFont.obj.scene.position.set(0,1,-5);
 
     const { animCountdown } = this.fanfare.raceFont;
     animCountdown.stop();
