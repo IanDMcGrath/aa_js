@@ -132,11 +132,12 @@ function addWalls() {
 addWalls();
 
 function addEnv() {
-  gltfLoader.load('./environment/road/track01_env.gltf', function ( gltf ) {
+  gltfLoader.load('./environment/road/track01_env.glb', function ( gltf ) {
     let env = gltf.scene;
     env.scale.set(1,1,1);
 
-    // console.log(gltf.scene)
+    console.log('ENVIRONMENT ASSET...');
+    console.log(gltf.scene);
 
     let roadParent = null;
     let gateParent = null;
@@ -179,6 +180,10 @@ function addEnv() {
     if (roadParent) meshesMaterial(roadParent.children, matRails);
     scene.add(env);
 
+    // console.log(gateParent  );
+    // console.log(`found gateGroupParent?: ${Boolean(gateParent)} // roadGroupParent?: ${Boolean(roadParent)} // raceStartingLine?: ${Boolean(startingLine)}`);
+    // console.log(`roadChildren length: ${roadParent.children.length} // gateChildren length: ${gateParent.children.length}`)
+
   }, undefined, function ( error ) {
     console.error( error );
   });
@@ -186,7 +191,7 @@ function addEnv() {
 addEnv();
 
 function addRoad() {
-  gltfLoader.load( './environment/road/track01_road.gltf', function ( gltf ) {
+  gltfLoader.load( './environment/road/track01_road.glb', function ( gltf ) {
     let road = gltf.scene;
     // road.castShadow = true;
     // road.receiveShadow = true;
@@ -751,6 +756,7 @@ function tryTick() {
   console.log("Trying to start tick..."); // A catch-all solution to waiting on the player's vehicle to be ready
 
   assignRacerColliders(); // pass references of the roads/walls to all racers
+  console.log(`loaded Racer[0]?: ${Boolean(RACERS[0])} // passed walls to racer[0]?: ${Boolean(RACERS[0].walls)} // has gates?: ${Boolean(arrRaceGates.gates)}`)
 
   if (RACERS[0] && RACERS[0].walls && arrRaceGates.gates) {
     // clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval

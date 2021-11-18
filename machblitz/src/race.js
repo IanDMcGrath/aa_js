@@ -198,8 +198,10 @@ export class RaceManager {
       let racer = this.racers[position.racerId];
       let gate = this.raceGates[position.gateId];
 
+
+      // console.log(this.raceGates);
       position.distance = racer.position.clone().sub(gate.position).lengthSq();
-      if (position.distance < 1500) {
+      if (position.distance < 1600) {
         if (position.gateId === 0) {
           position.lap += 1;
           if (position.lap > 1) {this.setLapTime(position.lap - 1)};
