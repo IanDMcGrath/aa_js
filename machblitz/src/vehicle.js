@@ -120,7 +120,10 @@ export class Vehicle {
     // update the mesh to match the class transform;
     this.obj.scene.position.set(...this.position.toArray());
     // this.obj.scene.rotation.setFromQuaternion(this.rotation.clone());
-    this.obj.scene.rotation.setFromQuaternion(new Quat().setFromEuler(this.obj.scene.rotation).rotateTowards(this.rotation.clone().multiply(new Quat(0,0,this.steer * -deltaTime * 10).normalize()), 0.1));
+    this.obj.scene.rotation.setFromQuaternion(new Quat().setFromEuler(this.obj.scene.rotation).rotateTowards(this.rotation.clone().multiply(new Quat(0,0,this.steer * -0.2).normalize()), 5 * deltaTime));
+    if (this.throttle > 0) {this.jets.objs.forEach(jet => {
+      jet.scale.set(1,1, (1 + 0.5 * (1 - 2 * Math.random())) * (this.brakePressed ? 0.2 : 1));
+    });}
     // if (this.isPlayer) {this.updatePlayerInterface();}
   }
 
