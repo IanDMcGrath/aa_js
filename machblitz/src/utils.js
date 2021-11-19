@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 export function vectorAdd(vectors){ // sum an array of vectors
     let total = [0,0,0];
     for (let i=0; i<vectors.length; i++) {
@@ -59,6 +61,14 @@ export function clampFRange(f, min, max) {
         return f;
     }
 }
+
+export const lerp = (a, b, alpha) => (
+  a * (1 - alpha) + b * alpha
+);
+
+// export const twoPointBezier = () => {
+
+// };
 
 
 // module.exports = Util

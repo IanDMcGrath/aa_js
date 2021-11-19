@@ -1,4 +1,4 @@
-import { Vector3, Quaternion, Euler, Raycaster, ArrowHelper } from 'three';
+import { Vector3, Quaternion, Euler, Raycaster, ArrowHelper, LineCurve, Vector2, SplineCurve } from 'three';
 // import { playerSpeed } from './javascripts/UI';
 const Util = require('./utils');
 const Quat = Quaternion; // because it's easier to type and read
@@ -47,6 +47,16 @@ export class Vehicle {
     this.jumping = false;
     this.wallBounced = 1;
     this.startIntervals();
+    this.speedCurve = new SplineCurve([
+      new Vector2(0, 0),
+      new Vector2(0.1, 0.4),
+      new Vector2(0.5, 0.5),
+      new Vector2(0.9, 0.6),
+      new Vector2(1, 1)
+    ]);
+    console.log('SPEED CURVE:');
+    console.log(this.speedCurve);
+    console.log(this.speedCurve.getPoints());
 
     if (isPlayer) {
       // bindControls();
@@ -109,8 +119,11 @@ export class Vehicle {
     } else {
       this.momentum();
     }
-    this.collision(deltaTime);
+    // this.collision(deltaTime);
+    if (this.walls) this.collideWall(deltaTime);
     this.position.add(this.linearVelocity.clone());
+    if (this.road) this.collideRoad(deltaTime);
+
     this.rotation.multiply(this.rotationalVelocity);
     this.rotation.normalize();
 
@@ -121,9 +134,11 @@ export class Vehicle {
     this.obj.scene.position.set(...this.position.toArray());
     // this.obj.scene.rotation.setFromQuaternion(this.rotation.clone());
     this.obj.scene.rotation.setFromQuaternion(new Quat().setFromEuler(this.obj.scene.rotation).rotateTowards(this.rotation.clone().multiply(new Quat(0,0,this.steer * -0.2).normalize()), 5 * deltaTime));
-    if (this.throttle > 0) {this.jets.objs.forEach(jet => {
-      jet.scale.set(1,1, (1 + 0.5 * (1 - 2 * Math.random())) * (this.brakePressed ? 0.2 : 1));
-    });}
+    if (this.throttle > 0) {
+      this.jets.objs.forEach(jet => {
+        jet.scale.set(1,1, (1 + 0.5 * (1 - 2 * Math.random())) * (this.brakePressed ? 0.2 : 1));
+      });
+    }
     // if (this.isPlayer) {this.updatePlayerInterface();}
   }
 
@@ -181,13 +196,17 @@ export class Vehicle {
     this.speed = this.speed + (this.throttle * (this.leftPressed || this.rightPressed ? 0.85 : 1));
     // speed = (this.speed + this.throttle);
     this.speed = (this.surface === "dirt" ? this.speed * 0.97 : this.speed) * (this.leftPressed || this.rightPressed ? 0.99 : 1);
-    if (this.brakePressed) {this.speed = Math.max(this.speed - (1 * deltaTime), 0);}
+    if (this.brakePressed) {
+      this.speed = Math.max(this.speed - (1 * deltaTime), 0);
+    }
     // this.speed = this.speed / (1 / deltaTime);
     if (this.throttle === 0) {
       this.speed = this.speed * 0.995;
     } else if (this.throttle < 0) {
       this.speed = this.speed * 0.97;
     }
+
+    this.speed = Math.min(this.speed, 3.55);
     // this.linearVelocity.set(...(this.gravityTotal.clone().add(this.forwardDir.clone().multiplyScalar(this.speed)).toArray()));
     // let trueSpeed = Math.min(this.speed, 1);
     // if (this.speed > this.isBoosting ? 2 : 1) {
@@ -288,7 +307,7 @@ export class Vehicle {
   }
 
   jump(pressed) { // not used, replaced with brake
-    console.log("jump!");
+    // console.log("jump!");
     this.jumping = true;
     if (pressed) {
       if (!this.isFalling) {
@@ -447,7 +466,7 @@ export class Vehicle {
 
   buildCollisions() {
     this.obj.scene.layers.set(2);
-    this.raycasterFloorC = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
+    this.raycasterFloorC = new Raycaster(this.position.clone().add(this.upDir.clone().multiplyScalar(5)), this.upDir.clone().negate(), 0, 10);
     this.raycasterFloorVel = new Raycaster(this.position.clone(), this.upDir.clone().negate(), 0, 5);
     this.raycasterWallVel = new Raycaster(this.position.clone(), this.forwardDir.clone(), 0, 1);
     this.raycasterWallL = new Raycaster(this.position.clone(), this.rightDir.clone().negate(), 0, 2);
@@ -460,7 +479,7 @@ export class Vehicle {
   }
 
   collideRoad(deltaTime) {
-    let upOffset = this.position.clone().add(this.upDir.clone().multiplyScalar(2));
+    let upOffset = this.position.clone().add(this.upDir.clone().multiplyScalar(5));
     let downDir = this.upDir.clone().negate();
 
     this.floorTraceVel = {origin: this.position.clone().add(this.upDir.clone().multiplyScalar(-1 * this.raycasterFloorC.far)), dir: this.moveDir};
@@ -479,10 +498,10 @@ export class Vehicle {
     if (intersectsC.length > 0) {
       this.moveToRoad(intersectsC[0]);
       this.falling(false);
-    } else if (intersectsVel.length > 0) {
-      console.log(intersectsVel[0]);
-      this.moveToRoadVel(intersectsVel[0]);
-      this.falling(false);
+    // } else if (intersectsVel.length > 0) {
+    //   console.log(intersectsVel[0]);
+    //   this.moveToRoadVel(intersectsVel[0]);
+    //   this.falling(false);
     } else {
       this.falling(true);
       this.setSurface(); // set surface to undefined (this.surface will be "none")
@@ -512,7 +531,7 @@ export class Vehicle {
   }
 
   moveToRoadVel(intersect) {
-    console.log('moveToRoadVel');
+    // console.log('moveToRoadVel');
     let hitPoint = intersect.point;
 
     this.position = hitPoint.clone().add(intersect.face.normal.clone().multiplyScalar( 1 ));

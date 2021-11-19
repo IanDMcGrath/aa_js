@@ -128,7 +128,7 @@ class UIManager {
   };
 
   inputPressStart(e) {
-    console.log(e);
+    // console.log(e);
     const { startMenu } = this.menus;
     e.preventDefault();
     e.stopPropagation();
