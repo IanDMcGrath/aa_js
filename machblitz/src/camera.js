@@ -11,13 +11,14 @@ export class PlayCam{
     this.flycams = {};
   }
 
-  move() {
+  move(deltaTime) {
     // this.obj.lookAt(this.player.position)
     // console.log(this.gameState.gameStarted);
     if (this.gameState.gameStarted) {
       this.offsetCam();
       this.clampDist();
-      this.lookAt();
+      this.lookAt(deltaTime);
+      // this.rotToSurface();
     } else {
       // console.log(this.flycams.flycamStart.position);
       this.obj.position.copy(this.flycams.flycamStart.obj.children[0].position);
@@ -50,16 +51,44 @@ export class PlayCam{
     this.obj.position.set(...targetPos.toArray());
   }
 
-  lookAt() {      // coders beware, jank code be here
-    let firstRot = new Quat();
-    let secondRot = new Quat();
-    firstRot.setFromEuler(this.obj.rotation);
-    this.obj.lookAt(this.player.position.clone().add(this.player.forwardDir.clone().multiplyScalar(10)));
-    secondRot.setFromEuler(this.obj.rotation);
-    firstRot.slerp(secondRot, 0.2);
-    this.obj.rotation.setFromQuaternion(firstRot);
+  lookAt(deltaTime) {      // coders beware, jank code be here
+    // let firstRot = new Quat();
+    // let secondRot = new Quat();
+    // firstRot.setFromEuler(this.obj.rotation);
+    // this.obj.lookAt(this.player.position.clone().add(this.player.forwardDir.clone().multiplyScalar(10)));
+    // secondRot.setFromEuler(this.obj.rotation);
+    // firstRot.slerp(secondRot, 0.2);
+    // this.obj.rotation.setFromQuaternion(firstRot);
+
+
+    // let lookatQuat = new Quat().setFromUnitVectors(this.obj.position.clone().sub(this.player.position));
+    // upDir.sub(this.player.upDir);
+    // lookatQuat.multiply(upDir);
+    // lookatQuat.normalize();
+    // this.obj.rotation.setFromQuaternion(lookatQuat);
+    // this.obj.rotation.setFromQuaternion(new Quat().setFromUnitVectors(this.obj.position.clone().sub(this.player.position), this.player.gravityDir.clone()));
+
+    let newQuat = new Quat().setFromEuler(this.obj.rotation);
+    let currentQuat = newQuat.clone();
+    let upDir = new Vector3(0, 1, 0).applyQuaternion(newQuat);
+    newQuat.premultiply(new Quat().setFromUnitVectors(upDir, this.player.upDir));
+    let forwardDir = new Vector3(0, 0, -1).applyQuaternion(newQuat);
+    let targetPos = this.player.position.clone().add(this.player.forwardDir.clone().multiplyScalar(10));
+    newQuat.premultiply(new Quat().setFromUnitVectors(forwardDir, targetPos.sub(this.obj.position).normalize()));
+    newQuat.normalize();
+    this.obj.rotation.setFromQuaternion(currentQuat.slerp(newQuat, deltaTime * 10));
+
 
   }
+
+  rotToSurface() {
+    let quat = new Quat();
+    quat.setFromUnitVectors(new Vector3(0,1,0).applyQuaternion(new Quat().setFromEuler(this.obj.rotation)), this.player.gravityDir.clone().negate());
+    this.obj.rotation.setFromQuaternion((new Quat().setFromEuler(this.obj.rotation)).premultiply(quat));
+    // this.obj.rotation.setFromQuaternion(new Quat().setFromUnitVectors(new Vector3().applyEuler(this.obj.rotation),this.player.graviyDir));
+    // console.log(this.obj.rotation);
+    // console.log(this.player.gravityDir);
+  };
 
   resetPosition() {
     // this.player.rotation.set(1,0,0,0);

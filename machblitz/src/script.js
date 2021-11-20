@@ -195,12 +195,17 @@ function addRoad() {
     let road = gltf.scene;
     // road.castShadow = true;
     // road.receiveShadow = true;
-    road.scale.set(1,1,1);
+    // road.scale.set(1,1,1);
+
+    console.log('ROADS')
+    console.log(gltf.scene.children)
+
+    gltf.scene.children.forEach(mesh => {
+      if (!mesh.geometry) return;
+      mesh.geometry.computeVertexNormals();
+    });
 
     meshesMaterial(road.children, matRoad);
-
-    // console.log('road vvv')
-    // console.log(gltf.scene.children[31].name)
 
     let dirt = null;
     for (let i=0; i<gltf.scene.children.length; i++) {

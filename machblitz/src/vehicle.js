@@ -496,7 +496,7 @@ export class Vehicle {
 
 
     if (intersectsC.length > 0) {
-      this.moveToRoad(intersectsC[0]);
+      this.moveToRoad(intersectsC[0], deltaTime);
       this.falling(false);
     // } else if (intersectsVel.length > 0) {
     //   console.log(intersectsVel[0]);
@@ -523,28 +523,30 @@ export class Vehicle {
     }
   }
 
-  moveToRoad(intersect) {
+  moveToRoad(intersect, deltaTime) {
     this.position = intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(1));
     this.setSurface(intersect.object);
 
-    this.orientToRoad(intersect);
+    this.orientToRoad(intersect, deltaTime);
   }
 
-  moveToRoadVel(intersect) {
+  moveToRoadVel(intersect, deltaTime) {
     // console.log('moveToRoadVel');
     let hitPoint = intersect.point;
 
     this.position = hitPoint.clone().add(intersect.face.normal.clone().multiplyScalar( 1 ));
     this.linearVelocity.projectOnPlane(intersect.face.normal);
 
-    this.orientToRoad(intersect);
+    this.orientToRoad(intersect, deltaTime);
   }
 
-  orientToRoad(intersect) {
+  orientToRoad(intersect, deltaTime) {
     // --->> the simple, snappy solution <<---
+    // console.log(intersect)
     let localHitNormal = intersect.face.normal.clone();
     let quat = new Quat().setFromUnitVectors(this.upDir.clone(), localHitNormal);
-    this.rotation.premultiply(quat);
+    let newQuat = this.rotation.clone().premultiply(quat);
+    this.rotation.slerp(newQuat, deltaTime * 10);
 
     this.gravityDir = intersect.face.normal.clone().negate();
   }
