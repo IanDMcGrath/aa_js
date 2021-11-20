@@ -136,8 +136,8 @@ function addEnv() {
     let env = gltf.scene;
     env.scale.set(1,1,1);
 
-    console.log('ENVIRONMENT ASSET...');
-    console.log(gltf.scene);
+    // console.log('ENVIRONMENT ASSET...');
+    // console.log(gltf.scene);
 
     let roadParent = null;
     let gateParent = null;
@@ -195,12 +195,17 @@ function addRoad() {
     let road = gltf.scene;
     // road.castShadow = true;
     // road.receiveShadow = true;
-    road.scale.set(1,1,1);
+    // road.scale.set(1,1,1);
+
+    console.log('ROADS')
+    console.log(gltf.scene.children)
+
+    gltf.scene.children.forEach(mesh => {
+      if (!mesh.geometry) return;
+      mesh.geometry.computeVertexNormals();
+    });
 
     meshesMaterial(road.children, matRoad);
-
-    // console.log('road vvv')
-    // console.log(gltf.scene.children[31].name)
 
     let dirt = null;
     for (let i=0; i<gltf.scene.children.length; i++) {
@@ -258,7 +263,7 @@ function addRacer() {
     jetLight.distance = 5;
     jetLight.intensity = 0;
     // jetLight.decay = 10;
-    console.log(jetLight);
+    // console.log(jetLight);
     jetLight.position.set(0,0,-2);
     racer.obj.scene.attach(jetLight);
     racer.jetLight = jetLight;
@@ -275,7 +280,7 @@ addRacer();
 const jetMat = new MeshLambertMaterial({emissive: new Color(1,1,1), emissiveIntensity: 255});
 const addRacerJets = (racer) => {
 gltfLoader.load('./vehicle/jet.glb', function (gltf) {
-  console.log(gltf);
+  // console.log(gltf);
   const jet1 = gltf.scene;
   jet1.children[0].material = jetMat;
   const jet2 = jet1.clone();
@@ -655,12 +660,12 @@ const raceStart = () => {
   raceManager.raceDelayStart();
   gameState.gameStarted = true;
   playCam.resetPosition();
-  console.log('SET GAMESTARTED TO TRUE')
+  // console.log('SET GAMESTARTED TO TRUE')
   playCam.cancelFade();
 };
 
 const raceComplete = () => {
-  console.log('RACE IS COMPLETE!!');
+  // console.log('RACE IS COMPLETE!!');
   gameInitialize();
   uiManager.raceComplete();
 };
@@ -756,7 +761,7 @@ function tryTick() {
   console.log("Trying to start tick..."); // A catch-all solution to waiting on the player's vehicle to be ready
 
   assignRacerColliders(); // pass references of the roads/walls to all racers
-  console.log(`loaded Racer[0]?: ${Boolean(RACERS[0])} // passed walls to racer[0]?: ${Boolean(RACERS[0].walls)} // has gates?: ${Boolean(arrRaceGates.gates)}`)
+  // console.log(`loaded Racer[0]?: ${Boolean(RACERS[0])} // passed walls to racer[0]?: ${Boolean(RACERS[0].walls)} // has gates?: ${Boolean(arrRaceGates.gates)}`)
 
   if (RACERS[0] && RACERS[0].walls && arrRaceGates.gates) {
     // clearInterval(prepTick); // clear interval first thing so if any functions fail, we don't spam this interval
