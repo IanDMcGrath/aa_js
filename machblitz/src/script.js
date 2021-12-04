@@ -55,7 +55,12 @@ material.roughness = 1;
 material.color = new Color(0xffffff);
 
 const matRoad = new MeshStandardMaterial({});
-matRoad.map = textureLoader.load('environment/road/roadTexture.jpg');
+matRoad.map = textureLoader.load('environment/road/roadSurface_BaseColor.png');
+matRoad.normalMap = textureLoader.load('environment/road/roadSurface_Normal.png');
+matRoad.emissiveMap = textureLoader.load('environment/road/roadSurface_Emissive.png');
+matRoad.metalMap = textureLoader.load('environment/road/roadSurface_OcclusionRoughnessMetallic.png');
+matRoad.roughnessMap = textureLoader.load('environment/road/roadSurface_OcclusionRoughnessMetallic.png');
+matRoad.aoMap = textureLoader.load('environment/road/roadSurface_OcclusionRoughnessMetallic.png');
 
 const matRails = new MeshPhongMaterial({
   map : textureLoader.load('environment/road/roadGuardRail.png'),
