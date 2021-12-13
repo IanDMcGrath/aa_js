@@ -54,9 +54,12 @@ export class Vehicle {
       new Vector2(0.9, 0.6),
       new Vector2(1, 1)
     ]);
-    console.log('SPEED CURVE:');
-    console.log(this.speedCurve);
-    console.log(this.speedCurve.getPoints());
+    this.mobile = {
+      roll: 0
+    }
+    // console.log('SPEED CURVE:');
+    // console.log(this.speedCurve);
+    // console.log(this.speedCurve.getPoints());
 
     if (isPlayer) {
       // bindControls();
@@ -308,8 +311,14 @@ export class Vehicle {
 
   handleOrientation(e) {
     // const { absolute, alpha, beta, gamma } = e;
+    const { beta } = e;
+    this.mobile.roll = beta;
     // console.log(alpha);
     // console.log(e);
+    // pitch yaw roll // gab
+    // gamma = pitch
+    // alpha = yaw
+    // beta = roll
   }
 
   jump(pressed) { // not used, replaced with brake

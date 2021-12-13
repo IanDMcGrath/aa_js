@@ -75,6 +75,7 @@ export class PlayCam{
     let forwardDir = new Vector3(0, 0, -1).applyQuaternion(newQuat);
     let targetPos = this.player.position.clone().add(this.player.forwardDir.clone().multiplyScalar(10));
     newQuat.premultiply(new Quat().setFromUnitVectors(forwardDir, targetPos.sub(this.obj.position).normalize()));
+    newQuat.multiply(new Quat(0, 0, Math.sin(this.player.mobile.roll * 0.0174 )));
     newQuat.normalize();
     this.obj.rotation.setFromQuaternion(currentQuat.slerp(newQuat, deltaTime * 10));
 
