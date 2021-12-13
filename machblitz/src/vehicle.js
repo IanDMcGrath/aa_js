@@ -306,6 +306,12 @@ export class Vehicle {
     }
   }
 
+  handleOrientation(e) {
+    // const { absolute, alpha, beta, gamma } = e;
+    // console.log(alpha);
+    // console.log(e);
+  }
+
   jump(pressed) { // not used, replaced with brake
     // console.log("jump!");
     this.jumping = true;

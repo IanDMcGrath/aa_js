@@ -196,3 +196,10 @@
 .results-menu-time {
   display: flex;
 }
+
+#debug {
+  color: rgb(151, 68, 68);
+  position: absolute;
+  margin-left: 1rem;
+  margin-top: 1rem;
+}

@@ -1,3 +1,5 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Menu from './Menu';
 
 class UIManager {
@@ -284,6 +286,27 @@ class UIManager {
     }, 2000);
 
   };
+
+  debug(strings) {
+    const root = document.getElementById('debug');
+    ReactDOM.render(<Debug strings={strings} />, root);
+  }
 };
+
+class Debug extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { strings } = this.props;
+    // console.log('rendering');
+    return (
+      <ul>
+        {strings.map((str, i) => <li key={`debug-${i}`}>{str}</li>)}
+      </ul>
+    );
+  }
+}
 
 export default UIManager;
