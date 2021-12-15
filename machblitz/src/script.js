@@ -1,7 +1,7 @@
 // import threejs
 import './assets/stylesheets/stylesheets.css';
 // import * as THREE from 'three';
-import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial, Mesh, LoopRepeat, LoadingManager, MeshLambertMaterial, PointLight, MeshStandardMaterial } from 'three';
+import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongMaterial, Color, DirectionalLight, AmbientLight, PerspectiveCamera, Vector3, WebGLRenderer, Clock, Quaternion, ArrowHelper, AnimationMixer, MeshToonMaterial, Euler, NearestFilter, RepeatWrapping, MeshPhysicalMaterial, Mesh, LoopRepeat, LoadingManager, MeshLambertMaterial, PointLight, MeshStandardMaterial, Vector2 } from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
@@ -62,6 +62,19 @@ matRoad.emissiveMap = textureLoader.load('environment/road/roadSurface_Emissive.
 matRoad.metalMap = textureLoader.load('environment/road/roadSurface_OcclusionRoughnessMetallic.png');
 matRoad.roughnessMap = textureLoader.load('environment/road/roadSurface_OcclusionRoughnessMetallic.png');
 matRoad.aoMap = textureLoader.load('environment/road/roadSurface_OcclusionRoughnessMetallic.png');
+matRoad.map.flipY = false;
+matRoad.normalMap.flipY = false;
+matRoad.emissiveMap.flipY = false;
+matRoad.metalMap.flipY = false;
+matRoad.roughnessMap.flipY = false;
+matRoad.aoMap.flipY = false;
+matRoad.map.wrapT = RepeatWrapping;
+matRoad.normalMap.wrapT = RepeatWrapping;
+matRoad.emissiveMap.wrapT = RepeatWrapping;
+matRoad.metalMap.wrapT = RepeatWrapping;
+matRoad.roughnessMap.wrapT = RepeatWrapping;
+matRoad.aoMap.wrapT = RepeatWrapping;
+matRoad.map.magFilter = NearestFilter;
 
 const matRails = new MeshPhongMaterial({
   map : textureLoader.load('environment/road/roadGuardRail.png'),
