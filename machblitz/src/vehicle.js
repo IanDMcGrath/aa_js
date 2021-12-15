@@ -274,36 +274,32 @@ export class Vehicle {
 
   handleInput(e, down) {
     e.preventDefault();
+    e.stopPropagation();
+
     // console.log(event.key)
     switch(e.code) {
       case "KeyW": case "ArrowUp":
         this.playerForward(down);
-        e.stopPropagation();
         break;
       case "KeyS": case "ArrowDown":
         this.playerBackward(down);
-        e.stopPropagation();
         break;
       case "KeyA": case "ArrowLeft":
         this.leftPressed = down;
         // console.log(down ? 'LeftPressed' : 'LeftReleased');
         this.playerLeft(down);
-        e.stopPropagation();
         break;
       case "KeyD": case "ArrowRight":
         this.rightPressed = down;
         // console.log(down ? 'RightPressed' : 'RightReleased');
         this.playerRight(down);
-        e.stopPropagation();
         break;
       case "KeyR":
         if (down) this.resetPosition();
-        e.stopPropagation();
         break;
       case "Space":
         this.brake(down);
         // this.boost();
-        e.stopPropagation();
         break;
       default: return;
     }
@@ -311,8 +307,14 @@ export class Vehicle {
 
   handleOrientation(e) {
     // const { absolute, alpha, beta, gamma } = e;
-    const { beta } = e;
-    this.mobile.roll = beta;
+    const { beta, gamma } = e;
+    let roll = 0;
+    if (gamma < 0) {
+      roll = beta;
+    } else {
+      roll = (beta > 0 ? beta - 180: beta + 180) * -1;
+    }
+    this.mobile.roll = roll;
     // console.log(alpha);
     // console.log(e);
     // pitch yaw roll // gab

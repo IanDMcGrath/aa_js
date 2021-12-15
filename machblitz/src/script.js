@@ -6,6 +6,7 @@ import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongM
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
+import PlayerController from './javascripts/playerController';
 import UIManager from './javascripts/UI';
 
 // import my files
@@ -554,7 +555,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const myVector = new Vector3(50,0,0);
 // render iterators
 function renderRacers(deltaTime) {
-  RACERS[0].handleOrientation(gameState.playerController);
+  // RACERS[0].handleOrientation(gameState.playerController);
   for (let i=0; i<RACERS.length; i++) {
     RACERS[i].move(deltaTime);
     // RACERS[i].position.x = clock.getElapsedTime();
@@ -650,28 +651,6 @@ function moveArrows() {
   // arrows[4].position.set(...RACERS[0].floorTraceFront.origin.toArray());
   // arrows[5].position.set(...RACERS[0].floorTraceBack.origin.toArray());
   // console.log(arrows[3].position);
-}
-
-class PlayerController {
-  constructor() {
-    this.handleOrientation = this.handleOrientation.bind(this);
-    window.addEventListener("deviceorientation", this.handleOrientation, true);
-    this.absolute = 0;
-    this.alpha = 0;
-    this.beta = 0;
-    this.gamma = 0;
-  }
-
-  handleOrientation(e) {
-    const { absolute, alpha, beta, gamma } = e;
-    console.log(e);
-    this.absolute = absolute;
-    this.alpha = alpha;
-    this.beta = beta;
-    this.gamma = gamma;
-
-    console.log(alpha);
-  }
 }
 
 const raceInitialize = (restart) => {
@@ -782,12 +761,14 @@ const tick = () =>
 const debug = () => {
   let strings = [];
 
-  const { gamma, alpha, beta, absolute } = gameState.playerController
+  const { roll, forward, backward, left, right, brake } = gameState.playerController.inputs;
 
-  strings.push(`gamma: ${gamma}`);
-  strings.push(`alpha: ${alpha}`);
-  strings.push(`beta: ${beta}`);
-  strings.push(`absolute: ${absolute}`);
+  strings.push(`roll: ${roll}`);
+  strings.push(`forward: ${forward}`);
+  strings.push(`backward: ${backward}`);
+  strings.push(`left: ${left}`);
+  strings.push(`right: ${right}`);
+  strings.push(`brake: ${brake}`);
 
   return strings;
 }
@@ -795,7 +776,7 @@ const debug = () => {
 const uiTick = () => {
   uiManager.menus.playHud.playerSpeed.speed = RACERS[0].speed;
   uiManager.setSpeedGauge();
-  uiManager.debug(debug());
+  // uiManager.debug(gameState.playerController.debug);
 };
 
 // var prepTick = setInterval(tryTick, 100);
