@@ -1,6 +1,6 @@
 import { Vector3, Quaternion, Euler, Raycaster, ArrowHelper, LineCurve, Vector2, SplineCurve } from 'three';
 // import { playerSpeed } from './javascripts/UI';
-const Util = require('./utils');
+const Util = require('../utils/utils');
 const Quat = Quaternion; // because it's easier to type and read
 
 

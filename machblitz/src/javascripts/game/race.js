@@ -1,7 +1,5 @@
-import scene from './script.js';
 import { LoopOnce, Quaternion, Vector3 } from 'three';
-import { RaceFont } from './fanfare.js';
-import Timer from './javascripts/Timer.js';
+import Timer from '../utils/Timer.js';
 
 
 export class RaceManager {

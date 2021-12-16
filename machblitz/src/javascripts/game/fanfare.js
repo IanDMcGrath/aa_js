@@ -1,5 +1,5 @@
 import { AnimationClip } from "three";
-import { scene } from "./script";
+import { scene } from "../../script";
 
 
 export class RaceFont {

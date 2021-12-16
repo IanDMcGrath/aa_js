@@ -6,14 +6,14 @@ import { TextureLoader, Scene, MeshBasicMaterial, MeshMatcapMaterial, MeshPhongM
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
-import PlayerController from './javascripts/playerController';
-import UIManager from './javascripts/UI';
+import PlayerController from './javascripts/player/playerController';
+import UIManager from './javascripts/ui/UI';
 
 // import my files
-import { Vehicle } from './vehicle';
-import { PlayCam } from './camera';
-const Util = require('./utils');
-import { RaceManager } from './race';
+import { Vehicle } from './javascripts/game/vehicle';
+import { PlayCam } from './javascripts/player/camera';
+const Util = require('./javascripts/utils/utils');
+import { RaceManager } from './javascripts/game/race';
 
 const LOADING_MANAGER = new LoadingManager();
 
@@ -509,6 +509,8 @@ const fullscreenClick = e => {
   }
 };
 
+console.log(fullscreenButton);
+
 fullscreenButton.addEventListener('click', fullscreenClick);
 
 let isFullscreen = false;
@@ -790,7 +792,7 @@ const debug = () => {
 const uiTick = () => {
   uiManager.menus.playHud.playerSpeed.speed = RACERS[0].speed;
   uiManager.setSpeedGauge();
-  // uiManager.debug(gameState.playerController.debug);
+  uiManager.debug(gameState.playerController.debug);
 };
 
 // var prepTick = setInterval(tryTick, 100);

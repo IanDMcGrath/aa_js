@@ -289,7 +289,7 @@ class UIManager {
 
   debug(strings) {
     const root = document.getElementById('debug');
-    ReactDOM.render(<Debug strings={strings} />, root);
+    // ReactDOM.render(<Debug strings={strings} />, root);
   }
 };
 
@@ -300,7 +300,7 @@ class Debug extends React.Component {
 
   render() {
     const { strings } = this.props;
-    // console.log('rendering');
+    console.log(strings);
     return (
       <ul>
         {strings.map((str, i) => <li key={`debug-${i}`}>{str}</li>)}

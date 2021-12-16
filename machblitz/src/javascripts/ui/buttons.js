@@ -1,3 +1,7 @@
+// this file is deprecated. I started building this out without realizing I can just ride on HTML and DOM to build menus.
+
+
+
 // FULLSCREEN BUTTON
 // const canvas = document.querySelector('canvas');
 // const fullscreenButton = document.querySelector("#button-fullscreen");

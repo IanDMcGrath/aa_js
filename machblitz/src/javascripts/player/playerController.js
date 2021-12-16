@@ -14,9 +14,11 @@ class PlayerController {
       brake: false,
     }
 
+    this.touchList = {};
+
     this.debug = [];
 
-    // this.bindControls();
+    this.bindControls();
   }
 
   bindControls() {
@@ -29,14 +31,42 @@ class PlayerController {
   }
 
   handleTouch(e, down) {
-    e.preventDefault();
+    // e.preventDefault();
+    let { pawn, touchList, inputs: { forward, backward, left, right, brake } } = this;
+    console.log(e);
+    if (!pawn) return;
     e.stopPropagation();
-    let width = screen.width;
+    let width = Math.floor(screen.width * 0.5);
+    // if (e.touches.)
 
-    let strings = [width, `${e.touches}`];
+    // console.log(e.touches);
 
-    this.debug = strings;
+    if (touchList)
 
+    Object.values(e.touches).forEach( touch => {
+      if (touch.clientX > width) {
+        forward = true;
+        pawn.inputForward(forward);
+      } else {
+        if (forward) {
+          brake = true;
+          pawn.inputBrake(brake);
+        } else {
+          backward = true;
+          pawn.inputBackward(backward);
+        }
+      }
+    });
+
+    // let strings = [width, Object.values(e.touches)];
+
+    // this.debug = strings;
+
+  }
+
+  shallowCompare(obj1, obj2) {
+    return Boolean(Object.keys(obj1).length === Object.keys(obj2).length &&
+    Object.keys(obj1).every(key => obj1[key] === obj2[key]));
   }
 
   handleInput(e, down) {

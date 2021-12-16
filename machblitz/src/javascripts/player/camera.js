@@ -1,6 +1,6 @@
-const Util = require('./utils');
+import * as Util from '../utils/utils';
 import {Vector3, Quaternion} from 'three'
-import Timer from './javascripts/Timer';
+import Timer from '../utils/Timer';
 const Quat = Quaternion;
 
 export class PlayCam{
