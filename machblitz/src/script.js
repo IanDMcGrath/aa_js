@@ -808,6 +808,7 @@ function tryTick() {
     clock.getDelta();
 
     RACERS[0].isPlayer = true;
+    gameState.playerController.pawn = RACERS[0];
     // console.log('ARRRACERS[0].SPEED');
     // console.log(RACERS[0].speed);
 

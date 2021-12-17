@@ -66,6 +66,21 @@ export const lerp = (a, b, alpha) => (
   a * (1 - alpha) + b * alpha
 );
 
+export const shallowCompare = (obj1, obj2) => {
+  return Boolean(Object.keys(obj1).length === Object.keys(obj2).length &&
+    Object.keys(obj1).every(key => obj1[key] === obj2[key]));
+}
+
+export const shallowDiff = (obj1, obj2) => {
+  return result = Object.keys(obj1).select(key => {obj1[key] !== obj2[key]});
+}
+
+Array.prototype.select = (func) => {
+  let result = [];
+  this.forEach( el => {if (func(el)) {result.push(el)}});
+  return result;
+}
+
 // export const twoPointBezier = () => {
 
 // };

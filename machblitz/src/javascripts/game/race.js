@@ -101,7 +101,8 @@ export class RaceManager {
     this.timers.raceStart = null;
 
     this.isRaceStarted = true;
-    this.racers[0].bindControls();
+    // this.racers[0].bindControls();
+    this.gameState.playerController.bindControls();
     this.timeStart = new Date().getTime();
     this.currentTime = 0;
     this.isRaceEnded = false;

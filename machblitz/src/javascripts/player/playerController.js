@@ -1,8 +1,11 @@
+import { shallowCompare } from '../utils/utils';
+
 class PlayerController {
   constructor() {
     this.handleOrientation = this.handleOrientation.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleTouch = this.handleTouch.bind(this);
+    this.bindControls = this.bindControls.bind(this);
     this.pawn = undefined;
 
     this.inputs = {
@@ -18,7 +21,7 @@ class PlayerController {
 
     this.debug = [];
 
-    this.bindControls();
+    // this.bindControls();
   }
 
   bindControls() {
@@ -33,30 +36,49 @@ class PlayerController {
   handleTouch(e, down) {
     // e.preventDefault();
     let { pawn, touchList, inputs: { forward, backward, left, right, brake } } = this;
-    console.log(e);
+    // console.log(e);
+    // console.log(touchList);
+    // console.log(e);
     if (!pawn) return;
     e.stopPropagation();
     let width = Math.floor(screen.width * 0.5);
-    // if (e.touches.)
 
-    // console.log(e.touches);
-
-    if (touchList)
-
-    Object.values(e.touches).forEach( touch => {
-      if (touch.clientX > width) {
-        forward = true;
-        pawn.inputForward(forward);
-      } else {
-        if (forward) {
-          brake = true;
-          pawn.inputBrake(brake);
-        } else {
-          backward = true;
-          pawn.inputBackward(backward);
+    if (down) {
+      Object.values(e.changedTouches).forEach(touch => {
+        if (touch.clientX > width && !forward) {
+          touchList[touch.identifier] = 'right';
+          this.inputs.forward = true;
+          pawn.inputForward(true);
+        } else if (!backward || !brake) {
+          touchList[touch.identifier] = 'left';
+          if (forward && !brake) {
+            this.inputs.brake = true;
+            pawn.inputBrake(true);
+          } else if (!backward) {
+            this.inputs.backward = true;
+            pawn.inputBackward(true);
+          }
         }
+      });
+    } else {
+      if (touchList[e.changedTouches[0].identifier]) {
+        if (touchList[e.changedTouches[0].identifier] === 'right') {
+          if (forward) {
+            this.inputs.forward = false;
+            pawn.inputForward(false);
+          }
+        } else if (touchList[e.changedTouches[0].identifier] === 'left') {
+          if (backward || brake) {
+            this.inputs.backward = false;
+            pawn.inputBackward(false);
+            this.inputs.brake = false;
+            pawn.inputBrake(false);
+          }
+        }
+        delete touchList[e.changedTouches[0].identifier];
       }
-    });
+    }
+    // console.log(touchList);
 
     // let strings = [width, Object.values(e.touches)];
 
@@ -64,10 +86,6 @@ class PlayerController {
 
   }
 
-  shallowCompare(obj1, obj2) {
-    return Boolean(Object.keys(obj1).length === Object.keys(obj2).length &&
-    Object.keys(obj1).every(key => obj1[key] === obj2[key]));
-  }
 
   handleInput(e, down) {
     // e.preventDefault();
@@ -76,24 +94,26 @@ class PlayerController {
     console.log(e.code);
     switch (e.code) {
       case "KeyW": case "ArrowUp":
-        forward = down;
-        this.pawn.inputForward(forward);
+        this.inputs.forward = down;
+        this.pawn.inputForward(down);
         break;
       case "KeyS": case "ArrowDown":
-        backward = down;
-        this.pawn.inputBackward(backward);
+        this.inputs.backward = down;
+        this.pawn.inputBackward(down);
         break;
       case "KeyA": case "ArrowLeft":
-        left = down;
-        this.pawn.inputLeft(left);
+        this.inputs.left = down;
+        this.pawn.leftPressed = down;
+        this.pawn.inputLeft(down);
         break;
       case "KeyD": case "ArrowRight":
-        right = down;
-        this.pawn.inputRight(right);
+        this.inputs.right = down;
+        this.pawn.rightPressed = down;
+        this.pawn.inputRight(down);
         break;
       case "Space":
-        brake = down;
-        this.pawn.inputBrake(brake);
+        this.inputs.brake = down;
+        this.pawn.inputBrake(down);
         break;
     }
   }

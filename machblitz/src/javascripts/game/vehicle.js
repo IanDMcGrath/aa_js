@@ -279,26 +279,26 @@ export class Vehicle {
     // console.log(event.key)
     switch(e.code) {
       case "KeyW": case "ArrowUp":
-        this.playerForward(down);
+        this.inputForward(down);
         break;
       case "KeyS": case "ArrowDown":
-        this.playerBackward(down);
+        this.inputBackward(down);
         break;
       case "KeyA": case "ArrowLeft":
         this.leftPressed = down;
         // console.log(down ? 'LeftPressed' : 'LeftReleased');
-        this.playerLeft(down);
+        this.inputLeft(down);
         break;
       case "KeyD": case "ArrowRight":
         this.rightPressed = down;
         // console.log(down ? 'RightPressed' : 'RightReleased');
-        this.playerRight(down);
+        this.inputRight(down);
         break;
       case "KeyR":
         if (down) this.resetPosition();
         break;
       case "Space":
-        this.brake(down);
+        this.inputBrake(down);
         // this.boost();
         break;
       default: return;
@@ -323,7 +323,7 @@ export class Vehicle {
     // beta = roll
   }
 
-  jump(pressed) { // not used, replaced with brake
+  jump(pressed) { // not used, replaced with inputBrake
     // console.log("jump!");
     this.jumping = true;
     if (pressed) {
@@ -337,7 +337,7 @@ export class Vehicle {
     }
   }
 
-  brake(pressed) {
+  inputBrake(pressed) {
     this.brakePressed = pressed;
   }
 
@@ -389,7 +389,7 @@ export class Vehicle {
     }
   }
 
-  playerForward(pressed) {
+  inputForward(pressed) {
     // window.removeEventListener("keydown", this.keydown); // remove event listener proof for darrick #2
     if (pressed && !this.forwardPressed ) {
       this.effectThrottleUp();
@@ -403,7 +403,7 @@ export class Vehicle {
     if (pressed) {
       this.throttle = 0.02;
     } else {
-      this.backwardPressed ? this.playerBackward(true) : this.throttle = 0;
+      this.backwardPressed ? this.inputBackward(true) : this.throttle = 0;
       this.effectThrottleDown();
     }
   }
@@ -451,33 +451,33 @@ export class Vehicle {
     this.jetLight.intensity = 2;
   };
 
-  playerBackward(pressed) {
+  inputBackward(pressed) {
     this.backwardPressed = pressed;
     if (pressed) {
       this.throttle = -0.01;
     } else {
-      this.forwardPressed ? this.playerForward(true) : this.throttle = 0;
+      this.forwardPressed ? this.inputForward(true) : this.throttle = 0;
     }
   }
 
-  playerLeft(pressed) {
+  inputLeft(pressed) {
     // this.leftPressed = pressed;
     this.steer = pressed ? 1 : 0;
     if (!pressed) {
       if (this.rightPressed) {
-        this.playerRight(true);
+        this.inputRight(true);
       }
     }
   }
 
-  playerRight(pressed) {
+  inputRight(pressed) {
     // this.rightPressed = pressed;
     this.steer = pressed ? -1 : 0;
     if (!pressed) {
       if (this.leftPressed) {
-        this.playerLeft(true);
+        this.inputLeft(true);
       }
-      // this.playerLeft(this.leftPressed);
+      // this.inputLeft(this.leftPressed);
     }
   }
 
