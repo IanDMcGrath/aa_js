@@ -792,7 +792,7 @@ const debug = () => {
 const uiTick = () => {
   uiManager.menus.playHud.playerSpeed.speed = RACERS[0].speed;
   uiManager.setSpeedGauge();
-  uiManager.debug(gameState.playerController.debug);
+  uiManager.debug(debug());
 };
 
 // var prepTick = setInterval(tryTick, 100);

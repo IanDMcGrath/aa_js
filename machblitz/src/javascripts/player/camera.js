@@ -79,7 +79,7 @@ export class PlayCam{
     newQuat.normalize();
     this.obj.rotation.setFromQuaternion(currentQuat.slerp(newQuat, deltaTime * 10));
 
-
+    // console.log(this.gameState.playerController.inputs.roll);
   }
 
   rotToSurface() {

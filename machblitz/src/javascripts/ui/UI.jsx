@@ -289,7 +289,7 @@ class UIManager {
 
   debug(strings) {
     const root = document.getElementById('debug');
-    // ReactDOM.render(<Debug strings={strings} />, root);
+    ReactDOM.render(<Debug strings={strings} />, root);
   }
 };
 

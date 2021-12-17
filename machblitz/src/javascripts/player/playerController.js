@@ -18,6 +18,7 @@ class PlayerController {
     }
 
     this.isMobile = Boolean(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    if (this.isMobile) window.addEventListener("deviceorientation", this.handleOrientation, true);
 
     this.touchList = {};
 
@@ -29,7 +30,6 @@ class PlayerController {
   bindControls() {
     if (this.isMobile) {
 
-      window.addEventListener("deviceorientation", this.handleOrientation, true);
       window.addEventListener("touchstart", (e) => this.handleTouch(e, true), false);
       window.addEventListener("touchend", (e) => this.handleTouch(e, false), false);
 
@@ -136,8 +136,10 @@ class PlayerController {
     } else {
       roll = (beta > 0 ? beta - 180 : beta + 180) * -1;
     }
-    
-    this.inputs.mobile.roll = roll;
+
+    // console.log(roll);
+
+    this.inputs.roll = roll;
     this.pawn.inputRoll(roll);
   }
 }
