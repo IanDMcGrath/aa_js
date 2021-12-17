@@ -460,6 +460,10 @@ export class Vehicle {
     }
   }
 
+  inputRoll(roll) {
+    this.steer = roll;
+  }
+
   inputLeft(pressed) {
     // this.leftPressed = pressed;
     this.steer = pressed ? 1 : 0;
