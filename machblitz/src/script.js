@@ -497,11 +497,12 @@ window.addEventListener('resize', () =>
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-const fullscreenButton = document.querySelector("#button-fullscreen");
-const hud = document.querySelector('.mid');
+const fullscreenButton = document.getElementById("button-fullscreen");
+const hud = document.getElementById('game-viewport');
 
 const fullscreenClick = e => {
   e.stopPropagation();
+
   if (!document.fullscreenElement) {
     hud.requestFullscreen();
   } else {
@@ -509,7 +510,7 @@ const fullscreenClick = e => {
   }
 };
 
-console.log(fullscreenButton);
+
 
 fullscreenButton.addEventListener('click', fullscreenClick);
 
@@ -703,6 +704,7 @@ const gameQuit = () => {
   gameState.isPaused = false;
   playCam.cancelFade();
   gameInitialize();
+  gameState.playerController.unbindControls();
   RACERS.forEach(racer => {
     racer.restart();
   });
@@ -792,7 +794,7 @@ const debug = () => {
 const uiTick = () => {
   uiManager.menus.playHud.playerSpeed.speed = RACERS[0].speed;
   uiManager.setSpeedGauge();
-  uiManager.debug(debug());
+  // uiManager.debug(debug());
 };
 
 // var prepTick = setInterval(tryTick, 100);
@@ -809,6 +811,7 @@ function tryTick() {
 
     RACERS[0].isPlayer = true;
     gameState.playerController.pawn = RACERS[0];
+    gameState.playerController.gameState = gameState;
     // console.log('ARRRACERS[0].SPEED');
     // console.log(RACERS[0].speed);
 

@@ -6,7 +6,10 @@ class PlayerController {
     this.handleInput = this.handleInput.bind(this);
     this.handleTouch = this.handleTouch.bind(this);
     this.bindControls = this.bindControls.bind(this);
+    this.touchDown = (e) => this.handleTouch(e, true);
+    this.touchUp = (e) => this.handleTouch(e, false);
     this.pawn = undefined;
+    this.gameState = undefined;
 
     this.inputs = {
       roll: 0,
@@ -30,8 +33,9 @@ class PlayerController {
   bindControls() {
     if (this.isMobile) {
 
-      window.addEventListener("touchstart", (e) => this.handleTouch(e, true), false);
-      window.addEventListener("touchend", (e) => this.handleTouch(e, false), false);
+      const viewport = document.getElementById('game-viewport');
+      viewport.addEventListener("touchstart", (e) => this.handleTouch(e, true), false);
+      viewport.addEventListener("touchend", (e) => this.handleTouch(e, false), false);
 
     } else {
 
@@ -39,11 +43,20 @@ class PlayerController {
       window.addEventListener("keyup", (e) => this.handleInput(e, false));
 
     }
+  }
 
+  unbindControls() {
+    const viewport = document.getElementById('game-viewport');
+    viewport.removeEventListener("touchstart", )
   }
 
   handleTouch(e, down) {
-    // e.preventDefault();
+    if (this.gameState.isPaused) {return;}
+
+    if (!e.target.classList.contains('button')) {
+      e.preventDefault();
+    } else {return;}
+
     let { pawn, touchList, inputs: { forward, backward, left, right, brake } } = this;
     // console.log(e);
     // console.log(touchList);
@@ -100,7 +113,7 @@ class PlayerController {
     // e.preventDefault();
     e.stopPropagation();
     let { inputs: { forward, backward, left, right, brake } } = this;
-    console.log(e.code);
+    // console.log(e.code);
     switch (e.code) {
       case "KeyW": case "ArrowUp":
         this.inputs.forward = down;

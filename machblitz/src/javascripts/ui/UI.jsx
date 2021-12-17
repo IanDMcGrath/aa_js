@@ -30,6 +30,9 @@ class UIManager {
     this.createMenus();
     this.configureMenuActions();
     this.showPressStartMenu();
+    this.buttons = {};
+    this.buttons.burger = document.getElementById("button-burger");
+    this.buttons.burger.addEventListener("click", this.togglePause);
   };
 
   createHUD() {
@@ -93,27 +96,22 @@ class UIManager {
     if (this.gameState.isPaused) {
       e.preventDefault();
       e.stopPropagation();
-      switch (e.code) {
-        case "Escape": case "Tab":
-          this.togglePause();
-          return;
-
-        default: return;
+      if (e.code === "Escape" || e.code === "Tab") {
+        this.togglePause();
+        return;
       }
     } else {
-      switch (e.code) {
-        case "Escape": case "Tab":
-          e.preventDefault();
-          e.stopPropagation();
-          this.togglePause();
-          return;
-
-        default: return;
+      if (e.code === "Escape" || e.code === "Tab") {
+        e.preventDefault();
+        e.stopPropagation();
+        this.togglePause();
+        return;
       }
     }
   };
 
   togglePause() {
+    if (!this.gameState.gameStarted) return;
     const { pauseMenu, playHud } = this.menus;
     // console.log(this.menus);
     this.gameState.gamePause(!this.gameState.isPaused);

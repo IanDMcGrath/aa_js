@@ -180,7 +180,7 @@ div.bottom {
   }
 } */
 
-#button-fullscreen, #button-exitfullscreen{
+#button-fullscreen, #button-exitfullscreen, #button-burger {
   border: solid 0.05rem var(--white2);
   background-color: var(--screen);
   height: 2rem;
@@ -194,6 +194,10 @@ div.bottom {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#button-burger {
+  right: 3rem;
 }
 
 .mid-container {
@@ -221,4 +225,13 @@ div#game-viewport:fullscreen > canvas.webgl {
 
 .group2 {
 
+}
+
+.unselectable {
+  pointer-events: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
