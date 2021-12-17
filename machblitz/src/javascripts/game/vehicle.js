@@ -461,7 +461,8 @@ export class Vehicle {
   }
 
   inputRoll(roll) {
-    this.steer = roll;
+    let rollScaled = Math.max(-1, Math.min(1, roll * 0.03));
+    this.steer = rollScaled;
   }
 
   inputLeft(pressed) {
