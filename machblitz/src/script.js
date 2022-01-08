@@ -473,8 +473,8 @@ scene.add(directionalLight);
  * Sizes
  */
 const sizes = {
-  width: Util.clampFMax(window.innerWidth, 1200),
-  height: Util.clampFMax(window.innerHeight, 700)
+  width: Math.min(window.innerWidth, 1200),
+  height: Math.min(window.innerHeight, 700)
 };
 
 window.addEventListener('resize', () =>

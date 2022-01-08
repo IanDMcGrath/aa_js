@@ -26,7 +26,11 @@
 }
 
 .press-start-menu {
-  min-width: 32rem;
+  min-width: min(32rem, 20vw);
+}
+
+.press-start.blinking {
+  font-size: min(1rem, 7vw);
 }
 
 .start-menu, .pause-menu, .results-menu {
@@ -39,7 +43,7 @@
 }
 
 .press-start-title {
-  font-size: 5rem;
+  font-size: min(5rem, calc(15vw - 0.3rem));
   margin: 0rem 2rem 0.5rem 2rem;
 }
 
@@ -127,13 +131,13 @@
 }
 
 .start-menu-title, .pause-menu-title, .results-menu-title {
-  font-size: 5rem;
+  font-size: min(5rem, calc(15vw - 0.3rem));
   display: flex;
   justify-content: center;
 }
 
 .start-menu-body, .pause-menu-body {
-  min-width: 30rem;
+  min-width: min(30rem, 85vw);
   margin-bottom: 1rem;
 }
 
@@ -161,7 +165,7 @@
 } */
 
 .pause-menu-title {
-  font-size: 5rem;
+  font-size: min(5rem, calc(15vw - 0.3rem));
 }
 
 #fader {
