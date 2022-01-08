@@ -8,6 +8,7 @@ class PlayerController {
     this.handleInputUp = (e) => this.handleInput(e, false);
     this.handleTouch = this.handleTouch.bind(this);
     this.bindControls = this.bindControls.bind(this);
+    this.hasControl = false;
     this.handleTouchStart = (e) => this.handleTouch(e, true);
     this.handleTouchEnd = (e) => this.handleTouch(e, false);
     this.pawn = undefined;
@@ -33,6 +34,7 @@ class PlayerController {
   }
 
   bindControls() {
+    this.hasControl = true;
     if (this.isMobile) {
 
       const viewport = document.getElementById('game-viewport');
@@ -48,11 +50,13 @@ class PlayerController {
   }
 
   unbindControls() {
+    this.hasControl = false;
     const viewport = document.getElementById('game-viewport');
     viewport.removeEventListener("touchstart", this.handleTouchStart);
     viewport.removeEventListener("touchend", this.handleTouchEnd);
     window.removeEventListener("keydown", this.handleInputDown);
     window.removeEventListener("keyup", this.handleInputUp);
+    this.pawn.inputRoll(0);
   }
 
   handleTouch(e, down) {
@@ -165,6 +169,7 @@ class PlayerController {
 
   handleOrientation(e) {
     // const { absolute, alpha, beta, gamma } = e;
+    if (!this.hasControl) return;
     const { beta, gamma } = e;
     let roll = 0;
     if (gamma < 0) {
