@@ -56,6 +56,23 @@ class PlayerController {
   }
 
   handleTouch(e, down) {
+    // feature detect
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(permissionState => {
+          if (permissionState === 'granted') {
+            window.addEventListener('deviceorientation', this.handleOrientation);
+          }
+        })
+        .catch(console.error);
+    } else {
+      // handle regular non iOS 13+ devices
+      this.inputTouch(e, down);
+    }
+  }
+
+  inputTouch(e, down) {
+
     if (this.gameState.isPaused) {return;}
 
     if (!e.target.classList.contains('button')) {
