@@ -722,6 +722,7 @@ class GameState {
 const gameState = new GameState;
 gameState.raceRestart = () => {
   raceInitialize(true);
+  gameState.playerController.unbindControls();
 };
 gameState.raceStart = raceStart;
 gameState.raceComplete = raceComplete;

@@ -4,10 +4,12 @@ class PlayerController {
   constructor() {
     this.handleOrientation = this.handleOrientation.bind(this);
     this.handleInput = this.handleInput.bind(this);
+    this.handleInputDown = (e) => this.handleInput(e, true);
+    this.handleInputUp = (e) => this.handleInput(e, false);
     this.handleTouch = this.handleTouch.bind(this);
     this.bindControls = this.bindControls.bind(this);
-    this.touchDown = (e) => this.handleTouch(e, true);
-    this.touchUp = (e) => this.handleTouch(e, false);
+    this.handleTouchStart = (e) => this.handleTouch(e, true);
+    this.handleTouchEnd = (e) => this.handleTouch(e, false);
     this.pawn = undefined;
     this.gameState = undefined;
 
@@ -34,20 +36,23 @@ class PlayerController {
     if (this.isMobile) {
 
       const viewport = document.getElementById('game-viewport');
-      viewport.addEventListener("touchstart", (e) => this.handleTouch(e, true), false);
-      viewport.addEventListener("touchend", (e) => this.handleTouch(e, false), false);
+      viewport.addEventListener("touchstart", this.handleTouchStart, false);
+      viewport.addEventListener("touchend", this.handleTouchEnd, false);
 
     } else {
 
-      window.addEventListener("keydown", (e) => this.handleInput(e, true));
-      window.addEventListener("keyup", (e) => this.handleInput(e, false));
+      window.addEventListener("keydown", this.handleInputDown);
+      window.addEventListener("keyup", this.handleInputUp);
 
     }
   }
 
   unbindControls() {
     const viewport = document.getElementById('game-viewport');
-    viewport.removeEventListener("touchstart", )
+    viewport.removeEventListener("touchstart", this.handleTouchStart);
+    viewport.removeEventListener("touchend", this.handleTouchEnd);
+    window.removeEventListener("keydown", this.handleInputDown);
+    window.removeEventListener("keyup", this.handleInputUp);
   }
 
   handleTouch(e, down) {
@@ -112,6 +117,7 @@ class PlayerController {
   handleInput(e, down) {
     // e.preventDefault();
     e.stopPropagation();
+    e.preventDefault();
     let { inputs: { forward, backward, left, right, brake } } = this;
     // console.log(e.code);
     switch (e.code) {
