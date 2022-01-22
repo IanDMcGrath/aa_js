@@ -33,8 +33,25 @@ module.exports = {
     [
       // HTML
       {
-        test: /\.(html)$/,
-        loader: 'html-loader'
+        test: /\.html$/i,
+        loader: 'html-loader',
+        options: {
+          sources: {
+            list: [
+              "...",
+              {
+                tag: "img",
+                attribute: "data-src",
+                type: "src",
+              },
+              {
+                tag: "img",
+                attribute: "data-srcset",
+                type: "srcset",
+              },
+            ],
+          },
+        },
       },
 
       // JS
