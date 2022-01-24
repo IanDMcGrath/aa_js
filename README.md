@@ -1,4 +1,4 @@
-live link: https://www.ians.tech/machblitz-racing
+live link: https://www.ians.tech/machblitz
 
 Background
 
